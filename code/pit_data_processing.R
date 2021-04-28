@@ -49,12 +49,22 @@ coc_categories = pit_data_raw %>%
 pit_data_output_name = paste0("pit_processed_", first_year, "_", last_year, ".csv")
 pit_data_output_path = file.path(output_dir, pit_data_output_name)
 
+# create the directory for the output data if it doesn't already exist
+if (!dir.exists(dirname(pit_data_output_path))) {
+  dir.create(dirname(pit_data_output_path))
+}
+
 # write out a csv with the processed pit data
 write_csv(pit_data, pit_data_output_path)
 
 # set the name and location for the saved CoC category data
 coc_categories_output_name = paste0("coc_categories_", first_year, "_", last_year, ".csv")
 coc_categories_output_path = file.path(output_dir, coc_categories_output_name)
+
+# create the directory for the output data if it doesn't already exist
+if (!dir.exists(dirname(coc_categories_output_path))) {
+  dir.create(dirname(coc_categories_output_path))
+}
 
 # write out a csv with the CoC category data
 write_csv(coc_categories, coc_categories_output_path)
