@@ -1,4 +1,4 @@
-# pit-data
+# coc-data
 
 Code to process the raw Point In Time (PIT) counts of people experiencing homelessness and to calculate homelessness rates in each Continuum of Care (CoC).
 
