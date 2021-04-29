@@ -1,9 +1,16 @@
 library(tidyverse)
 library(tidycensus)
 
-# read in the processed pit data if the object doesn't already exist in the environment
-if (!exists(pit_data)) {
-  pit_data = read_csv("output_data/pit_processed_2007_2019.csv")
+acs_start_year = 2012
+acs_end_year = 2019
+
+input_dir = "input_data"
+output_dir = "output_data"
+
+
+# read in the processed PIT data if the object doesn't already exist in the environment
+if (!exists("pit_data")) {
+  pit_data = read_csv(file.path(output_dir, "pit_processed_2007_2019.csv"))
 }
 
 # just grab the overall homelessness count
@@ -11,11 +18,11 @@ pit_overall = pit_data %>%
   filter(category == "Overall Homeless") %>% 
   select(coc_number, coc_name, year, overall_homeless = count)
 
-# read in the coc to county crosswalk
-coc_county_crosswalk = readxl::read_excel("input_data/HUD_COC_Geography_crosswalk.xlsx")
+# read in the CoC to county crosswalk
+coc_county_crosswalk = readxl::read_excel(file.path(input_dir, "HUD_COC_Geography_crosswalk.xlsx"))
 
-# fetch the acs data by county for total population, total population for which poverty status is determined, total poverty population, share of population for which poverty status is determined that is in poverty
-acs_data = map_dfr(2012:2019, function(x) {
+# fetch the ACS data by county for total population, total population for which poverty status is determined, total poverty population, share of population for which poverty status is determined that is in poverty
+acs_data = map_dfr(acs_start_year:acs_end_year, function(x) {
   # hit the census API for the data
   get_acs("county", variables = c("S0101_C01_001E", "S1701_C01_001E", "S1701_C02_001E", "S1701_C03_001E"), year = x, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5") %>% 
     select(fips = GEOID, name = NAME, total_population = S0101_C01_001E, total_pop_with_pov_status = S1701_C01_001E, total_pop_in_poverty = S1701_C02_001E, share_in_poverty = S1701_C03_001E) %>% 
