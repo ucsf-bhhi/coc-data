@@ -55,4 +55,11 @@ combined_data = coc_county_crosswalk %>%
   relocate(c(homeless_per_1000_total_pop, homeless_per_1000_in_poverty, homeless_rate_total_pop, homeless_rate_in_poverty), .after = year) %>% 
   relocate(overall_homeless, .before = coc_total_population)
 
+# set homelessness rates output file name
+output_name = paste0("pit_homelessness_rates_", acs_start_year, "_", acs_end_year, ".csv")
+# set the output file path
+output_path = file.path(output_dir, output_name)
+
+# write csv
+write_csv(combined_data, output_path)
 
