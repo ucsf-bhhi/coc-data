@@ -19,7 +19,7 @@ pit_overall = pit_data %>%
   select(coc_number, coc_name, year, overall_homeless = count)
 
 # read in the CoC to county crosswalk
-coc_county_crosswalk = readxl::read_excel(file.path(input_dir, "geography", "HUD_COC_Geography_crosswalk.xlsx"))
+coc_county_crosswalk = readxl::read_excel(file.path(input_dir, "geography", "county_to_coc_crosswalk.xlsx"))
 
 # fetch the ACS data by county for total population, total population for which poverty status is determined, total poverty population, share of population for which poverty status is determined that is in poverty
 acs_data = map_dfr(acs_start_year:acs_end_year, function(x) {
