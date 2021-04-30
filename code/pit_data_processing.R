@@ -5,7 +5,7 @@ first_year = 2007
 last_year = 2019
 
 # set the raw pit spreadsheet location and name
-input_dir = "input_data"
+input_dir = "input_data/pit_counts"
 output_dir = "output_data"
 pit_spreadsheet_name = "2007-2019-Point-in-Time-Estimates-by-CoC.xlsx"
 
