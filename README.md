@@ -11,6 +11,7 @@ To run the code which creates homelessness rates, make sure you have the environ
 | `pit_processed_2007_2019.csv`          | `code/pit_data_processing.R` |
 | `coc_categories_2007_2019.csv`         | `code/pit_data_processing.R` |
 | `pit_homelessness_rates_2012_2019.csv` | `code/pit_rates.R`           |
+| `coc_zillow_rent.csv`                  | `code/coc_zillow_rent.R`     |
 
 ### Input Data Sources
 
