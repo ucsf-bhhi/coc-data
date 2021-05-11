@@ -1,5 +1,6 @@
 library(tidyverse)
 library(tidycensus)
+source("code/helpers.R")
 
 acs_start_year <- 2012
 acs_end_year <- 2019
@@ -22,13 +23,8 @@ pit_overall <- pit_data %>%
 coc_county_crosswalk <- readxl::read_excel(file.path(input_dir, "geography", "county_to_coc_crosswalk.xlsx"))
 
 # fetch the ACS data by county for total population, total population for which poverty status is determined, total poverty population, share of population for which poverty status is determined that is in poverty
-acs_data <- map_dfr(acs_start_year:acs_end_year, function(x) {
-  # hit the census API for the data
-  get_acs("county", variables = c("S0101_C01_001E", "S1701_C01_001E", "S1701_C02_001E", "S1701_C03_001E"), year = x, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5") %>%
-    select(fips = GEOID, name = NAME, total_population = S0101_C01_001E, total_pop_with_pov_status = S1701_C01_001E, total_pop_in_poverty = S1701_C02_001E, share_in_poverty = S1701_C03_001E) %>%
-    # add a year variable
-    mutate(year = x)
-})
+acs_data <- map_dfr(acs_start_year:acs_end_year, ~fetch_acs("county", variables = c("S0101_C01_001E", "S1701_C01_001E", "S1701_C02_001E", "S1701_C03_001E"), year = .x, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")) %>%
+    rename(total_population = S0101_C01_001E, total_pop_with_pov_status = S1701_C01_001E, total_pop_in_poverty = S1701_C02_001E, share_in_poverty = S1701_C03_001E)
 
 # combine the data and calculate homelessness rates
 combined_data <- coc_county_crosswalk %>%

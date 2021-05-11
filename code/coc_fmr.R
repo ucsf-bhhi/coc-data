@@ -1,5 +1,6 @@
 library(tidyverse)
 library(tidycensus)
+source("code/helpers.R")
 
 # set the years of data we're using (in line with available ACS and PIT data)
 first_year <- 2012
@@ -58,18 +59,11 @@ multi_county_states <- fmr_data_initial %>%
 variable_code_change_year <- 2015
 renter_variable_codes <- c(replicate(variable_code_change_year - first_year, "DP04_0046"), replicate(last_year - (variable_code_change_year - 1), "DP04_0047"))
 
-# function that gets the number of renter households by county subdivision from the ACS
-fetch_renter_counts <- function(yr, variable_code) {
-  # hit the ACS api for the data
-  get_acs("county subdivision", variables = variable_code, year = yr, state = multi_county_states, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5") %>%
-    # rename and select just the variables we want (10-digit FIPS & estimate of renting households)
-    select(fips10 = GEOID, renting_households = matches(paste0(variable_code, "E"))) %>%
-    # add a column with the year of the data
-    mutate(year = yr)
-}
-
 # loop over the analysis years, fetching the data and combining into one table
-acs_num_renters <- map2_dfr(first_year:last_year, renter_variable_codes, fetch_renter_counts)
+acs_num_renters <- map2_dfr(first_year:last_year, renter_variable_codes, ~ fetch_acs("county subdivision", variables = .y, year = .x, state = multi_county_states, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")) %>% 
+  # get the renting households estimates into one column
+  mutate(renting_households = if_else(!is.na(DP04_0046E), DP04_0046E, DP04_0047E)) %>% 
+  select(fips10 = fips, year, renting_households)
 
 # calculate a weighted average FMR for the counties in more than one FMR region
 # county subdivisions are unique to an FMR area so we can take the weighted average of FMRs in the county subdivisions
@@ -89,13 +83,8 @@ fmr_full_county <- fmr_data_one_county %>%
   bind_rows(fmr_data_multi_county)
 
 # grab the county renter household counts to weight the CoC average FMRs
-county_population_data <- map_dfr(first_year:last_year, function(yr) {
-  # hit the census API for the data
-  get_acs("county", variables = "S0101_C01_001E", year = yr, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5") %>%
-    select(fips = GEOID, total_population = S0101_C01_001E) %>%
-    # add a year variable
-    mutate(year = yr)
-})
+county_population_data <- map_dfr(first_year:last_year, ~ fetch_acs("county", variables = "S0101_C01_001E", year = .x, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")) %>%
+    rename(total_population = S0101_C01_001E)
 
 # calculate the percentage of the CoC total population that comes from each of its constituent counties
 # start by reading in the county to CoC crosswalk
