@@ -82,24 +82,8 @@ fmr_data_multi_county <- fmr_data_initial %>%
 fmr_full_county <- fmr_data_one_county %>%
   bind_rows(fmr_data_multi_county)
 
-# grab the county renter household counts to weight the CoC average FMRs
-county_population_data <- map_dfr(first_year:last_year, ~ fetch_acs("county", variables = "S0101_C01_001E", year = .x, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")) %>%
-    rename(total_population = S0101_C01_001E)
-
-# calculate the percentage of the CoC total population that comes from each of its constituent counties
-# start by reading in the county to CoC crosswalk
-county_to_coc <- readxl::read_excel("input_data/geography/county_to_coc_crosswalk.xlsx") %>%
-  # merge on the county population
-  left_join(county_population_data, by = c("county_fips" = "fips")) %>%
-  # pop in the CoC is the county population * % of the county pop in that CoC (from the crosswalk)
-  mutate(county_pop_in_coc = total_population * (pct_cnty_pop_coc / 100)) %>%
-  group_by(coc_number, year) %>%
-  mutate(
-    # sum the county populations in the CoC to get the CoC total population
-    coc_pop = sum(county_pop_in_coc),
-    # divide the CoC population from each county by the CoC total population to get the share of the CoC population from each county
-    pct_coc_from_county = county_pop_in_coc / coc_pop
-  )
+# read in the county to CoC crosswalk
+county_to_coc <- read_csv("output_data/county_to_coc_crosswalk.csv")
 
 # calculate the weighted average FMR in each CoC (weights are county share of CoC population)
 coc_fmr <- county_to_coc %>%
@@ -108,9 +92,9 @@ coc_fmr <- county_to_coc %>%
   group_by(coc_number, year) %>%
   summarise(
     # calculate the weighted average for each FMR
-    across(starts_with("fmr"), ~ weighted.mean(.x, pct_coc_from_county, na.rm = TRUE), .names = "avg_{.col}"),
+    across(starts_with("fmr"), ~ weighted.mean(.x, pct_coc_pop_from_county, na.rm = TRUE), .names = "avg_{.col}"),
     # calculate the share of each CoC that was missing an FMR
-    across(starts_with("fmr"), ~ sum(pct_coc_from_county[is.na(.x)]), .names = "{.col}_pct_coc_na_rent")
+    across(starts_with("fmr"), ~ sum(pct_coc_pop_from_county[is.na(.x)]), .names = "{.col}_pct_coc_na_rent")
   )
 
 # set the path for the csv
