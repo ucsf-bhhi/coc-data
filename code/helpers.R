@@ -22,10 +22,10 @@ fetch_acs = function(...) {
            matches("variable"), 
            matches("estimate"), 
            # when get_acs is run in wide mode the estimate columns always have the last letter E, so we keep all columns ending in E
-           ends_with("E"), 
-           # moe and name end in E, but we don't want them, so explicitly drop them
-           -matches("moe"), 
+           ends_with("E", ignore.case = FALSE), 
+           # name end in E, but we don't want it, so explicitly drop it
            -matches("NAME")) %>% 
+    rename_with(~ str_remove(.x, "E"), ends_with("E", ignore.case = FALSE)) %>% 
     # add the year column to the data
     mutate(year = yr) %>%
     # put the year column after the fips column
