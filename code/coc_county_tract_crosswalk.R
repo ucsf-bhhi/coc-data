@@ -1,9 +1,3 @@
-library(sf)
-library(tidyverse)
-library(rmapshaper)
-library(tidycensus)
-source("code/helpers.R")
-
 load_coc_shapefile <- function(year, prefix, shapefile_directory, layer = NULL) {
   specific_dir <- path(shapefile_directory, prefix)
   shapefile_path <- dir_ls(specific_dir, regexp = as.character(year))
@@ -46,7 +40,15 @@ recombine_tracts <- function(tracts_in_cocs, tracts_not_in_cocs) {
       county_fips = str_sub(tract_fips, 1, 5),
       state_fips = str_sub(tract_fips, 1, 2)
     ) %>%
-    select(tract_fips, state_fips, county_fips, coc_number = COCNUM, coc_name = COCNAME, tract_pop, tract_pop_in_poverty)
+    select(year, tract_fips, state_fips, county_fips, coc_number = COCNUM, coc_name = COCNAME, tract_pop, tract_pop_in_poverty)
+}
+
+map_tracts_to_cocs = function(clipped_tracts, coc_boundaries) {
+  clipped_tracts %>% 
+    pluck("tracts_in_cocs") %>% 
+    st_point_on_surface() %>% 
+    match_tract_to_coc(coc_boundaries) %>% 
+    recombine_tracts(clipped_tracts$tracts_not_in_cocs)
 }
 
 build_tract_crosswalk <- function(recombined_tracts) {
@@ -55,7 +57,7 @@ build_tract_crosswalk <- function(recombined_tracts) {
       distinct(tidycensus::fips_codes, state_code, state_name),
       by = c("state_fips" = "state_code")
     ) %>%
-    group_by(coc_number) %>%
+    group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
       coc_poverty_pop = sum(tract_pop_in_poverty),
@@ -68,7 +70,7 @@ build_tract_crosswalk <- function(recombined_tracts) {
 
 build_county_crosswalk <- function(tract_crosswalk) {
   tract_crosswalk %>%
-    group_by(county_fips, coc_number) %>%
+    group_by(county_fips, coc_number, year) %>%
     summarise(across(c(state_fips, state_name, coc_name, coc_pop, coc_poverty_pop), first),
       county_pop_in_coc = sum(tract_pop),
       county_poverty_pop_in_coc = sum(tract_pop_in_poverty)
@@ -84,32 +86,19 @@ build_county_crosswalk <- function(tract_crosswalk) {
     )
 }
 
-write_crosswalk <- function(crosswalk, year, type, output_directory) {
-  filename <- paste(type, "coc_crosswalk", year, sep = "_")
+write_crosswalk <- function(crosswalk, years, type, output_directory) {
+  first_year = min(years)
+  last_year = max(years)
+  filename <- paste(type, "coc_crosswalk", first_year, last_year, sep = "_")
   crosswalk_path <- path(output_directory, filename, ext = "csv")
   write_csv(crosswalk, crosswalk_path)
+  
+  return(crosswalk_path)
 }
 
-create_crosswalks <- function(year, shapefile_directory = "output_data/coc_shapefiles", output_directory = "output_data", crs = 2163) {
-  coc_shapefile <- load_coc_shapefile(year, prefix = "simplified", shapefile_directory)
-  coc_dissolved <- load_coc_shapefile(year, prefix = "dissolved_simplified", shapefile_directory)
+# create_crosswalks <- function(year, shapefile_directory = "output_data/coc_shapefiles", output_directory = "output_data", crs = 2163) {
 
-  tracts <- fetch_tract_data(year, crs)
+# write_crosswalk(tract_crosswalk, year, "tract", output_directory)
+# write_crosswalk(county_crosswalk, year, "county", output_directory)
 
-  clipped_tracts <- clip_tracts(tracts, coc_dissolved)
 
-  tract_points_on_surface <- st_point_on_surface(clipped_tracts$tracts_in_cocs)
-
-  tract_cocs <- match_tract_to_coc(tract_points_on_surface, coc_shapefile)
-
-  recombined_tracts <- recombine_tracts(tract_cocs, clipped_tracts$tracts_not_in_cocs)
-
-  tract_crosswalk <- build_tract_crosswalk(recombined_tracts)
-
-  county_crosswalk <- build_county_crosswalk(tract_crosswalk)
-
-  write_crosswalk(tract_crosswalk, year, "tract", output_directory)
-  write_crosswalk(county_crosswalk, year, "county", output_directory)
-}
-
-walk(2013:2019, create_crosswalks)
