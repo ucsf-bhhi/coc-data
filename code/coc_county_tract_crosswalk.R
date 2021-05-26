@@ -10,6 +10,10 @@ fetch_tract_data <- function(year, crs) {
 }
 
 clip_tracts <- function(tract_geodata, dissolved_cocs) {
+  tract_year = unique(tract_geodata$year)
+  coc_year = unique(dissolved_cocs$year)
+  stopifnot("tracts and dissolved coc shapefile not from same year" = tract_year == coc_year)
+  
   tracts_in_cocs <- ms_clip(tract_geodata, dissolved_cocs)
   tracts_not_in_cocs <- tract_geodata %>%
     filter(!(tract_fips %in% pluck(tracts_in_cocs$tract_fips))) %>%
