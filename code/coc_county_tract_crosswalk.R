@@ -75,10 +75,8 @@ build_county_crosswalk <- function(tract_crosswalk) {
     )
 }
 
-write_crosswalk <- function(crosswalk, years, type, output_directory) {
-  first_year = min(years)
-  last_year = max(years)
-  filename <- paste(type, "coc_crosswalk", first_year, last_year, sep = "_")
+write_crosswalk <- function(crosswalk, type, output_directory) {
+  filename <- paste(type, "coc_crosswalk", sep = "_")
   crosswalk_path <- path(output_directory, filename, ext = "csv")
   write_csv(crosswalk, crosswalk_path)
   
