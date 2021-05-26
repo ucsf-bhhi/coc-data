@@ -1,0 +1,5 @@
+^renv$
+^renv\.lock$
+^coc-data-package\.Rproj$
+^\.Rproj\.user$
+^code$
