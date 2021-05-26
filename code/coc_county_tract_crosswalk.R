@@ -82,10 +82,3 @@ write_crosswalk <- function(crosswalk, type, output_directory) {
   
   return(crosswalk_path)
 }
-
-# create_crosswalks <- function(year, shapefile_directory = "output_data/coc_shapefiles", output_directory = "output_data", crs = 2163) {
-
-# write_crosswalk(tract_crosswalk, year, "tract", output_directory)
-# write_crosswalk(county_crosswalk, year, "county", output_directory)
-
-
