@@ -1,14 +1,3 @@
-load_coc_shapefile <- function(year, prefix, shapefile_directory, layer = NULL) {
-  specific_dir <- path(shapefile_directory, prefix)
-  shapefile_path <- dir_ls(specific_dir, regexp = as.character(year))
-
-  if (is.null(layer)) {
-    st_read(shapefile_path)
-  } else {
-    st_read(shapefile_path)
-  }
-}
-
 fetch_tract_data <- function(year, crs) {
   state_fips <- tidycensus::fips_codes %>%
     distinct(state_code, state_name) %>%
