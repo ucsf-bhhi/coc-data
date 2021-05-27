@@ -60,15 +60,13 @@ clip_tracts <- function(tract_geodata, dissolved_cocs) {
   return(list("tracts_in_cocs" = tracts_in_cocs, "tracts_not_in_cocs" = tracts_not_in_cocs))
 }
 
-#' Match Census Tracts to CoCs
+#' @describeIn map_tracts_to_cocs Match Census Tracts to CoCs
 #'
 #' Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
 #' lies within.
 #'
 #' @param tract_points sf object with the center points of the Census Tracts
 #' @param coc_boundaries sf object with the CoC boundaries
-#'
-#' @return A data frame with the tract, tract data, and its corresponding CoC
 match_tract_to_coc <- function(tract_points, coc_boundaries) {
   # match up the tract centers and CoCs
   st_intersection(tract_points, coc_boundaries) %>%
@@ -76,16 +74,13 @@ match_tract_to_coc <- function(tract_points, coc_boundaries) {
     st_drop_geometry()
 }
 
-#' Combine tables of tracts in and not in CoCs
+#' @describeIn map_tracts_to_cocs Combine tables of tracts in and not in CoCs
 #'
 #' Takes the matched table of tracts in CoCs, joins it with the table of tracts
 #' not in CoCs and cleans up the variables.
 #'
 #' @param tracts_in_cocs A data frame with tracts matched to CoCs
 #' @param tracts_not_in_cocs A data frame with tracts not in CoCs
-#'
-#' @return A clean data frame of all tracts, their tract population data, and
-#'   the corresponding CoC if there is one.
 recombine_tracts <- function(tracts_in_cocs, tracts_not_in_cocs) {
   # start with the tracts that are in CoCs
   tracts_in_cocs %>%
