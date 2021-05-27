@@ -76,13 +76,31 @@ match_tract_to_coc <- function(tract_points, coc_boundaries) {
     st_drop_geometry()
 }
 
+#' Combine tables of tracts in and not in CoCs
+#'
+#' Takes the matched table of tracts in CoCs, joins it with the table of tracts
+#' not in CoCs and cleans up the variables.
+#'
+#' @param tracts_in_cocs A data frame with tracts matched to CoCs
+#' @param tracts_not_in_cocs A data frame with tracts not in CoCs
+#'
+#' @return A clean data frame of all tracts, their tract population data, and
+#'   the corresponding CoC if there is one.
 recombine_tracts <- function(tracts_in_cocs, tracts_not_in_cocs) {
+  # start with the tracts that are in CoCs
   tracts_in_cocs %>%
+    # combine with the tracts that aren't in CoCs
     bind_rows(tracts_not_in_cocs) %>%
     mutate(
+      # add a column for the tract's county FIPS code (the first 5 characters of
+      # the tract FIPS code)
       county_fips = str_sub(tract_fips, 1, 5),
+      # add a column for the tract's state FIPS code (the first 2 characters of
+      # the tract FIPS code)
       state_fips = str_sub(tract_fips, 1, 2)
     ) %>%
+    # just keep these variables and give friendlier names for the coc_number and
+    # coc_name columns
     select(year, tract_fips, state_fips, county_fips, coc_number = COCNUM, coc_name = COCNAME, tract_pop, tract_pop_in_poverty)
 }
 
