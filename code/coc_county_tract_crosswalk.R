@@ -27,15 +27,36 @@ fetch_tract_data <- function(year, crs) {
     st_transform(crs)
 }
 
+#' Trim tracts outside of CoC boundaries
+#'
+#' Not all Census tracts are in CoC boundaries, this separates out the tracts
+#' that are not in a CoC.
+#'
+#' @param tract_geodata An sf object with the tract data & boundaries
+#' @param dissolved_cocs An sf object with the internal boundaries dissolved
+#'   since we only care at this point if a tract is in *any* CoC
+#'
+#' @return A list with two sf objects: one with the tracts that are in a CoC and
+#'   one with the tracts that aren't in a CoC
 clip_tracts <- function(tract_geodata, dissolved_cocs) {
+  # grab the year of the tract data
   tract_year = unique(tract_geodata$year)
+  # grab the year of the CoC data
   coc_year = unique(dissolved_cocs$year)
+  # throw an error if the tract and CoC data are not from the same year
   stopifnot("tracts and dissolved coc shapefile not from same year" = tract_year == coc_year)
   
+  # trim to just the tracts that intersect with a CoC
   tracts_in_cocs <- ms_clip(tract_geodata, dissolved_cocs)
+  # get the tracts not in a CoC by starting with all the tracts
   tracts_not_in_cocs <- tract_geodata %>%
+    # then filter to just the ones not in the tracts_in_coc table
     filter(!(tract_fips %in% pluck(tracts_in_cocs$tract_fips))) %>%
+    # remove the boundary data from these tracts. they aren't in a CoC so we
+    # don't need it anymore
     st_drop_geometry()
+  
+  # return a list with both tables
   return(list("tracts_in_cocs" = tracts_in_cocs, "tracts_not_in_cocs" = tracts_not_in_cocs))
 }
 
