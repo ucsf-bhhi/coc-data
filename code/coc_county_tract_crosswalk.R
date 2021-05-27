@@ -60,8 +60,19 @@ clip_tracts <- function(tract_geodata, dissolved_cocs) {
   return(list("tracts_in_cocs" = tracts_in_cocs, "tracts_not_in_cocs" = tracts_not_in_cocs))
 }
 
+#' Match Census Tracts to CoCs
+#'
+#' Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
+#' lies within.
+#'
+#' @param tract_points sf object with the center points of the Census Tracts
+#' @param coc_boundaries sf object with the CoC boundaries
+#'
+#' @return A data frame with the tract, tract data, and its corresponding CoC
 match_tract_to_coc <- function(tract_points, coc_boundaries) {
+  # match up the tract centers and CoCs
   st_intersection(tract_points, coc_boundaries) %>%
+    # strip off the geodata now that we're done with it
     st_drop_geometry()
 }
 
