@@ -1,11 +1,29 @@
+#' Gets ACS data from the Census API
+#'
+#' Requests ACS population data for all tracts in the 50 states + DC as well as
+#' spatial data for the tracts. It also converts the spatial data to the given
+#' CRS.
+#'
+#' @param year Year of the ACS data and tract boundaries to fetch
+#' @param crs The EPSG code for the tract spatial data CRS
+#'
+#' @return An sf object with tract population data and boundaries
 fetch_tract_data <- function(year, crs) {
+  # start with the FIPS code table from the tidycensus package
   state_fips <- tidycensus::fips_codes %>%
+    # just keep the distinct states (the table has sub-state geographies so
+    # there are multiple entries for a state)
     distinct(state_code, state_name) %>%
+    # filter out the territories (50 states & DC all have FIPS codes < 60)
     filter(as.integer(state_code) < 60)
-
+  
+  # iterate over the list of states fetching the ACS data
   map_dfr(state_fips$state_code, ~
+  # hit the census API for tract population and boundaries
   fetch_acs("tract", year = year, variables = c(tract_pop = "B01003_001", tract_pop_in_poverty = "B17001_002"), key = Sys.getenv("CENSUS_API_KEY"), state = .x, survey = "acs5", geometry = TRUE, output = "wide")) %>%
+    # clarify the tract FIPS code column name
     rename(tract_fips = fips) %>%
+    # change the CRS for the tract boundaries
     st_transform(crs)
 }
 
