@@ -157,15 +157,34 @@ build_tract_crosswalk <- function(recombined_tracts) {
     relocate(state_name, .after = state_fips)
 }
 
+#' Creates the county to CoC crosswalk
+#'
+#' Calculates the CoC population, share of the CoC coming from each tract, and share of each CoC in each county.
+#' Both for the total population and the population under the poverty line.
+#' 
+#' @param tract_crosswalk A tract to CoC crosswalk
+#'
+#' @return A data frame with the CoC population,share of the CoC coming from
+#'   each county, and share of each CoC in each county.
+#' @seealso [build_tract_crosswalk()]
 build_county_crosswalk <- function(tract_crosswalk) {
+  # start with the tract crosswalk
   tract_crosswalk %>%
+    # sum the county population in the CoC by grouping the tracts by county,
+    # coc, and year
     group_by(county_fips, coc_number, year) %>%
+    # grab the first value of these label columns that are the same for every
+    # tract in a given CoC
     summarise(across(c(state_fips, state_name, coc_name, coc_pop, coc_poverty_pop), first),
       county_pop_in_coc = sum(tract_pop),
       county_poverty_pop_in_coc = sum(tract_pop_in_poverty)
     ) %>%
+    # now, grouping by county sum the county population, % of CoC from the
+    # county, and % of the county in each of its CoCs
     group_by(county_fips) %>%
     mutate(
+      # sum the total county population by adding up its population in each CoC
+      # it's part of
       county_pop = sum(county_pop_in_coc),
       county_pop_in_poverty = sum(county_poverty_pop_in_coc),
       pct_coc_pop_from_county = county_pop_in_coc / coc_pop,
