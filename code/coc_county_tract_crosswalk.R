@@ -104,11 +104,28 @@ recombine_tracts <- function(tracts_in_cocs, tracts_not_in_cocs) {
     select(year, tract_fips, state_fips, county_fips, coc_number = COCNUM, coc_name = COCNAME, tract_pop, tract_pop_in_poverty)
 }
 
+#' Match tracts to CoCs
+#'
+#' Calls functions that calculate the center points for tracts in CoCs, match
+#' them to the CoC the center point lies within, recombine the tracts in and not
+#' in CoCs, and does some light cleaning.
+#'
+#' @param clipped_tracts A list with two elements: `tracts_in_cocs` &
+#'   `tracts_not_in_cocs`
+#' @param coc_boundaries An sf object with CoC boundaries
+#'
+#' @return A clean data frame of all tracts, their tract population data, and
+#'   the corresponding CoC if there is one.
 map_tracts_to_cocs = function(clipped_tracts, coc_boundaries) {
+  # start with the list of tables of tracts in and not in CoCs
   clipped_tracts %>% 
+    # grab just the one with tracts in CoCs
     pluck("tracts_in_cocs") %>% 
-    st_point_on_surface() %>% 
+    # get their center points
+    st_point_on_surface() %>%
+    # match them to CoCs
     match_tract_to_coc(coc_boundaries) %>% 
+    # combine them with the tracts not in CoCs
     recombine_tracts(clipped_tracts$tracts_not_in_cocs)
 }
 
