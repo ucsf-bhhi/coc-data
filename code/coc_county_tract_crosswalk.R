@@ -194,10 +194,21 @@ build_county_crosswalk <- function(tract_crosswalk) {
     )
 }
 
+#' Write the crosswalk to CSV
+#' 
+#' Creates a CSV flat text file with the crosswalk data.
+#'
+#' @param crosswalk A crosswalk data frame
+#' @param type A string with the type of crosswalk. Either `"tract"` or `"county"`.
+#' @param output_directory A path to the directory to save the CSV
+#'
+#' @return Returns the CSV path so [targets] can track it
 write_crosswalk <- function(crosswalk, type, output_directory) {
   filename <- paste(type, "coc_crosswalk", sep = "_")
+  
   crosswalk_path <- path(output_directory, filename, ext = "csv")
   write_csv(crosswalk, crosswalk_path)
   
+  # return the CSV path so targets can track it
   return(crosswalk_path)
 }
