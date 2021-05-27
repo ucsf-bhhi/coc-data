@@ -124,20 +124,36 @@ map_tracts_to_cocs = function(clipped_tracts, coc_boundaries) {
     recombine_tracts(clipped_tracts$tracts_not_in_cocs)
 }
 
+#' Creates the tract to CoC crosswalk
+#'
+#' Calculates the CoC population and share of the CoC coming from each tract.
+#' Both for the total population and the population under the poverty line.
+#'
+#' @param recombined_tracts A data frame of tracts, their populations, and the
+#'   corresponding CoC
+#'
+#' @return A data frame with the CoC population and share of the CoC coming from
+#'   each tract.
 build_tract_crosswalk <- function(recombined_tracts) {
+  # start with the tract/CoC table
   recombined_tracts %>%
+    # join on state names from the tidycensus FIPS code table
     left_join(
       distinct(tidycensus::fips_codes, state_code, state_name),
       by = c("state_fips" = "state_code")
     ) %>%
+    # calculate yearly CoC level stats by summing over the tracts in each CoC 
     group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
       coc_poverty_pop = sum(tract_pop_in_poverty),
       pct_coc_pop_from_tract = tract_pop / coc_pop,
       pct_coc_poverty_pop_from_tract = tract_pop_in_poverty / coc_poverty_pop,
+      # make sure these variables are NA for tracts that aren't in a CoC (where
+      # coc_number is NA)
       across(c(coc_pop, coc_poverty_pop, pct_coc_pop_from_tract, pct_coc_poverty_pop_from_tract), ~ if_else(is.na(coc_number), NA_real_, .x))
     ) %>%
+    # move the state name column after the state_fips column
     relocate(state_name, .after = state_fips)
 }
 
