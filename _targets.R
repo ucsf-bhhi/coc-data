@@ -6,7 +6,8 @@ plan(callr)
 source("code/helpers.R")
 source("code/process_coc_shapefiles.R")
 source("code/coc_county_tract_crosswalk.R")
-tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs"))
+source("code/pit_data_processing.R")
+tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
   tar_files_input(
@@ -73,5 +74,27 @@ list(
     save_county_crosswalk,
     write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
     format = "file"
+  ),
+  tar_files_input(
+    raw_pit_counts,
+    "input_data/pit_counts/pit_counts_2007_2019.xlsx",
+    format = "file"
+  ),
+  tar_target(
+    pit_years,
+    get_pit_years(raw_pit_counts)
+  ),
+  tar_target(
+    wide_pit_data,
+    parse_pit_year(raw_pit_counts, pit_years),
+    pattern = map(pit_years)
+  ),
+  tar_target(
+    long_pit_data,
+    get_long_pit_data(wide_pit_data)
+  ),
+  tar_target(
+    coc_categories,
+    get_coc_categories(wide_pit_data)
   )
 )
