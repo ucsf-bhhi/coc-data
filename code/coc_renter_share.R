@@ -1,3 +1,8 @@
+#' @describeIn build_coc_renter_shares Calculates the share of renters in each county
+#'
+#' @param year
+#' 
+#' @return 
 build_county_renter_share = function(year) {
   # hit the census api for total household and renter household counts
   fetch_acs("county", variables = c(total_households = "B25003_001", renting_households = "B25003_003"), year = year, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5") %>%
@@ -7,6 +12,12 @@ build_county_renter_share = function(year) {
 }
 
 
+#' Calculates the share of renters in each CoC
+#'
+#' @param renter_shares A data frame with county renter shares
+#' @param crosswalk A data frame with a county to CoC crosswalk
+#'
+#' @return A data frame with CoC renter shares.
 build_coc_renter_shares = function(renter_shares, crosswalk) {
   crosswalk %>%
   # merge the county renter data onto the crosswalk
