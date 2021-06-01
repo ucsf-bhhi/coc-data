@@ -7,6 +7,7 @@ source("code/helpers.R")
 source("code/process_coc_shapefiles.R")
 source("code/coc_county_tract_crosswalk.R")
 source("code/pit_data_processing.R")
+source("code/pit_rates.R")
 tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
@@ -66,6 +67,10 @@ list(
     pattern = map(tract_crosswalk)
   ),
   tar_target(
+    coc_populations,
+    distinct(tract_crosswalk, year, coc_number, coc_name, coc_pop, coc_poverty_pop)
+  ),
+  tar_target(
     save_tract_crosswalk, 
     write_crosswalk(tract_crosswalk, "tract", output_directory = "output_data/"),
     format = "file"
@@ -96,5 +101,9 @@ list(
   tar_target(
     coc_categories,
     get_coc_categories(wide_pit_data)
+  ),
+  tar_target(
+    pit_rates,
+    build_pit_rates(long_pit_data, coc_populations)
   )
 )
