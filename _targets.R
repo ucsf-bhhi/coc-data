@@ -8,6 +8,7 @@ source("code/process_coc_shapefiles.R")
 source("code/coc_county_tract_crosswalk.R")
 source("code/pit_data_processing.R")
 source("code/pit_rates.R")
+source("code/coc_renter_share.R")
 tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
@@ -105,5 +106,14 @@ list(
   tar_target(
     pit_rates,
     build_pit_rates(long_pit_data, coc_populations)
+  ),
+  tar_target(
+    county_renter_shares,
+    build_county_renter_share(shapefile_years),
+    pattern = map(shapefile_years)
+  ),
+  tar_target(
+    coc_renter_shares,
+    build_coc_renter_shares(county_renter_shares, county_crosswalk)
   )
 )
