@@ -11,22 +11,10 @@ if (!file.exists(county_to_coc_crosswalk)) {
 }
 county_to_coc <- read_csv(county_to_coc_crosswalk)
 
-# the acs variable code for counts of renting households changes after 2015
-variable_code_change_year <- 2015
-vars_pre <- c("DP04_0044", "DP04_0046")
-vars_post <- c("DP04_0045", "DP04_0047")
-
 # loop over the analysis years, fetching the data and combining into one table
 acs_share_renters <- map_dfr(first_year:last_year, function(yr) {
-  # if the year in the loop is before 2015 use variable codes DP04_0044 & DP04_0046, else use DP04_0045 & DP04_0047
-  vars <- if (yr < variable_code_change_year) vars_pre else vars_post
-  fetch_acs("county", variables = vars, year = yr, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")
+  fetch_acs("county", variables = c(total_households = "B25002_001", renting_households = "B25002_003"), year = yr, key = Sys.getenv("CENSUS_API_KEY"), output = "wide", survey = "acs5")
 }) %>%
-  # get the renting households estimates into one column
-  mutate(
-    total_households = if_else(!is.na(DP04_0044E), DP04_0044E, DP04_0045E),
-    renting_households = if_else(!is.na(DP04_0046E), DP04_0046E, DP04_0047E)
-  ) %>%
   # calculate the share of households who are renting
   mutate(share_renters = renting_households / total_households) %>%
   select(fips, year, share_renters)
