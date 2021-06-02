@@ -30,3 +30,4 @@ README.html
 output_data/
 _targets
 R/
+tests/data_tests/_targets.yaml
