@@ -12,6 +12,7 @@ count_na = function(data, column) {
 
 in_range = function(data, column, min, max) {
   data %>% 
+    filter(!is.na({{ column }})) %>% 
     pull({{ column }}) %>% 
     between(min, max) %>% 
     all()
