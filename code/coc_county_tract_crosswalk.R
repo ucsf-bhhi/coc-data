@@ -146,7 +146,7 @@ build_tract_crosswalk <- function(recombined_tracts) {
     group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
-      coc_poverty_pop = sum(tract_pop_in_poverty),
+      coc_poverty_pop = sum(tract_pop_in_poverty, na.rm = TRUE),
       pct_coc_pop_from_tract = tract_pop / coc_pop,
       pct_coc_poverty_pop_from_tract = tract_pop_in_poverty / coc_poverty_pop,
       # make sure these variables are NA for tracts that aren't in a CoC (where
@@ -154,7 +154,9 @@ build_tract_crosswalk <- function(recombined_tracts) {
       across(c(coc_pop, coc_poverty_pop, pct_coc_pop_from_tract, pct_coc_poverty_pop_from_tract), ~ if_else(is.na(coc_number), NA_real_, .x))
     ) %>%
     # move the state name column after the state_fips column
-    relocate(state_name, .after = state_fips)
+    relocate(state_name, .after = state_fips) %>% 
+    # remove grouping for when it's used later
+    ungroup()
 }
 
 #' Creates the county to CoC crosswalk
@@ -177,11 +179,11 @@ build_county_crosswalk <- function(tract_crosswalk) {
     # tract in a given CoC
     summarise(across(c(state_fips, state_name, coc_name, coc_pop, coc_poverty_pop), first),
       county_pop_in_coc = sum(tract_pop),
-      county_poverty_pop_in_coc = sum(tract_pop_in_poverty)
+      county_poverty_pop_in_coc = sum(tract_pop_in_poverty, na.rm = TRUE)
     ) %>%
     # now, grouping by county sum the county population, % of CoC from the
     # county, and % of the county in each of its CoCs
-    group_by(county_fips) %>%
+    group_by(county_fips, year) %>%
     mutate(
       # sum the total county population by adding up its population in each CoC
       # it's part of
@@ -191,7 +193,11 @@ build_county_crosswalk <- function(tract_crosswalk) {
       pct_coc_poverty_pop_from_county = county_poverty_pop_in_coc / coc_poverty_pop,
       pct_county_pop_in_coc = county_pop_in_coc / county_pop,
       pct_county_poverty_pop_in_coc = county_poverty_pop_in_coc / county_pop_in_poverty
-    )
+    ) %>% 
+    # get rid of the counties and pieces of counties which are not in CoCs
+    filter(!is.na(coc_number)) %>% 
+    # remove grouping for when it's used later
+    ungroup()
 }
 
 #' Write the crosswalk to CSV
