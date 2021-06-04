@@ -9,12 +9,23 @@ source("code/coc_county_tract_crosswalk.R")
 source("code/pit_data_processing.R")
 source("code/pit_rates.R")
 source("code/coc_renter_share.R")
+source("code/coc_fmr.R")
 tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
   tar_files_input(
     raw_coc_shapefiles,
     fs::dir_ls("input_data/geography/coc_shapefiles", recurse = 1, regex = build_regex()),
+    format = "file"
+  ),
+  tar_files_input(
+    raw_pit_counts,
+    "input_data/pit_counts/pit_counts_2007_2019.xlsx",
+    format = "file"
+  ),
+  tar_files_input(
+    raw_fmr,
+    fs::dir_ls("input_data/hud_fmr"),
     format = "file"
   ),
   tar_target(
@@ -81,11 +92,6 @@ list(
     write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
     format = "file"
   ),
-  tar_files_input(
-    raw_pit_counts,
-    "input_data/pit_counts/pit_counts_2007_2019.xlsx",
-    format = "file"
-  ),
   tar_target(
     pit_years,
     get_pit_years(raw_pit_counts)
@@ -115,5 +121,19 @@ list(
   tar_target(
     coc_renter_shares,
     build_coc_renter_shares(county_renter_shares, county_crosswalk)
+  ),
+  tar_target(
+    processed_fmr,
+    process_fmr(raw_fmr),
+    pattern = map(raw_fmr)
+  ),
+  tar_target(
+    acs_county_subdivision,
+    get_acs_county_sub(shapefile_years, processed_fmr),
+    pattern = map(shapefile_years)
+  ),
+  tar_target(
+    coc_fmr,
+    build_coc_fmr(processed_fmr, acs_county_subdivision, county_crosswalk)
   )
 )
