@@ -1,8 +1,6 @@
 library(targets, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
 
-tar_config_set(file.path(usethis::proj_path(), "_targets"))
-
 count_na = function(data, column) {
   data %>% 
     pull({{ column }}) %>% 
