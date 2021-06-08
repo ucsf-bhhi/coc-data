@@ -15,6 +15,7 @@ source("code/coc_zillow_rent.R")
 tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
+  #### Input Data ####
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls("input_data/geography/coc_shapefiles", recurse = 1, regex = build_regex()),
@@ -40,6 +41,7 @@ list(
     dir_ls("input_data/geography/usps_tract_to_zip"),
     format = "file"
   ),
+  #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
     shapefile_years,
     parse_number(raw_coc_shapefiles)
@@ -104,6 +106,7 @@ list(
     write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
     format = "file"
   ),
+  #### PIT Data ####
   tar_target(
     pit_years,
     get_pit_years(raw_pit_counts)
@@ -125,6 +128,7 @@ list(
     pit_rates,
     build_pit_rates(long_pit_data, coc_populations)
   ),
+  #### Renter Shares ####
   tar_target(
     county_renter_shares,
     build_county_renter_share(shapefile_years),
@@ -134,6 +138,7 @@ list(
     coc_renter_shares,
     build_coc_renter_shares(county_renter_shares, county_crosswalk)
   ),
+  #### FMRs ####
   tar_target(
     processed_fmr,
     process_fmr(raw_fmr),
