@@ -24,6 +24,20 @@ count_na <- function(data, column) {
 }
 
 in_range <- function(data, column, min, max) {
+expect_no_na <- function(data, column) {
+  column_exists({{ data }}, {{ column }})
+  
+  na_count <- count_na(data, {{ column }})
+
+  column_name = as_name(enquo(column))
+  
+  expect(
+    na_count == 0,
+    glue_col("{red {column_name} has {na_count} NAs}")
+  )
+
+  invisible(data)
+}
   data %>%
     filter(!is.na({{ column }})) %>%
     pull({{ column }}) %>%
