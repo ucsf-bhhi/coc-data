@@ -59,7 +59,7 @@ column_exists <- function(data, column) {
   column_name <- as_name(enquo(column))
   data_name <- as_name(enquo(data))
   
-  check = rlang::has_name(quo_squash(data), column_name)
+  check = has_name(quo_squash(data), column_name)
   
   if (!check) {
      msg = glue_col("{red column '{column_name}' not present in '{data_name}'}")
