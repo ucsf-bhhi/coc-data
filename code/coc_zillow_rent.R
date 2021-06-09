@@ -134,6 +134,8 @@ build_tract_zillow_rent <- function(rent_data, tract_to_zip) {
 #'    [build_tract_crosswalk()] for creating the census tract to CoC crosswalk
 build_coc_zillow_rent <- function(tract_rent, tract_to_coc) {
   tract_to_coc %>%
+    # drop the tracts that aren't in a CoC
+    filter(!is.na(coc_number)) %>% 
     left_join(tract_rent, by = c("year", "tract_fips")) %>%
     group_by(coc_number, year) %>%
     summarise(
