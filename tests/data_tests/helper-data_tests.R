@@ -38,6 +38,18 @@ expect_no_na <- function(data, column) {
 
   invisible(data)
 }
+
+test_that("na's computed correctly", {
+  test_data <- tribble(
+    ~no_na, ~na, ~all_na,
+    1, NA, NA,
+    2, 1, NA
+  )
+  expect_success(expect_no_na(test_data, no_na))
+  expect_failure(expect_no_na(test_data, na))
+  expect_failure(expect_no_na(test_data, all_na))
+})
+
   data %>%
     filter(!is.na({{ column }})) %>%
     pull({{ column }}) %>%
