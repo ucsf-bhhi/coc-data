@@ -109,15 +109,6 @@ list(
   ),
   tar_target(
     coc_populations,
-  tar_target(
-    save_tract_crosswalk, 
-    write_crosswalk(tract_crosswalk, "tract", output_directory = "output_data/"),
-    format = "file"
-  ),
-  tar_target(
-    save_county_crosswalk,
-    write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
-    format = "file"
     distinct(tract_crosswalk,
                year,
                coc_number,
