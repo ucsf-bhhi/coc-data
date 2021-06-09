@@ -23,7 +23,6 @@ count_na <- function(data, column) {
     sum()
 }
 
-in_range <- function(data, column, min, max) {
 expect_no_na <- function(data, column) {
   column_exists({{ data }}, {{ column }})
   
@@ -62,6 +61,21 @@ in_range <- function(data, column, min, max, tolerance = tt_tol) {
     pull({{ column }}) %>%
     in_between(min, max, tolerance) %>%
     all()
+}
+
+expect_between <- function(data, column, min, max, tolerance = tt_tol) {
+  column_exists({{ data }}, {{ column }})
+  
+  is_between = in_range(data, {{ column }}, min, max, tolerance)
+  
+  column_name <- substitute(column)
+  
+  expect(
+    is_between,
+    glue_col("{red {column_name} has values outside {min} and {max}}")
+  )
+
+  invisible(data)
 }
 
 get_value <- function(data, column, ...) {
