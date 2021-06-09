@@ -4,6 +4,8 @@ library(future)
 library(future.callr)
 plan(callr)
 library(fs)
+
+# load functions
 source("code/helpers.R")
 source("code/process_coc_shapefiles.R")
 source("code/coc_county_tract_crosswalk.R")
@@ -12,13 +14,26 @@ source("code/pit_rates.R")
 source("code/coc_renter_share.R")
 source("code/coc_fmr.R")
 source("code/coc_zillow_rent.R")
-tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
+
+# load packages used by functions
+tar_option_set(packages = c(
+  "tidyverse",
+  "sf",
+  "rmapshaper",
+  "tidycensus",
+  "fs",
+  "readxl"
+))
 
 list(
   #### Input Data ####
   tar_files_input(
     raw_coc_shapefiles,
-    dir_ls("input_data/geography/coc_shapefiles", recurse = 1, regex = build_regex()),
+    dir_ls(
+      "input_data/geography/coc_shapefiles",
+      recurse = 1,
+      regex = build_regex()
+    ),
     format = "file"
   ),
   tar_files_input(
@@ -94,8 +109,6 @@ list(
   ),
   tar_target(
     coc_populations,
-    distinct(tract_crosswalk, year, coc_number, coc_name, coc_pop, coc_poverty_pop)
-  ),
   tar_target(
     save_tract_crosswalk, 
     write_crosswalk(tract_crosswalk, "tract", output_directory = "output_data/"),
@@ -105,6 +118,13 @@ list(
     save_county_crosswalk,
     write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
     format = "file"
+    distinct(tract_crosswalk,
+               year,
+               coc_number,
+               coc_name,
+               coc_pop,
+               coc_poverty_pop
+            )
   ),
   #### PIT Data ####
   tar_target(
