@@ -50,10 +50,17 @@ test_that("na's computed correctly", {
   expect_failure(expect_no_na(test_data, all_na))
 })
 
+in_between <- function(x, min, max, tolerance = 0L) {
+  x >= (min - tolerance) & x <= (max + tolerance)
+}
+
+tt_tol <- testthat::testthat_tolerance()
+
+in_range <- function(data, column, min, max, tolerance = tt_tol) {
   data %>%
     filter(!is.na({{ column }})) %>%
     pull({{ column }}) %>%
-    between(min, max) %>%
+    in_between(min, max, tolerance) %>%
     all()
 }
 
