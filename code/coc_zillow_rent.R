@@ -27,12 +27,12 @@ process_zillow_data <- function(file_path) {
 }
 
 #' Parses year from tract to zip crosswalk
-#' 
+#'
 #' @inheritParams process_tract_to_zip
-#' 
+#'
 #' @return An integer value with the year of the crosswalk.
 #' @seealso [process_tract_to_zip()]
-#' @keywords internal 
+#' @keywords internal
 get_tract_to_zip_year <- function(file_path) {
   file_path %>%
     # extract just the file name from the path
@@ -91,7 +91,7 @@ process_tract_to_zip <- function(file_path) {
 #'      covered by the Zillow rent index (numeric)
 #' @seealso [process_zillow_data()] for processing the raw Zillow rent index,
 #'    [process_tract_to_zip()] for processing the census tract to zip code
-#'    crosswalk, [build_coc_zillow_rent()] for creating the CoC level Zillow 
+#'    crosswalk, [build_coc_zillow_rent()] for creating the CoC level Zillow
 #'    rent index
 build_tract_zillow_rent <- function(rent_data, tract_to_zip) {
   tract_to_zip %>%
@@ -135,7 +135,7 @@ build_tract_zillow_rent <- function(rent_data, tract_to_zip) {
 build_coc_zillow_rent <- function(tract_rent, tract_to_coc) {
   tract_to_coc %>%
     # drop the tracts that aren't in a CoC
-    filter(!is.na(coc_number)) %>% 
+    filter(!is.na(coc_number)) %>%
     left_join(tract_rent, by = c("year", "tract_fips")) %>%
     group_by(coc_number, year) %>%
     summarise(
@@ -151,6 +151,7 @@ build_coc_zillow_rent <- function(tract_rent, tract_to_coc) {
       coc_share_na_rent_zillow = sum(
         pct_coc_pop_from_tract * tract_share_na_rent,
         na.rm = TRUE
-      )
+      ),
+      .groups = "drop"
     )
 }
