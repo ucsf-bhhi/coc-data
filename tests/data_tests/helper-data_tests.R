@@ -78,6 +78,24 @@ expect_between <- function(data, column, min, max, tolerance = tt_tol) {
   invisible(data)
 }
 
+test_that("between works properly", {
+  test_data <- tribble(
+    ~pass, ~too_low, ~too_high, ~both, ~tol_low, ~tol_high, ~tol_both,
+    0, -1, 0, -1, -0.0000000001, 0, -0.0000000001,
+    0.5, 0.5, 2, 2, 0.5, 1.0000000001, 1.0000000001
+  )
+  test_min <- 0
+  test_max <- 1
+
+  expect_success(expect_between(test_data, pass, test_min, test_max))
+  expect_success(expect_between(test_data, tol_low, test_min, test_max))
+  expect_success(expect_between(test_data, tol_high, test_min, test_max))
+  expect_success(expect_between(test_data, tol_both, test_min, test_max))
+  expect_failure(expect_between(test_data, too_low, test_min, test_max))
+  expect_failure(expect_between(test_data, too_high, test_min, test_max))
+  expect_failure(expect_between(test_data, both, test_min, test_max))
+})
+
 get_value <- function(data, column, ...) {
   column_exists({{ data }}, {{ column }})
   f <- quos(...)
