@@ -3,6 +3,7 @@ library(tarchetypes)
 library(future)
 library(future.callr)
 plan(callr)
+library(fs)
 source("code/helpers.R")
 source("code/process_coc_shapefiles.R")
 source("code/coc_county_tract_crosswalk.R")
@@ -10,12 +11,14 @@ source("code/pit_data_processing.R")
 source("code/pit_rates.R")
 source("code/coc_renter_share.R")
 source("code/coc_fmr.R")
+source("code/coc_zillow_rent.R")
 tar_option_set(packages = c("tidyverse", "sf", "rmapshaper", "tidycensus", "fs", "readxl"))
 
 list(
+  #### Input Data ####
   tar_files_input(
     raw_coc_shapefiles,
-    fs::dir_ls("input_data/geography/coc_shapefiles", recurse = 1, regex = build_regex()),
+    dir_ls("input_data/geography/coc_shapefiles", recurse = 1, regex = build_regex()),
     format = "file"
   ),
   tar_files_input(
@@ -25,9 +28,20 @@ list(
   ),
   tar_files_input(
     raw_fmr,
-    fs::dir_ls("input_data/hud_fmr"),
+    dir_ls("input_data/hud_fmr"),
     format = "file"
   ),
+  tar_files_input(
+    raw_zillow_data,
+    "input_data/zillow_rent_index/zillow_rent_index_sa_zip_code_2014.01_2021.03.csv",
+    format = "file"
+  ),
+  tar_files_input(
+    raw_tract_to_zip,
+    dir_ls("input_data/geography/usps_tract_to_zip"),
+    format = "file"
+  ),
+  #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
     shapefile_years,
     parse_number(raw_coc_shapefiles)
@@ -92,6 +106,7 @@ list(
     write_crosswalk(county_crosswalk, "county", output_directory = "output_data/"),
     format = "file"
   ),
+  #### PIT Data ####
   tar_target(
     pit_years,
     get_pit_years(raw_pit_counts)
@@ -113,6 +128,7 @@ list(
     pit_rates,
     build_pit_rates(long_pit_data, coc_populations)
   ),
+  #### Renter Shares ####
   tar_target(
     county_renter_shares,
     build_county_renter_share(shapefile_years),
@@ -122,6 +138,7 @@ list(
     coc_renter_shares,
     build_coc_renter_shares(county_renter_shares, county_crosswalk)
   ),
+  #### FMRs ####
   tar_target(
     processed_fmr,
     process_fmr(raw_fmr),
@@ -135,5 +152,23 @@ list(
   tar_target(
     coc_fmr,
     build_coc_fmr(processed_fmr, acs_county_subdivision, county_crosswalk)
+  ),
+  #### Zillow Rent Index ####
+  tar_target(
+    processed_zillow_data,
+    process_zillow_data(raw_zillow_data)
+  ),
+  tar_target(
+    tract_to_zip,
+    process_tract_to_zip(raw_tract_to_zip),
+    pattern = map(raw_tract_to_zip)
+  ),
+  tar_target(
+    tract_zillow_rent,
+    build_tract_zillow_rent(processed_zillow_data, tract_to_zip)
+  ),
+  tar_target(
+    coc_zillow_rent,
+    build_coc_zillow_rent(tract_zillow_rent, tract_crosswalk)
   )
 )

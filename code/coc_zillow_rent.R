@@ -1,82 +1,156 @@
-library(tidyverse)
-library(tidycensus)
+#' Reads and processes raw Zillow rent index data
+#'
+#' Reads in the raw Zillow data, cleans up variable names and types, reshapes it
+#' to long form, and calculates an annual average from the monthly data.
+#'
+#' @param file_path A character string with the path to the raw data.
+#'
+#' @return A data frame with the annual average rent by zip code.
+#' * `zip`: zip code (character)
+#' * `year`: year (integer)
+#' * `annual_mean_rent`: average annual Zillow rent index (numeric)
+#' @seealso [build_coc_zillow_rent()] for creating the CoC level Zillow rent
+#'    index, [build_tract_zillow_rent()] for creating the census tract level
+#'    Zillow rent index
+process_zillow_data <- function(file_path) {
+  read_csv(file_path) %>%
+    # keep the zip code and the columns with the rent data (which start with 20)
+    select(zip = RegionName, starts_with("20")) %>%
+    pivot_longer(-zip, names_to = "year_month", values_to = "rent") %>%
+    separate(year_month, c("year", "month")) %>%
+    mutate(across(c(year, month), as.integer)) %>%
+    # the zillow data are monthly, but we need annual data so we're just taking
+    # a simple average of the months
+    group_by(zip, year) %>%
+    summarize(annual_mean_rent = mean(rent, na.rm = TRUE), .groups = "drop") %>%
+    filter(!is.na(annual_mean_rent))
+}
 
-zillow_data_start_year <- 2014
-zillow_data_end_year <- 2020
-zillow_file_name <- "zillow_rent_index_sa_zip_code_2014.01_2021.03.csv"
+#' Parses year from tract to zip crosswalk
+#' 
+#' @inheritParams process_tract_to_zip
+#' 
+#' @return An integer value with the year of the crosswalk.
+#' @seealso [process_tract_to_zip()]
+#' @keywords internal 
+get_tract_to_zip_year <- function(file_path) {
+  file_path %>%
+    # extract just the file name from the path
+    path_file() %>%
+    # strip off the extension
+    path_ext_remove() %>%
+    # the year is the last 4 characters
+    str_sub(-4, -1) %>%
+    as.integer()
+}
 
-# read in the tract to CoC crosswalk (columns with a - in col_types are ignored)
-tract_to_coc <- read_csv("input_data/geography/tract_to_coc_crosswalk.csv",
-  col_types = "cc-c--i-"
-) %>%
-  # add a leading 0 where needed to fill out the tracts FIPS code
-  mutate(tract_fips = str_pad(tract_fips, 11, "left", "0")) %>%
-  # calculate the share of a CoC's population coming from each tract
-  group_by(coc_number) %>%
-  mutate(coc_pop_share_in_tract = total_population / sum(total_population, na.rm = TRUE))
+#' Reads and processes tract to zip code crosswalk
+#'
+#' Reads in the USPS census tract to zip code crosswalk, cleans up the variable
+#' names and types, adds a year variable, and removes entries with no
+#' residential units.
+#'
+#' @param file_path A character vector with the path to the crosswalk.
+#'
+#' @return A data frame with the processed crosswalk.
+#' * `zip`: zip code (character)
+#' * `tract_fips`: census tract FIPS code (character)
+#' * `year`: year (integer)
+#' * `res_ratio`: share of census tract's residential addresses in given zip
+#'      code (numeric)
+process_tract_to_zip <- function(file_path) {
+  read_excel(file_path, col_types = "text") %>%
+    rename_with(str_to_lower, everything()) %>%
+    select(zip, tract_fips = tract, res_ratio) %>%
+    mutate(
+      year = get_tract_to_zip_year(file_path),
+      res_ratio = as.numeric(res_ratio)
+    ) %>%
+    filter(res_ratio > 0)
+}
 
-# create a table shell with a row for each distinct tract in the crosswalk for each year in the zillow data
-# we'll use this as the basis for tying together the tract to CoC relationship with the zip code to tract relationship
-tracts_in_cocs <- tract_to_coc %>%
-  # drop any rows that don't belong to a CoC (these are mostly table notes)
-  filter(!is.na(coc_number)) %>%
-  # just keep the tract column
-  select(tract_fips) %>%
-  # just keep one row for each tract
-  distinct() %>%
-  # create a row for each tract for each year of the zillow data
-  expand(tract_fips, year = zillow_data_start_year:zillow_data_end_year)
+#' Creates a census tract level Zillow rent index
+#'
+#' The census tract level index is created by taking a weighted average of the
+#' original zip code level Zillow rent index for the zip codes in each census
+#' tract. The weights are the share of the census tract's residences that are in
+#' each zip code. That data comes from the USPS census tract to zip code
+#' crosswalk.
+#'
+#' @param rent_data A data frame with processed zip code level Zillow rent index
+#'   data created by [process_zillow_data()]
+#' @param tract_to_zip A data frame with a processed USPS census tract to zip
+#'   code crosswalk created by [process_tract_to_zip()].
+#'
+#' @return A data frame with the census tract level Zillow rent index.
+#' * `tract_fips`: census tract FIPS code (character)
+#' * `year`: year (integer)
+#' * `tract_annual_mean_rent`: annual average Zillow rent index, NA for tracts
+#'      with no zip codes covered by the Zillow rent index (numeric)
+#' * `tract_share_na_rent`: share of the tract's residence in zip codes not
+#'      covered by the Zillow rent index (numeric)
+#' @seealso [process_zillow_data()] for processing the raw Zillow rent index,
+#'    [process_tract_to_zip()] for processing the census tract to zip code
+#'    crosswalk, [build_coc_zillow_rent()] for creating the CoC level Zillow 
+#'    rent index
+build_tract_zillow_rent <- function(rent_data, tract_to_zip) {
+  tract_to_zip %>%
+    left_join(rent_data, by = c("year", "zip")) %>%
+    group_by(year, tract_fips) %>%
+    # take the weighted average of the rent in the tract (weights are the share
+    # of residences in a tract coming from each zip code)
+    summarise(
+      tract_annual_mean_rent = weighted.mean(
+        annual_mean_rent,
+        res_ratio,
+        na.rm = TRUE
+      ),
+      # add up the share of the tract for which we don't have rent data
+      tract_share_na_rent = sum(res_ratio[is.na(annual_mean_rent)]),
+      .groups = "drop"
+    )
+}
 
-# read in the zillow data (it's in wide form, we'll change that)
-zillow_data <- read_csv(file.path("input_data/zillow_rent_index", zillow_file_name)) %>%
-  # just keep the zip code column and the columns with the rent data (they all start with 20)
-  select(zip = RegionName, starts_with("20")) %>%
-  # reshape the data to long form
-  pivot_longer(-zip, names_to = "year_month", values_to = "rent") %>%
-  # split the year and month into separate columns
-  separate(year_month, c("year", "month")) %>%
-  # convert the year and month columns from text to integers
-  mutate(across(c(year, month), as.integer))
-
-# the zillow data are monthly, but we need annual data so we're just taking a simple average of the months
-annual_zillow_data <- zillow_data %>%
-  # take the average monthly rent in each zip code/year combo and ignore NA's while doing so
-  group_by(zip, year) %>%
-  summarize(annual_mean_rent = mean(rent, na.rm = TRUE))
-
-# read in the tract to zip crosswalk so we can convert the zip code level rent data to tract level
-tract_to_zip <- readxl::read_excel("input_data/geography/usps_tract_to_zip_crosswalk_2017.03.xlsx", col_types = c("text", "text", "numeric", "skip", "skip", "skip")) %>%
-  rename_with(str_to_lower, everything())
-
-# convert the zillow data to tract level
-# start with the shell table that has a row for each tract/year that's in a CoC
-tract_rent <- tracts_in_cocs %>%
-  # merge on the zip code crosswalk to give us the share of each tract coming from its zip codes
-  left_join(tract_to_zip, by = c("tract_fips" = "tract")) %>%
-  # merge on the rent data
-  left_join(annual_zillow_data, by = c("zip", "year")) %>%
-  group_by(tract_fips, year) %>%
-  summarise(
-    # take the weighted average of the rent in the tract (weights are the share of residences in a tract coming from each zip code)
-    tract_rent = weighted.mean(annual_mean_rent, res_ratio, na.rm = TRUE),
-    # add up the share of the tract that we don't have rent data for
-    tract_share_na_rent = sum(res_ratio[is.na(annual_mean_rent)])
-  ) %>%
-  # some tracts don't have full zip to tract data from the crosswalk which can mess up this share of tract with na rent calculation. if the tract rent value is NA, then the whole tract was missing rent so force the share to be 1
-  mutate(tract_share_na_rent = if_else(is.na(tract_rent), 1, tract_share_na_rent))
-
-# convert the tract level rent data to CoC level
-# start with the tract to CoC crosswalk
-coc_zillow_rent <- tract_to_coc %>%
-  # merge on the tract level rent data
-  left_join(tract_rent, by = "tract_fips") %>%
-  group_by(coc_number, year) %>%
-  summarise(
-    # take the weighted average rent in each CoC (weights are share of the CoC's population coming from the tracts)
-    coc_rent_zillow = weighted.mean(tract_rent, coc_pop_share_in_tract, na.rm = TRUE),
-    # add up the share of the CoC (based on population) coming from tract's that don't have rent data
-    coc_share_na_rent_zillow = sum(coc_pop_share_in_tract * tract_share_na_rent, na.rm = TRUE)
-  )
-
-# output the final CoC level dataset
-write_csv(coc_zillow_rent, "output_data/coc_zillow_rent.csv")
+#' Creates a CoC level Zillow rent index
+#'
+#' The CoC level index is created by taking a weighted average of the census
+#' tract level Zillow rent index for the tracts in each CoC. The weights are the
+#' share of the CoC's population that are in each tract.
+#'
+#' @param tract_rent A data frame with processed census tract level Zillow rent
+#'   index data created by [build_tract_zillow_rent()].
+#' @param tract_to_coc A data frame with a census tract to CoC crosswalk created
+#'   by [build_tract_crosswalk()].
+#'
+#' @return A data frame with the CoC level Zillow rent index.
+#' * `coc_number`: CoC number (character)
+#' * `year`: year (integer)
+#' * `coc_rent_zillow`: annual average Zillow rent index, NA for CoC
+#'      with no zip codes covered by the Zillow rent index (numeric)
+#' * `coc_share_na_rent`: share of the CoC's population in zip codes not
+#'      covered by the Zillow rent index (numeric)
+#' @seealso [process_zillow_data()] for processing the raw Zillow rent index,
+#'    [build_coc_zillow_rent()] for creating the CoC level Zillow rent index,
+#'    [build_tract_crosswalk()] for creating the census tract to CoC crosswalk
+build_coc_zillow_rent <- function(tract_rent, tract_to_coc) {
+  tract_to_coc %>%
+    # drop the tracts that aren't in a CoC
+    filter(!is.na(coc_number)) %>% 
+    left_join(tract_rent, by = c("year", "tract_fips")) %>%
+    group_by(coc_number, year) %>%
+    summarise(
+      # take the weighted average rent in each CoC (weights are share of the
+      # CoC's population coming from the tracts)
+      coc_rent_zillow = weighted.mean(
+        tract_annual_mean_rent,
+        pct_coc_pop_from_tract,
+        na.rm = TRUE
+      ),
+      # add up the share of the CoC (based on population) coming from tract's
+      # that don't have rent data
+      coc_share_na_rent_zillow = sum(
+        pct_coc_pop_from_tract * tract_share_na_rent,
+        na.rm = TRUE
+      )
+    )
+}
