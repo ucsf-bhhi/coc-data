@@ -7,7 +7,8 @@
 simplify_shapefile(shapefile, projected_crs = 2163, simplify_keep_pct = 0.1)
 }
 \arguments{
-\item{shapefile}{An sf object}
+\item{shapefile}{An sf object with a raw CoC shapefile from
+\code{\link[=read_raw_coc_shapefile]{read_raw_coc_shapefile()}}}
 
 \item{projected_crs}{The EPSG code for the projected CRS}
 
@@ -20,4 +21,9 @@ The simplified sf object now in the projected CRS.
 Simplifies a shapefile using \code{\link[rmapshaper:ms_simplify]{rmapshaper::ms_simplify()}} and also sets a
 projected CRS using \code{\link[sf:st_transform]{sf::st_transform()}} since \code{\link[rmapshaper:ms_simplify]{rmapshaper::ms_simplify()}}
 prefers a projected CRS.
+}
+\seealso{
+\code{\link[=read_raw_coc_shapefile]{read_raw_coc_shapefile()}} for reading in the raw shapefile
+
+\code{\link[=match_tract_to_coc]{match_tract_to_coc()}} for using the shapefile to match CoCs to tracts
 }

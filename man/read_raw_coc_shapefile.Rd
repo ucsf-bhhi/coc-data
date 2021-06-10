@@ -18,3 +18,7 @@ Loads an original CoC shapefile from HUD as a spatial data frame and adds a
 year column. Returns an error if it cannot parse a 4-digit year from the file
 path.
 }
+\seealso{
+\code{\link[=simplify_shapefile]{simplify_shapefile()}} for simplifying the shapefile to reduce its
+complexity
+}

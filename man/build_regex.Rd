@@ -2,7 +2,7 @@
 % Please edit documentation in code/process_coc_shapefiles.R
 \name{build_regex}
 \alias{build_regex}
-\title{Build filename regular expression}
+\title{Build file extension regular expression}
 \usage{
 build_regex(file_extensions = c("gdb", "shp"))
 }
@@ -16,3 +16,4 @@ A character vector containing the regular expression.
 \description{
 Creates a regular expression used to filter shapefile in input_data
 }
+\keyword{internal}
