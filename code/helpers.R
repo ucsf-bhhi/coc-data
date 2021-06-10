@@ -40,9 +40,28 @@ fetch_acs = function(..., quiet = TRUE) {
   }
 }
 
-write_dataset = function(data, output_function, extension, output_dir = "output_data", file_name = "coc_data") {
-  file_path = path(output_dir, file_name, ext = extension)
-  output_call = call(output_function, data, file_path)
+#' Write combined dataset to disk
+#'
+#' Flexibly writes the combined data set to disk. Since the actual call to the
+#' function that will write the dataset is built dynamically, it can support
+#' many filetypes as long as they are of the form `output_function(data,
+#' file_path`.
+#' @param data A data frame with the combined dataset.
+#' @param output_function A character string with the function that will
+#'   actually write the file.
+#' @param extension A character string with the extension for the output file.
+#' @param output_dir A character string with the path to the output directory.
+#' @param file_name A character string with the file name.
+#'
+#' @return Invisibly returns a character string with the output file's path.
+write_dataset <- function(data, output_function, extension,
+                          output_dir = "output_data",
+                          file_name = "coc_data") {
+  file_path <- path(output_dir, file_name, ext = extension)
+  # build the actual call to a function that will write the output file
+  output_call <- call(output_function, data, file_path)
+  # run the function
   eval(output_call)
+  # invisibly return the file path so targets can monitor it
   invisible(return(file_path))
 }
