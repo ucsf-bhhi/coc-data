@@ -16,14 +16,22 @@ source("code/coc_fmr.R")
 source("code/coc_zillow_rent.R")
 
 # load packages used by functions
-tar_option_set(packages = c(
-  "tidyverse",
-  "sf",
-  "rmapshaper",
-  "tidycensus",
-  "fs",
-  "readxl"
-))
+tar_option_set(
+  packages = c(
+    "tidyverse",
+    "sf",
+    "rmapshaper",
+    "tidycensus",
+    "fs",
+    "readxl",
+    "haven"
+  )
+)
+
+output_formats <- list(
+  functions = c("write_csv", "write_dta", "write_sas", "write_rds"),
+  extensions = c("csv", "dta", "sas7bdat", "rds")
+)
 
 list(
   #### Input Data ####
@@ -190,5 +198,15 @@ list(
       full_join(coc_renter_shares, by = c("coc_number", "year")) %>% 
       full_join(coc_fmr, by = c("coc_number", "year")) %>% 
       full_join(coc_zillow_rent, by = c("coc_number", "year"))
+  ),
+  #### Output Dataset Files ####
+  tar_map(
+    values = output_formats,
+    tar_file(
+      output_file,
+      write_dataset(combined_dataset, functions, extensions)
+    ),
+    names = extensions
   )
 )
+

@@ -39,3 +39,10 @@ fetch_acs = function(..., quiet = TRUE) {
     f(...)
   }
 }
+
+write_dataset = function(data, output_function, extension, output_dir = "output_data", file_name = "coc_data") {
+  file_path = path(output_dir, file_name, ext = extension)
+  output_call = call(output_function, data, file_path)
+  eval(output_call)
+  invisible(return(file_path))
+}
