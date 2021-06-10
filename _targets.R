@@ -112,7 +112,6 @@ list(
     distinct(tract_crosswalk,
                year,
                coc_number,
-               coc_name,
                coc_pop,
                coc_poverty_pop
             )
