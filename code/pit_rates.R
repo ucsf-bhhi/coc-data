@@ -17,7 +17,7 @@ make_pit_rates <- function(pit_data, coc_populations) {
       homeless_per_1000_total_pop = homeless_rate_total_pop * 1000,
       homeless_per_1000_in_poverty = homeless_rate_in_poverty * 1000
     ) %>%
-    select(coc_number, coc_name, year, overall_homeless, homeless_rate_total_pop, homeless_rate_in_poverty, homeless_per_1000_total_pop, homeless_per_1000_in_poverty)
+    select(coc_number, year, overall_homeless, homeless_rate_total_pop, homeless_rate_in_poverty, homeless_per_1000_total_pop, homeless_per_1000_in_poverty)
 }
 
 #' Calculate homelessness rates by CoC

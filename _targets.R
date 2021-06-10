@@ -112,7 +112,6 @@ list(
     distinct(tract_crosswalk,
                year,
                coc_number,
-               coc_name,
                coc_pop,
                coc_poverty_pop
             )
@@ -181,5 +180,15 @@ list(
   tar_target(
     coc_zillow_rent,
     build_coc_zillow_rent(tract_zillow_rent, tract_crosswalk)
+  ),
+  #### Combined Dataset ####
+  tar_target(
+    combined_dataset,
+    coc_categories %>% 
+      full_join(pit_rates, by = "coc_number") %>% 
+      full_join(coc_populations, by = c("coc_number", "year")) %>% 
+      full_join(coc_renter_shares, by = c("coc_number", "year")) %>% 
+      full_join(coc_fmr, by = c("coc_number", "year")) %>% 
+      full_join(coc_zillow_rent, by = c("coc_number", "year"))
   )
 )
