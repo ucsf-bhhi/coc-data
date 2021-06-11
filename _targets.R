@@ -117,12 +117,7 @@ list(
   ),
   tar_target(
     coc_populations,
-    distinct(tract_crosswalk,
-               year,
-               coc_number,
-               coc_pop,
-               coc_poverty_pop
-            )
+    build_coc_populations(tract_crosswalk)
   ),
   #### PIT Data ####
   tar_target(

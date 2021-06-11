@@ -218,3 +218,29 @@ write_crosswalk <- function(crosswalk, type, output_directory) {
   # return the CSV path so targets can track it
   return(crosswalk_path)
 }
+
+#' CoC populations and poverty rates
+#' 
+#' Provides CoC level total population, population in poverty, and poverty rate.
+#'
+#' @param tract_crosswalk A data frame with a tract to CoC crosswalk produced by [build_tract_crosswalk()].
+#'
+#' @return A data frame.
+#' * `year`: Year (numeric)
+#' * `coc_number`: CoC number (character)
+#' * `coc_pop`: CoC population (numeric)
+#' * `coc_poverty_pop`: CoC population below poverty line (numeric)
+#' * `coc_poverty_rate`: Share of CoC population below poverty line (numeric)
+#' @seealso [build_tract_crosswalk()] for the source data
+build_coc_populations = function(tract_crosswalk) {
+  tract_crosswalk %>% 
+    # remove tracts that are not in CoCs
+    filter(!is.na(coc_number)) %>% 
+    distinct(
+      year,
+      coc_number,
+      coc_pop,
+      coc_poverty_pop
+    ) %>% 
+    mutate(coc_poverty_rate = coc_poverty_pop / coc_pop)
+}
