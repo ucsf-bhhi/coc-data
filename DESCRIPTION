@@ -1,6 +1,6 @@
 Package: coc-data-package
 Title: Point-in-time homelessness counts and covariates by CoC
-Version: 0.0.0.9000
+Version: 0.0.0.9100
 Authors@R: 
   person(given = "Perry",
          family = "Eve",
