@@ -184,6 +184,12 @@ list(
     coc_zillow_rent,
     build_coc_zillow_rent(tract_zillow_rent, tract_crosswalk)
   ),
+  #### Share Rent Burdened ####
+  tar_target(
+    county_rent_burdened_count,
+    get_county_rent_burdened_count(shapefile_years),
+    pattern = map(shapefile_years)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
