@@ -218,3 +218,16 @@ write_crosswalk <- function(crosswalk, type, output_directory) {
   # return the CSV path so targets can track it
   return(crosswalk_path)
 }
+
+build_coc_populations = function(tract_crosswalk) {
+  tract_crosswalk %>% 
+    # remove tracts that are not in CoCs
+    filter(!is.na(coc_number)) %>% 
+    distinct(
+      year,
+      coc_number,
+      coc_pop,
+      coc_poverty_pop
+    ) %>% 
+    mutate(coc_poverty_rate = coc_poverty_pop / coc_pop)
+}
