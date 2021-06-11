@@ -37,12 +37,24 @@ expect_no_na <- function(data, column) {
   column_exists({{ data }}, {{ column }})
   
   na_count <- count_na(data, {{ column }})
+  nas = if (na_count == 1) "NA" else "NAs"
   
   column_name = as_name(enquo(column))
   
   expect(
     na_count == 0,
-    glue_col("{red {column_name} has {na_count} NAs}")
+    glue_col("{red `{column_name}` has {na_count} {nas}}")
+  )
+  
+  invisible(data)
+}
+
+expect_no_na_df = function(data) {
+  data_name = as_name(enquo(data))
+  
+  expect(
+    !anyNA(data),
+    glue_col("{red {data_name} has NAs.}")
   )
   
   invisible(data)
