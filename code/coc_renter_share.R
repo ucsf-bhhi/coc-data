@@ -27,8 +27,8 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
   summarise(avg_renter_share = weighted.mean(share_renters, pct_coc_pop_from_county, na.rm = TRUE))
 }
 
-get_county_rent_burdened_count = function(year) {
-  acs_variables = c(
+get_county_rent_burdened_count <- function(year) {
+  acs_variables <- c(
     "total" = "B25070_001",
     "count_30_35" = "B25070_007",
     "count_35_40" = "B25070_008",
@@ -51,6 +51,26 @@ get_county_rent_burdened_count = function(year) {
       total_computed
     )
 }
+
+build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
+  county_crosswalk %>%
+    left_join(county_rent_data, by = c("year", "county_fips")) %>%
+    group_by(year, coc_number) %>%
+    summarise(
+      across(
+        c(count_30_plus, count_50_plus, total_computed),
+        sum, na.rm = TRUE
+      ),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      share_rent_over_30_pct_inc = count_30_plus / total_computed,
+      share_rent_over_50_pct_inc = count_50_plus / total_computed
+    ) %>%
+    select(
+      year,
+      coc_number,
+      share_rent_over_30_pct_inc,
+      share_rent_over_50_pct_inc
     )
 }
-

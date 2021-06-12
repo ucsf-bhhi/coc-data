@@ -190,6 +190,10 @@ list(
     get_county_rent_burdened_count(shapefile_years),
     pattern = map(shapefile_years)
   ),
+  tar_target(
+    coc_rent_burdened_share,
+    build_coc_rent_burdened_share(county_rent_burdened_count, county_crosswalk)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
