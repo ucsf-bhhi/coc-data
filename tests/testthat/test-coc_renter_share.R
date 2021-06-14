@@ -66,3 +66,34 @@ test_that("CoC renter shares work", {
   
   expect_equal(test_multi_county$avg_renter_share, 0.5)
 })
+
+test_that("coc share rent burdened is working correctly", {
+  # create some fake county rent burdened counts
+  county_data <- tribble(
+    ~year, ~county_fips, ~count_30_plus, ~count_50_plus, ~total_computed,
+    2019, "99999", 30, 15, 100,
+    2019, "99998", 20, 10, 50,
+    2019, "99997", 10, 5, 50,
+    2019, "99996", 30, 15, 100,
+    2019, "99995", NA, NA, NA
+  )
+
+  # create a fake county to CoC crosswalk
+  crosswalk <- tribble(
+    ~year, ~county_fips, ~coc_number, ~pct_coc_pop_from_county,
+    2019, "99999", "AA-101", 1,
+    2019, "99998", "AA-102", 0.5,
+    2019, "99997", "AA-102", 0.5,
+    2019, "99996", "AA-103", 0.5,
+    2019, "99995", "AA-103", 0.5
+  )
+
+  expected <- tribble(
+    ~year, ~coc_number, ~share_rent_over_30_pct_inc, ~share_rent_over_50_pct_inc,
+    2019, "AA-101", 0.3, 0.15,
+    2019, "AA-102", 0.3, 0.15,
+    2019, "AA-103", 0.3, 0.15
+  )
+
+  expect_equal(build_coc_rent_burdened_share(county_data, crosswalk), expected)
+})
