@@ -202,7 +202,8 @@ list(
       full_join(coc_populations, by = c("coc_number", "year")) %>% 
       full_join(coc_renter_shares, by = c("coc_number", "year")) %>% 
       full_join(coc_fmr, by = c("coc_number", "year")) %>% 
-      full_join(coc_zillow_rent, by = c("coc_number", "year"))
+      full_join(coc_zillow_rent, by = c("coc_number", "year")) %>% 
+      full_join(coc_rent_burdened_share, by = c("coc_number", "year")) 
   ),
   #### Output Dataset Files ####
   tar_map(
