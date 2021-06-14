@@ -43,6 +43,7 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
 #'      income in rent (numeric)
 #' * `total_computed`: Count of renting households that have a calculated rent
 #'      share of income (numeric)
+#' * `median_rent_burden`: Median rent share of income in the county (numeric)
 #' @seealso [build_coc_rent_burdened_share()] for CoC-level rent burdened shares
 get_county_rent_burdened_count <- function(year) {
   acs_variables <- c(
@@ -51,21 +52,23 @@ get_county_rent_burdened_count <- function(year) {
     "count_35_40" = "B25070_008",
     "count_40_50" = "B25070_009",
     "count_50_plus" = "B25070_010",
-    "not_computed" = "B25070_011"
+    "not_computed" = "B25070_011",
+    "median_rent_burden" = "B25071_001"
   )
   fetch_acs("county", year = year, variables = acs_variables, output = "wide") %>%
     mutate(
       year = year,
       total_computed = total - not_computed,
       count_30_plus = count_30_35 + count_35_40 + count_40_50 + count_50_plus,
-      count_50_plus
+      median_rent_burden = median_rent_burden / 100,
     ) %>%
     select(
       year,
       county_fips = fips,
       count_30_plus,
       count_50_plus,
-      total_computed
+      total_computed,
+      median_rent_burden
     )
 }
 
@@ -86,6 +89,7 @@ get_county_rent_burdened_count <- function(year) {
 #'      30 percent of their income in rent (numeric)
 #' * `share_rent_over_50_pct_inc`: Share of renter households paying more than
 #'      50 percent of their income in rent (numeric)
+#' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
 #' @seealso [get_county_rent_burdened_count()] for fetching the ACS county-level
 #'   rent burdened counts
 build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
@@ -97,6 +101,11 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
         c(count_30_plus, count_50_plus, total_computed),
         sum, na.rm = TRUE
       ),
+      median_rent_burden = weighted.mean(
+        median_rent_burden,
+        pct_coc_pop_from_county,
+        na.rm = TRUE
+      ),
       .groups = "drop"
     ) %>%
     mutate(
@@ -107,6 +116,7 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
       year,
       coc_number,
       share_rent_over_30_pct_inc,
-      share_rent_over_50_pct_inc
+      share_rent_over_50_pct_inc,
+      median_rent_burden
     )
 }

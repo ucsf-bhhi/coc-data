@@ -24,6 +24,13 @@ test_that("county_rent_burdened_count is valid", {
   )
   expect_equal(
     get_value(
+      county_rent_burdened_count, median_rent_burden,
+      year == 2013, county_fips == "01001"
+    ),
+    0.304
+  )
+  expect_equal(
+    get_value(
       county_rent_burdened_count, count_30_plus,
       year == 2019, county_fips == "01001"
     ),
@@ -42,5 +49,12 @@ test_that("county_rent_burdened_count is valid", {
       year == 2019, county_fips == "01001"
     ),
     4905
+  )
+  expect_equal(
+    get_value(
+      county_rent_burdened_count, median_rent_burden,
+      year == 2019, county_fips == "01001"
+    ),
+    0.294
   )
 })
