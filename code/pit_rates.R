@@ -37,6 +37,11 @@ get_overall_pit_counts <- function(pit_data) {
     select(coc_number, year, overall_homeless = count)
 }
 
+#' Constructs the homelessness rates
+#'
+#' @inheritParams build_pit_rates 
+#'
+#' @keywords internal
 make_pit_rates <- function(pit_data, coc_populations) {
   # start with the CoC population data
   coc_populations %>%
