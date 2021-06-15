@@ -1,9 +1,47 @@
+#' Calculate homelessness rates by CoC
+#'
+#' @param pit_data A data frame with PiT counts in long form from
+#'   [get_long_pit_data()].
+#' @param coc_populations A data frame with CoC overall populations and
+#'   populations in poverty from [build_coc_populations()].
+#'
+#' @return A data frame with homelessness counts and rates: 
+#' * `coc_number`: CoC number (character) 
+#' * `year`: Year (numeric) 
+#' * `overall_homeless`: Count of all unhoused people in the CoC (numeric) 
+#' * `homeless_rate_total_pop`: Share of total CoC population that is unhoused
+#'      (numeric) 
+#' * `homeless_rate_in_poverty`: Total unhoused count divided by population
+#'      below poverty line (numeric)
+#' * `homeless_per_1000_total_pop`: Number of unhoused people per 1,000 people
+#'      in the overall population (numeric)
+#' * `homeless_per_1000_in_poverty`: Number of unhoused people per 1,000 people
+#'      below the poverty line (numeric)
+build_pit_rates <- function(pit_data, coc_populations) {
+  get_overall_pit_counts(pit_data) %>%
+    make_pit_rates(coc_populations)
+}
+
+#' Filter overall homelessness counts from PiT data
+#'
+#' @inheritParams build_pit_rates 
+#'
+#' @return A data frame with just the overall homelessness counts:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `overall_homeless`: Count of all unhoused people in the CoC (numeric) 
+#' @keywords internal
 get_overall_pit_counts <- function(pit_data) {
   pit_data %>%
     filter(category == "Overall Homeless") %>%
     select(coc_number, year, overall_homeless = count)
 }
 
+#' Constructs the homelessness rates
+#'
+#' @inheritParams build_pit_rates 
+#'
+#' @keywords internal
 make_pit_rates <- function(pit_data, coc_populations) {
   # start with the CoC population data
   coc_populations %>%
@@ -18,17 +56,4 @@ make_pit_rates <- function(pit_data, coc_populations) {
       homeless_per_1000_in_poverty = homeless_rate_in_poverty * 1000
     ) %>%
     select(coc_number, year, overall_homeless, homeless_rate_total_pop, homeless_rate_in_poverty, homeless_per_1000_total_pop, homeless_per_1000_in_poverty)
-}
-
-#' Calculate homelessness rates by CoC
-#'
-#' @param pit_data A data frame with PIT counts in long form
-#' @param coc_populations A data frame with CoC overall populations and
-#'   populations in poverty
-#'
-#' @return A data frame with CoC homelessness counts, rates, and number of
-#'   unhoused people per 1000 people in the overall population.
-build_pit_rates <- function(pit_data, coc_populations) {
-  get_overall_pit_counts(pit_data) %>%
-    make_pit_rates(coc_populations)
 }
