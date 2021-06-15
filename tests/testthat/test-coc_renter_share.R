@@ -97,3 +97,51 @@ test_that("coc share rent burdened is working correctly", {
 
   expect_equal(build_coc_rent_burdened_share(county_data, crosswalk), expected)
 })
+
+test_that("fetch_acs_rental_vacancy_rate is working for 2013", {
+  fetch_acs_rental_vacancy_rate(2013) %>%
+    filter(fips == "01001") %>%
+    pull(rental_vacancy_rate) %>%
+    expect_equal(0.047)
+})
+
+test_that("fetch_acs_rental_vacancy_rate is working for 2019", {
+  fetch_acs_rental_vacancy_rate(2019) %>%
+    filter(fips == "01001") %>%
+    pull(rental_vacancy_rate) %>%
+    expect_equal(0.031)
+})
+
+test_that("building coc vacancy rates works", {
+  test_yr <- 2019
+
+  test_acs <- tribble(
+    ~year, ~fips, ~rental_vacancy_rate,
+    2019, "99999", 0.05,
+    2019, "99998", 0.05,
+    2019, "99997", 0.1,
+    2019, "99996", 0.04,
+    2019, "99995", NA
+  )
+
+  test_crosswalk <- tribble(
+    ~year, ~county_fips, ~coc_number, ~pct_coc_pop_from_county,
+    2019, "99999", "AA-101", 1,
+    2019, "99998", "AA-102", 0.5,
+    2019, "99997", "AA-102", 0.5,
+    2019, "99996", "AA-103", 0.5,
+    2019, "99995", "AA-103", 0.5
+  )
+
+  expected <- tribble(
+    ~coc_number, ~year, ~rental_vacancy_rate,
+    "AA-101", 2019, 0.05,
+    "AA-102", 2019, 0.075,
+    "AA-103", 2019, 0.04
+  )
+
+  expect_equal(
+    make_coc_rental_vacancy_rate(test_acs, test_yr, test_crosswalk),
+    expected
+  )
+})
