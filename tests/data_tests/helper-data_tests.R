@@ -1,5 +1,6 @@
 library(targets, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
+library(assertr, warn.conflicts = FALSE)
 library(glue, warn.conflicts = FALSE)
 library(rlang, warn.conflicts = FALSE)
 library(crayon, warn.conflicts = FALSE)
