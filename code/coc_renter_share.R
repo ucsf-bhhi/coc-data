@@ -121,11 +121,34 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
     )
 }
 
+#' CoC rental housing vacancy rents
+#'
+#' Builds rental housing vacancy rates from ACS table DP04.
+#'
+#' @param yr A numeric with the year of the data.
+#' @param county_crosswalk A data frame with a county to CoC crosswalk from
+#'   [build_county_crosswalk()].
+#'
+#' @return A data frame with the rental vacancy rates:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
 build_coc_vacancy_rate <- function(yr, county_crosswalk) {
   fetch_acs_rental_vacancy_rate(yr) %>%
     make_coc_rental_vacancy_rate(yr, county_crosswalk)
 }
 
+#' Fetches ACS rental vacancy rates
+#'
+#' @inheritParams build_coc_vacancy_rate
+#' 
+#' @return A data frame with county vacancy rates:
+#' * `fips`: County FIPS code (character)
+#' * `year`: Year (numeric)
+#' * `rental_vacancy rate`: Share of rental housing units not rented (numeric)
+#' 
+#' @keywords internal
+#' @seealso [build_coc_vacancy_rate()]
 fetch_acs_rental_vacancy_rate <- function(yr) {
   fetch_acs(
     "county",
@@ -136,6 +159,14 @@ fetch_acs_rental_vacancy_rate <- function(yr) {
     mutate(rental_vacancy_rate = rental_vacancy_rate / 100)
 }
 
+#' Constructs the CoC rental vacancy rates
+#'
+#' @param acs_data A data frame with county vacancy rates from
+#'   [fetch_acs_rental_vacancy_rate()]
+#' @inheritParams build_coc_vacancy_rate
+#'
+#' @keywords internal
+#' @seealso [build_coc_vacancy_rate()]
 make_coc_rental_vacancy_rate <- function(acs_data, yr, county_crosswalk) {
   county_crosswalk %>%
     filter(year == yr) %>%
