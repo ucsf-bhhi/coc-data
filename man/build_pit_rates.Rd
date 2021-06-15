@@ -7,14 +7,27 @@
 build_pit_rates(pit_data, coc_populations)
 }
 \arguments{
-\item{pit_data}{A data frame with PIT counts in long form}
+\item{pit_data}{A data frame with PiT counts in long form from
+\code{\link[=get_long_pit_data]{get_long_pit_data()}}.}
 
 \item{coc_populations}{A data frame with CoC overall populations and
-populations in poverty}
+populations in poverty from \code{\link[=build_coc_populations]{build_coc_populations()}}.}
 }
 \value{
-A data frame with CoC homelessness counts, rates, and number of
-unhoused people per 1000 people in the overall population.
+A data frame with homelessness counts and rates:
+\itemize{
+\item \code{coc_number}: CoC number (character)
+\item \code{year}: Year (numeric)
+\item \code{overall_homeless}: Count of all unhoused people in the CoC (numeric)
+\item \code{homeless_rate_total_pop}: Share of total CoC population that is unhoused
+(numeric)
+\item \code{homeless_rate_in_poverty}: Total unhoused count divided by population
+below poverty line (numeric)
+\item \code{homeless_per_1000_total_pop}: Number of unhoused people per 1,000 people
+in the overall population (numeric)
+\item \code{homeless_per_1000_in_poverty}: Number of unhoused people per 1,000 people
+below the poverty line (numeric)
+}
 }
 \description{
 Calculate homelessness rates by CoC
