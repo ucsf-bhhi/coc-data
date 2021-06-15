@@ -22,6 +22,15 @@ build_pit_rates <- function(pit_data, coc_populations) {
     make_pit_rates(coc_populations)
 }
 
+#' Filter overall homelessness counts from PiT data
+#'
+#' @inheritParams build_pit_rates 
+#'
+#' @return A data frame with just the overall homelessness counts:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `overall_homeless`: Count of all unhoused people in the CoC (numeric) 
+#' @keywords internal
 get_overall_pit_counts <- function(pit_data) {
   pit_data %>%
     filter(category == "Overall Homeless") %>%
