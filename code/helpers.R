@@ -1,3 +1,17 @@
+#' Fetches ACS table data from the Census Bureau API
+#'
+#' A wrapper around [tidycensus::get_acs()] which fetches data from the Census
+#' Bureau API, adds a column with the year of the data, and removes the unneeded
+#' margin of error columns.
+#'
+#' @param ... Parameters passed to [tidycensus::get_acs()].
+#' @param quiet Boolean to suppress status messages.
+#'
+#' @return A data frame with the requested ACS data. 
+#' * `year`: Year (numeric) 
+#' * `fips`: Geographic unit FIPS code (character) 
+#' * Additional columns with requested data
+#' @seealso [tidycensus::get_acs()]
 fetch_acs = function(..., quiet = TRUE) {
   f = function(...) {
     # put the arguments in a list
