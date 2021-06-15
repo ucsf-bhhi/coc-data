@@ -120,3 +120,37 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
       median_rent_burden
     )
 }
+
+build_coc_vacancy_rate <- function(yr, county_crosswalk) {
+  fetch_acs_rental_vacancy_rate(yr) %>%
+    make_coc_rental_vacancy_rate(yr, county_crosswalk)
+}
+
+fetch_acs_rental_vacancy_rate <- function(yr) {
+  fetch_acs(
+    "county",
+    year = yr,
+    variables = c("rental_vacancy_rate" = "DP04_0005"),
+    output = "wide"
+  ) %>%
+    mutate(rental_vacancy_rate = rental_vacancy_rate / 100)
+}
+
+make_coc_rental_vacancy_rate <- function(acs_data, yr, county_crosswalk) {
+  county_crosswalk %>%
+    filter(year == yr) %>%
+    # grab the ACS data and join it to the crosswalk
+    left_join(
+      acs_data,
+      by = c("county_fips" = "fips", "year")
+    ) %>%
+    # add year to the grouping to make sure it's in the output
+    group_by(coc_number, year) %>%
+    summarise(
+      rental_vacancy_rate = weighted.mean(
+        rental_vacancy_rate, pct_coc_pop_from_county,
+        na.rm = TRUE
+      ),
+      .groups = "drop"
+    )
+}
