@@ -20,6 +20,7 @@ income in rent (numeric)
 income in rent (numeric)
 \item \code{total_computed}: Count of renting households that have a calculated rent
 share of income (numeric)
+\item \code{median_rent_burden}: Median rent share of income in the county (numeric)
 }
 }
 \description{

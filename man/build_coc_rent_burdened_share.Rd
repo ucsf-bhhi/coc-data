@@ -22,6 +22,7 @@ A data frame:
 30 percent of their income in rent (numeric)
 \item \code{share_rent_over_50_pct_inc}: Share of renter households paying more than
 50 percent of their income in rent (numeric)
+\item \code{median_rent_burden}: Median rent share of income in the CoC (numeric)
 }
 }
 \description{
