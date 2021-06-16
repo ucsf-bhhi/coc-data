@@ -51,6 +51,8 @@ dictionary <- tribble(
 )
 ```
 
+# Data Dictionary
+
 ```{r print dictionary}
 kable(
   dictionary,

@@ -1,3 +1,5 @@
+# Data Dictionary
+
 | Variable                       | Description                                                                                     | Data Source          | Original Geographic Unit  | Creator Target             |
 |:-------------------------------|:------------------------------------------------------------------------------------------------|:---------------------|:--------------------------|:---------------------------|
 | `coc_number`                   | CoC number                                                                                      | CoC Shapefiles       | CoC                       | coc\_categories            |
