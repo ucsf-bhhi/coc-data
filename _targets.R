@@ -196,8 +196,8 @@ list(
   ),
   #### Rental Vacancy Rate ####
   tar_target(
-    coc_rental_vacancy_rate,
-    build_coc_vacancy_rate(shapefile_years, county_crosswalk),
+    coc_rental_vacancy_rates,
+    build_coc_vacancy_rates(shapefile_years, county_crosswalk),
     pattern = map(shapefile_years)
   ),
   #### Combined Dataset ####
@@ -210,7 +210,7 @@ list(
       full_join(coc_fmr, by = c("coc_number", "year")) %>% 
       full_join(coc_zillow_rent, by = c("coc_number", "year")) %>% 
       full_join(coc_rent_burdened_share, by = c("coc_number", "year")) %>% 
-      full_join(coc_rental_vacancy_rate, by = c("coc_number", "year")) 
+      full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) 
   ),
   #### Output Dataset Files ####
   tar_map(

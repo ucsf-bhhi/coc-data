@@ -133,9 +133,9 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
 #' * `coc_number`: CoC number (character)
 #' * `year`: Year (numeric)
 #' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
-build_coc_vacancy_rate <- function(yr, county_crosswalk) {
-  fetch_acs_rental_vacancy_rate(yr) %>%
-    make_coc_rental_vacancy_rate(yr, county_crosswalk)
+build_coc_vacancy_rates <- function(yr, county_crosswalk) {
+  fetch_acs_vacancy_data(yr) %>%
+    make_coc_vacancy_rates(yr, county_crosswalk)
 }
 
 #' Fetches ACS rental vacancy rates
@@ -149,14 +149,19 @@ build_coc_vacancy_rate <- function(yr, county_crosswalk) {
 #' 
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rate()]
-fetch_acs_rental_vacancy_rate <- function(yr) {
+fetch_acs_vacancy_data <- function(yr) {
   fetch_acs(
     "county",
     year = yr,
-    variables = c("rental_vacancy_rate" = "DP04_0005"),
+    variables = c(
+      "total_housing_units" = "B25002_001",
+      "vacant_housing_units" = "B25002_003",
+      "occupied_rental_units" = "B25003_003",
+      "for_rent" = "B25004_002",
+      "rented_not_occupied" = "B25004_003"
+    ),
     output = "wide"
-  ) %>%
-    mutate(rental_vacancy_rate = rental_vacancy_rate / 100)
+  )
 }
 
 #' Constructs the CoC rental vacancy rates
@@ -167,7 +172,7 @@ fetch_acs_rental_vacancy_rate <- function(yr) {
 #'
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rate()]
-make_coc_rental_vacancy_rate <- function(acs_data, yr, county_crosswalk) {
+make_coc_vacancy_rates <- function(acs_data, yr, county_crosswalk) {
   county_crosswalk %>%
     filter(year == yr) %>%
     # grab the ACS data and join it to the crosswalk
@@ -178,10 +183,20 @@ make_coc_rental_vacancy_rate <- function(acs_data, yr, county_crosswalk) {
     # add year to the grouping to make sure it's in the output
     group_by(coc_number, year) %>%
     summarise(
-      rental_vacancy_rate = weighted.mean(
-        rental_vacancy_rate, pct_coc_pop_from_county,
-        na.rm = TRUE
+      across(
+        c(
+          total_housing_units,
+          vacant_housing_units,
+          occupied_rental_units,
+          for_rent,
+          rented_not_occupied
+        ),
+        sum, na.rm = TRUE
       ),
+      gross_vacancy_rate = vacant_housing_units / total_housing_units,
+      total_rental_units = occupied_rental_units + for_rent + rented_not_occupied,
+      rental_vacancy_rate = for_rent / total_rental_units,
       .groups = "drop"
-    )
+    ) %>% 
+    select(coc_number, year, gross_vacancy_rate, rental_vacancy_rate)
 }
