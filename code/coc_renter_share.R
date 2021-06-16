@@ -120,3 +120,97 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
       median_rent_burden
     )
 }
+
+#' CoC housing vacancy rents
+#'
+#' Builds gross and rental vacancy rates.
+#' 
+#' # Definitions
+#' Gross vacancy rate = all unoccupied housing units / all housing units
+#' 
+#' Rental vacancy rate = unoccupied rental units that are for rent /
+#'   (occupied rental units + unoccupied rental units that are for rent +
+#'   rented units that are unoccupied)
+#'
+#' @param yr A numeric with the year of the data.
+#' @param county_crosswalk A data frame with a county to CoC crosswalk from
+#'   [build_county_crosswalk()].
+#'
+#' @return A data frame with the rental vacancy rates:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `gross_vacancy_rate`: Share of all housing units that are unoccupied
+#'      (numeric)
+#' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
+build_coc_vacancy_rates <- function(yr, county_crosswalk) {
+  fetch_acs_vacancy_data(yr) %>%
+    make_coc_vacancy_rates(yr, county_crosswalk)
+}
+
+#' Fetches ACS vacancy data
+#'
+#' @inheritParams build_coc_vacancy_rates
+#' 
+#' @return A data frame with county vacancy rates:
+#' * `fips`: County FIPS code (character)
+#' * `year`: Year (numeric)
+#' * `total_housing_units`: Total housing units (numeric)
+#' * `vacant_housing_units`: Total vacant housing units (numeric)
+#' * `occupied_rental_units`: Occupied rental housing units (numeric)
+#' * `for_rent`: Rental housing units that are unoccupied and for rent (numeric)
+#' * `rented_not_occupied`: Rental housing units that have been rented but are
+#'      unoccupied (numeric)
+#' 
+#' @keywords internal
+#' @seealso [build_coc_vacancy_rates()]
+fetch_acs_vacancy_data <- function(yr) {
+  fetch_acs(
+    "county",
+    year = yr,
+    variables = c(
+      "total_housing_units" = "B25002_001",
+      "vacant_housing_units" = "B25002_003",
+      "occupied_rental_units" = "B25003_003",
+      "for_rent" = "B25004_002",
+      "rented_not_occupied" = "B25004_003"
+    ),
+    output = "wide"
+  )
+}
+
+#' Constructs the CoC vacancy rates
+#'
+#' @param acs_data A data frame with county vacancy data from
+#'   [fetch_acs_vacancy_data()]
+#' @inheritParams build_coc_vacancy_rates
+#'
+#' @keywords internal
+#' @seealso [build_coc_vacancy_rates()]
+make_coc_vacancy_rates <- function(acs_data, yr, county_crosswalk) {
+  county_crosswalk %>%
+    filter(year == yr) %>%
+    # grab the ACS data and join it to the crosswalk
+    left_join(
+      acs_data,
+      by = c("county_fips" = "fips", "year")
+    ) %>%
+    # add year to the grouping to make sure it's in the output
+    group_by(coc_number, year) %>%
+    summarise(
+      across(
+        c(
+          total_housing_units,
+          vacant_housing_units,
+          occupied_rental_units,
+          for_rent,
+          rented_not_occupied
+        ),
+        sum, na.rm = TRUE
+      ),
+      gross_vacancy_rate = vacant_housing_units / total_housing_units,
+      total_rental_units = occupied_rental_units + for_rent + rented_not_occupied,
+      rental_vacancy_rate = for_rent / total_rental_units,
+      .groups = "drop"
+    ) %>% 
+    select(coc_number, year, gross_vacancy_rate, rental_vacancy_rate)
+}
