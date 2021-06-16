@@ -8,6 +8,8 @@ To run the code, make sure you have the environmental variable `CENSUS_API_KEY` 
 
 The strategy to link census tracts and counties to CoCs is based on [Byrne, et al. \(2016\)](https://github.com/tomhbyrne/HUD-CoC-Geography-Crosswalk).
 
+A data dictionary is avaiable in [data-dictionary.md](data-dictionary.md).
+
 ### Input Data Sources
 
 | Data                                   | File Location                                     | Source                                                                                                                                                           |
