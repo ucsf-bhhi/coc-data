@@ -133,8 +133,8 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
 #'   rented units that are unoccupied)
 #'
 #' @param yr A numeric with the year of the data.
-#' @param county_crosswalk A data frame with a county to CoC crosswalk from
-#'   [build_county_crosswalk()].
+#' @param tract_crosswalk A data frame with a census tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
 #'
 #' @return A data frame with the rental vacancy rates:
 #' * `coc_number`: CoC number (character)
@@ -155,7 +155,7 @@ build_coc_vacancy_rates <- function(yr, tract_crosswalk) {
 #'
 #' @inheritParams build_coc_vacancy_rates
 #' 
-#' @return A data frame with county vacancy rates:
+#' @return A data frame with tract vacancy counts:
 #' * `fips`: County FIPS code (character)
 #' * `year`: Year (numeric)
 #' * `total_housing_units`: Total housing units (numeric)
@@ -185,7 +185,7 @@ fetch_acs_vacancy_data <- function(state, year) {
 
 #' Constructs the CoC vacancy rates
 #'
-#' @param acs_data A data frame with county vacancy data from
+#' @param acs_data A data frame with tract vacancy data from
 #'   [fetch_acs_vacancy_data()]
 #' @inheritParams build_coc_vacancy_rates
 #'
