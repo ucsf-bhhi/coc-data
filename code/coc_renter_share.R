@@ -142,9 +142,13 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
 #' * `gross_vacancy_rate`: Share of all housing units that are unoccupied
 #'      (numeric)
 #' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
-build_coc_vacancy_rates <- function(yr, county_crosswalk) {
-  fetch_acs_vacancy_data(yr) %>%
-    make_coc_vacancy_rates(yr, county_crosswalk)
+build_coc_vacancy_rates <- function(yr, tract_crosswalk) {
+  states = tidycensus::fips_codes %>% 
+    distinct(state_code) %>% 
+    filter(as.numeric(state_code) < 60)
+  
+  map_dfr(states, fetch_acs_vacancy_data, yr) %>%
+    make_coc_vacancy_rates(yr, tract_crosswalk)
 }
 
 #' Fetches ACS vacancy data
@@ -163,10 +167,11 @@ build_coc_vacancy_rates <- function(yr, county_crosswalk) {
 #' 
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rates()]
-fetch_acs_vacancy_data <- function(yr) {
+fetch_acs_vacancy_data <- function(state, year) {
   fetch_acs(
-    "county",
-    year = yr,
+    "tract",
+    year = year,
+    state = state,
     variables = c(
       "total_housing_units" = "B25002_001",
       "vacant_housing_units" = "B25002_003",
@@ -186,13 +191,13 @@ fetch_acs_vacancy_data <- function(yr) {
 #'
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rates()]
-make_coc_vacancy_rates <- function(acs_data, yr, county_crosswalk) {
-  county_crosswalk %>%
-    filter(year == yr) %>%
+make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
+  tract_crosswalk %>%
+    filter(year == yr, !is.na(coc_number)) %>%
     # grab the ACS data and join it to the crosswalk
     left_join(
       acs_data,
-      by = c("county_fips" = "fips", "year")
+      by = c("tract_fips" = "fips", "year")
     ) %>%
     # add year to the grouping to make sure it's in the output
     group_by(coc_number, year) %>%

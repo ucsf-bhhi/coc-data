@@ -197,7 +197,7 @@ list(
   #### Rental Vacancy Rate ####
   tar_target(
     coc_rental_vacancy_rates,
-    build_coc_vacancy_rates(shapefile_years, county_crosswalk),
+    build_coc_vacancy_rates(shapefile_years, tract_crosswalk),
     pattern = map(shapefile_years)
   ),
   #### Combined Dataset ####
