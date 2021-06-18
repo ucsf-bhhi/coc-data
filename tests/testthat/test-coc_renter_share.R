@@ -100,33 +100,33 @@ test_that("coc share rent burdened is working correctly", {
 
 test_that("fetch_acs_rental_vacancy_data is working for 2013", {
   expected = tibble(
-    fips = "01001",
+    fips = "06001403300",
     year = 2013,
-    total_housing_units = 22220,
-    vacant_housing_units = 2149,
-    occupied_rental_units = 4653,
-    for_rent = 234,
-    rented_not_occupied = 91
+    total_housing_units = 2365,
+    vacant_housing_units = 225,
+    occupied_rental_units = 1617,
+    for_rent = 83,
+    rented_not_occupied = 0
   )
   
-  fetch_acs_vacancy_data(2013) %>%
-    filter(fips == "01001") %>% 
+  fetch_acs_vacancy_data("06", 2013) %>%
+    filter(fips == "06001403300") %>% 
     expect_equal(expected)
 })
 
 test_that("fetch_acs_rental_vacancy_data is working for 2019", {
   expected = tibble(
-    fips = "01001",
+    fips = "06001403300",
     year = 2019,
-    total_housing_units = 23493,
-    vacant_housing_units = 2096,
-    occupied_rental_units = 5715,
-    for_rent = 187,
-    rented_not_occupied = 70
+    total_housing_units = 2393,
+    vacant_housing_units = 250,
+    occupied_rental_units = 1440,
+    for_rent = 91,
+    rented_not_occupied = 0
   )
   
-  fetch_acs_vacancy_data(2019) %>%
-    filter(fips == "01001") %>% 
+  fetch_acs_vacancy_data("06", 2019) %>%
+    filter(fips == "06001403300") %>% 
     expect_equal(expected)
 })
 
@@ -136,27 +136,27 @@ test_that("building coc vacancy rates works", {
   test_acs <- tibble(
     fips = c("99999", "99998", "99997", "99996", "99995"),
     year = c(2019, 2019, 2019, 2019, 2019),
-    total_housing_units = c(10000, 5000, 5000, 10000, NA),
-    vacant_housing_units = c(1000, 500, 500, 1000, NA),
-    occupied_rental_units = c(3800, 1900, 1900, 3800, NA),
-    for_rent = c(100, 50, 50, 100, NA),
-    rented_not_occupied = c(100, 50, 50, 100, NA)
+    total_housing_units = c(10000, 4000, 1000, 2000, NA),
+    vacant_housing_units = c(1000, 50, 25, 30, NA),
+    occupied_rental_units = c(3800, 2100, 1800, 980, NA),
+    for_rent = c(100, 10, 40, 10, NA),
+    rented_not_occupied = c(100, 5, 45, 10, NA)
   )
 
   test_crosswalk <- tribble(
-    ~year, ~county_fips, ~coc_number, ~pct_coc_pop_from_county,
-    2019, "99999", "AA-101", 1,
-    2019, "99998", "AA-102", 0.5,
-    2019, "99997", "AA-102", 0.5,
-    2019, "99996", "AA-103", 0.5,
-    2019, "99995", "AA-103", 0.5
+    ~year, ~tract_fips, ~coc_number,
+    2019, "99999", "AA-101",
+    2019, "99998", "AA-102",
+    2019, "99997", "AA-102",
+    2019, "99996", "AA-103",
+    2019, "99995", "AA-103"
   )
 
   expected <- tribble(
     ~coc_number, ~year, ~gross_vacancy_rate, ~rental_vacancy_rate,
     "AA-101", 2019, 0.1, 0.025,
-    "AA-102", 2019, 0.1, 0.025,
-    "AA-103", 2019, 0.1, 0.025
+    "AA-102", 2019, 0.015, 0.0125,
+    "AA-103", 2019, 0.015, 0.01
   )
 
   expect_equal(
