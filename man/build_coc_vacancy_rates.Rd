@@ -4,13 +4,13 @@
 \alias{build_coc_vacancy_rates}
 \title{CoC housing vacancy rents}
 \usage{
-build_coc_vacancy_rates(yr, county_crosswalk)
+build_coc_vacancy_rates(yr, tract_crosswalk)
 }
 \arguments{
 \item{yr}{A numeric with the year of the data.}
 
-\item{county_crosswalk}{A data frame with a county to CoC crosswalk from
-\code{\link[=build_county_crosswalk]{build_county_crosswalk()}}.}
+\item{tract_crosswalk}{A data frame with a census tract to CoC crosswalk from
+\code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}.}
 }
 \value{
 A data frame with the rental vacancy rates:

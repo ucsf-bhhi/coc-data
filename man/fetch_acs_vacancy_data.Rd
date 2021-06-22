@@ -4,13 +4,10 @@
 \alias{fetch_acs_vacancy_data}
 \title{Fetches ACS vacancy data}
 \usage{
-fetch_acs_vacancy_data(yr)
-}
-\arguments{
-\item{yr}{A numeric with the year of the data.}
+fetch_acs_vacancy_data(state, year)
 }
 \value{
-A data frame with county vacancy rates:
+A data frame with tract vacancy counts:
 \itemize{
 \item \code{fips}: County FIPS code (character)
 \item \code{year}: Year (numeric)

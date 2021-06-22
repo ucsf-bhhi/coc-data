@@ -27,16 +27,44 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
   summarise(avg_renter_share = weighted.mean(share_renters, pct_coc_pop_from_county, na.rm = TRUE))
 }
 
-#' County-level counts of rent-burdened households
+#' CoC-level shares of rent burdened households
+#'
+#' Builds shares of renter households who pay more than 30 or 50 percent of
+#' their income in rent and the average median rent burden
+#' (rent / household income) in the CoC.
+#'
+#' @param yr A numeric with the year of the data.
+#' @param tract_crosswalk A data frame with a census tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
+#'
+#' @return A data frame:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `share_rent_over_30_pct_inc`: Share of renter households paying more than
+#'      30 percent of their income in rent (numeric)
+#' * `share_rent_over_50_pct_inc`: Share of renter households paying more than
+#'      50 percent of their income in rent (numeric)
+#' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
+build_coc_rent_burden <- function(year, tract_crosswalk) {
+  states = tidycensus::fips_codes %>% 
+    distinct(state_code) %>% 
+    filter(as.numeric(state_code) < 60)
+  
+  map_dfr(states, fetch_acs_rent_burden, year) %>%
+    make_coc_rent_burden(tract_crosswalk, year)
+}
+
+#' Census Tract level counts of rent-burdened households
 #'
 #' Gets ACS data that has the counts of households who pay more than 30 or 50
-#' percent of their income in rent.
+#' percent of their income in rent and the median rent burden
+#' (rent / household income) in the tract.
 #'
 #' @param year A numeric with the year of ACS data to fetch.
 #'
 #' @return A data frame:
 #' * `year`: Year (numeric)
-#' * `county_fips`: County FIPS code (character)
+#' * `tract_fips`: Census Tract FIPS code (character)
 #' * `count_30_plus`: Count of renting households paying more than 30% of their
 #'      income in rent (numeric)
 #' * `count_50_plus`: Count of renting households paying more than 50% of their
@@ -44,8 +72,9 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
 #' * `total_computed`: Count of renting households that have a calculated rent
 #'      share of income (numeric)
 #' * `median_rent_burden`: Median rent share of income in the county (numeric)
-#' @seealso [build_coc_rent_burdened_share()] for CoC-level rent burdened shares
-get_county_rent_burdened_count <- function(year) {
+#' @seealso [build_coc_rent_burden()] for the main function
+#' @keywords internal
+fetch_acs_rent_burden <- function(state, year) {
   acs_variables <- c(
     "total" = "B25070_001",
     "count_30_35" = "B25070_007",
@@ -55,7 +84,13 @@ get_county_rent_burdened_count <- function(year) {
     "not_computed" = "B25070_011",
     "median_rent_burden" = "B25071_001"
   )
-  fetch_acs("county", year = year, variables = acs_variables, output = "wide") %>%
+  fetch_acs(
+    "tract",
+    state = state,
+    year = year,
+    variables = acs_variables,
+    output = "wide"
+  ) %>%
     mutate(
       year = year,
       total_computed = total - not_computed,
@@ -64,7 +99,7 @@ get_county_rent_burdened_count <- function(year) {
     ) %>%
     select(
       year,
-      county_fips = fips,
+      tract_fips = fips,
       count_30_plus,
       count_50_plus,
       total_computed,
@@ -72,15 +107,16 @@ get_county_rent_burdened_count <- function(year) {
     )
 }
 
-#' CoC-level shares of rent burdened households
+#' Construct CoC-level shares of rent burdened households
 #'
 #' Builds shares of renter households who pay more than 30 or 50 percent of
-#' their income in rent.
+#' their income in rent and the average median rent burden
+#' (rent / household income) in the CoC.
 #'
-#' @param county_rent_data A data frame of county level counts of rent burdened
+#' @param tract_rent_data A data frame of tract level counts of rent burdened
 #'   households created by [get_county_rent_burdened_count()].
-#' @param county_crosswalk A data frame with a county to CoC crosswalk created
-#'   by [build_county_crosswalk()].
+#' @param tract_crosswalk A data frame with a tract to CoC crosswalk created
+#'   by [build_tract_crosswalk()].
 #'
 #' @return A data frame:
 #' * `year`: Year (numeric)
@@ -90,11 +126,12 @@ get_county_rent_burdened_count <- function(year) {
 #' * `share_rent_over_50_pct_inc`: Share of renter households paying more than
 #'      50 percent of their income in rent (numeric)
 #' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
-#' @seealso [get_county_rent_burdened_count()] for fetching the ACS county-level
-#'   rent burdened counts
-build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
-  county_crosswalk %>%
-    left_join(county_rent_data, by = c("year", "county_fips")) %>%
+#' @seealso [build_coc_rent_burden()] for the main function
+#' @keywords internal
+make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, year) {
+  tract_crosswalk %>%
+    filter(year == year, !is.na(coc_number)) %>% 
+    left_join(tract_rent_data, by = c("year", "tract_fips")) %>%
     group_by(year, coc_number) %>%
     summarise(
       across(
@@ -103,7 +140,7 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
       ),
       median_rent_burden = weighted.mean(
         median_rent_burden,
-        pct_coc_pop_from_county,
+        pct_coc_pop_from_tract,
         na.rm = TRUE
       ),
       .groups = "drop"
@@ -133,8 +170,8 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
 #'   rented units that are unoccupied)
 #'
 #' @param yr A numeric with the year of the data.
-#' @param county_crosswalk A data frame with a county to CoC crosswalk from
-#'   [build_county_crosswalk()].
+#' @param tract_crosswalk A data frame with a census tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
 #'
 #' @return A data frame with the rental vacancy rates:
 #' * `coc_number`: CoC number (character)
@@ -142,16 +179,20 @@ build_coc_rent_burdened_share <- function(county_rent_data, county_crosswalk) {
 #' * `gross_vacancy_rate`: Share of all housing units that are unoccupied
 #'      (numeric)
 #' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
-build_coc_vacancy_rates <- function(yr, county_crosswalk) {
-  fetch_acs_vacancy_data(yr) %>%
-    make_coc_vacancy_rates(yr, county_crosswalk)
+build_coc_vacancy_rates <- function(yr, tract_crosswalk) {
+  states = tidycensus::fips_codes %>% 
+    distinct(state_code) %>% 
+    filter(as.numeric(state_code) < 60)
+  
+  map_dfr(states, fetch_acs_vacancy_data, yr) %>%
+    make_coc_vacancy_rates(yr, tract_crosswalk)
 }
 
 #' Fetches ACS vacancy data
 #'
 #' @inheritParams build_coc_vacancy_rates
 #' 
-#' @return A data frame with county vacancy rates:
+#' @return A data frame with tract vacancy counts:
 #' * `fips`: County FIPS code (character)
 #' * `year`: Year (numeric)
 #' * `total_housing_units`: Total housing units (numeric)
@@ -163,10 +204,11 @@ build_coc_vacancy_rates <- function(yr, county_crosswalk) {
 #' 
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rates()]
-fetch_acs_vacancy_data <- function(yr) {
+fetch_acs_vacancy_data <- function(state, year) {
   fetch_acs(
-    "county",
-    year = yr,
+    "tract",
+    year = year,
+    state = state,
     variables = c(
       "total_housing_units" = "B25002_001",
       "vacant_housing_units" = "B25002_003",
@@ -180,19 +222,19 @@ fetch_acs_vacancy_data <- function(yr) {
 
 #' Constructs the CoC vacancy rates
 #'
-#' @param acs_data A data frame with county vacancy data from
+#' @param acs_data A data frame with tract vacancy data from
 #'   [fetch_acs_vacancy_data()]
 #' @inheritParams build_coc_vacancy_rates
 #'
 #' @keywords internal
 #' @seealso [build_coc_vacancy_rates()]
-make_coc_vacancy_rates <- function(acs_data, yr, county_crosswalk) {
-  county_crosswalk %>%
-    filter(year == yr) %>%
+make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
+  tract_crosswalk %>%
+    filter(year == yr, !is.na(coc_number)) %>%
     # grab the ACS data and join it to the crosswalk
     left_join(
       acs_data,
-      by = c("county_fips" = "fips", "year")
+      by = c("tract_fips" = "fips", "year")
     ) %>%
     # add year to the grouping to make sure it's in the output
     group_by(coc_number, year) %>%
