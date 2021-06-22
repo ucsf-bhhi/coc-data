@@ -67,35 +67,71 @@ test_that("CoC renter shares work", {
   expect_equal(test_multi_county$avg_renter_share, 0.5)
 })
 
+test_that("fetch_acs_rent_burden is working for 2013", {
+  expected = tibble(
+    year = 2013,
+    tract_fips = "06001403300",
+    count_30_plus = 926,
+    count_50_plus = 468,
+    total_computed = 1577,
+    median_rent_burden = 0.349 
+  )
+  
+  fetch_acs_rent_burden("06", 2013) %>%
+    filter(tract_fips == "06001403300") %>% 
+    expect_equal(expected)
+})
+
+test_that("fetch_acs_rent_burden is working for 2019", {
+  expected = tibble(
+    year = 2019,
+    tract_fips = "06001403300",
+    count_30_plus = 716,
+    count_50_plus = 357,
+    total_computed = 1309,
+    median_rent_burden = 0.320 
+  )
+  
+  fetch_acs_rent_burden("06", 2019) %>%
+    filter(tract_fips == "06001403300") %>% 
+    expect_equal(expected)
+})
+
 test_that("coc share rent burdened is working correctly", {
-  # create some fake county rent burdened counts
-  county_data <- tribble(
-    ~year, ~county_fips, ~count_30_plus, ~count_50_plus, ~total_computed, ~median_rent_burden,
+  test_yr <- 2019
+  
+  # create some fake tract rent burdened counts
+  test_acs <- tribble(
+    ~year, ~tract_fips, ~count_30_plus, ~count_50_plus, ~total_computed, ~median_rent_burden,
     2019, "99999", 30, 15, 100, 0.3,
-    2019, "99998", 20, 10, 50, 0.4,
-    2019, "99997", 10, 5, 50, 0.2,
+    2019, "99998", 20, 10, 60, 0.4,
+    2019, "99997", 15, 7, 40, 0.2,
     2019, "99996", 30, 15, 100, 0.3,
-    2019, "99995", NA, NA, NA, NA
+    2019, "99995", 20, 10, 75, 0.3,
+    2019, "99994", 40, 20, 125, 0.4
   )
-
-  # create a fake county to CoC crosswalk
-  crosswalk <- tribble(
-    ~year, ~county_fips, ~coc_number, ~pct_coc_pop_from_county,
+  
+  test_crosswalk <- tribble(
+    ~year, ~tract_fips, ~coc_number, ~pct_coc_pop_from_tract,
     2019, "99999", "AA-101", 1,
-    2019, "99998", "AA-102", 0.5,
-    2019, "99997", "AA-102", 0.5,
-    2019, "99996", "AA-103", 0.5,
-    2019, "99995", "AA-103", 0.5
+    2019, "99998", "AA-102", 0.75,
+    2019, "99997", "AA-102", 0.25,
+    2019, "99996", "AA-103", 0.25,
+    2019, "99995", "AA-103", 0.50,
+    2019, "99994", "AA-103", 0.25
   )
-
+  
   expected <- tribble(
     ~year, ~coc_number, ~share_rent_over_30_pct_inc, ~share_rent_over_50_pct_inc, ~median_rent_burden,
     2019, "AA-101", 0.3, 0.15, 0.3,
-    2019, "AA-102", 0.3, 0.15, 0.3,
-    2019, "AA-103", 0.3, 0.15, 0.3
+    2019, "AA-102", 0.35, 0.17, 0.35,
+    2019, "AA-103", 0.3, 0.15, 0.325
   )
-
-  expect_equal(build_coc_rent_burdened_share(county_data, crosswalk), expected)
+  
+  expect_equal(
+    make_coc_rent_burden(test_acs, test_crosswalk, test_yr),
+    expected
+  )
 })
 
 test_that("fetch_acs_rental_vacancy_data is working for 2013", {
