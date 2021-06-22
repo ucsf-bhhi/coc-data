@@ -43,9 +43,9 @@ dictionary <- tribble(
   "`fmr4_pct_coc_na_rent`", "Share of CoC population in region without a 4-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
   "`coc_rent_zillow`", "Annual average Zillow rent index, NA for CoC with no zip codes covered by the Zillow rent index", "Zillow Rent Index", "Zip Code", "coc_zillow_rent",
   "`coc_share_na_rent_zillow`", "Share of the CoC's population in zip codes not covered by the Zillow rent index", "Zillow Rent Index", "Zip Code", "coc_zillow_rent",
-  "`share_rent_over_30_pct_inc`", "Share of renter households paying more than 30 percent of their income in rent", "ACS", "County", "coc_rent_burdened_share",
-  "`share_rent_over_50_pct_inc`", "Share of renter households paying more than 50 percent of their income in rent", "ACS", "County", "coc_rent_burdened_share",
-  "`median_rent_burden`", "Median rent share of income in the CoC", "ACS", "County", "coc_rent_burdened_share",
+  "`share_rent_over_30_pct_inc`", "Share of renter households paying more than 30 percent of their income in rent", "ACS", "Census Tract", "coc_rent_burdened_share",
+  "`share_rent_over_50_pct_inc`", "Share of renter households paying more than 50 percent of their income in rent", "ACS", "Census Tract", "coc_rent_burdened_share",
+  "`median_rent_burden`", "Median rent share of income in the CoC", "ACS", "Census Tract", "coc_rent_burdened_share",
   "`gross_vacancy_rate`", "Share of all housing units that are unoccupied", "ACS", "Census Tract", "coc_rental_vacancy_rate",
   "`rental_vacancy_rate`", "Share of rental housing units not rented", "ACS", "Census Tract", "coc_rental_vacancy_rate"
 )
