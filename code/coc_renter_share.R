@@ -27,7 +27,24 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
   summarise(avg_renter_share = weighted.mean(share_renters, pct_coc_pop_from_county, na.rm = TRUE))
 }
 
-#' County-level counts of rent-burdened households
+#' CoC-level shares of rent burdened households
+#'
+#' Builds shares of renter households who pay more than 30 or 50 percent of
+#' their income in rent and the average median rent burden
+#' (rent / household income) in the CoC.
+#'
+#' @param yr A numeric with the year of the data.
+#' @param tract_crosswalk A data frame with a census tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
+#'
+#' @return A data frame:
+#' * `coc_number`: CoC number (character)
+#' * `year`: Year (numeric)
+#' * `share_rent_over_30_pct_inc`: Share of renter households paying more than
+#'      30 percent of their income in rent (numeric)
+#' * `share_rent_over_50_pct_inc`: Share of renter households paying more than
+#'      50 percent of their income in rent (numeric)
+#' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
 build_coc_rent_burden <- function(year, tract_crosswalk) {
   states = tidycensus::fips_codes %>% 
     distinct(state_code) %>% 
@@ -37,15 +54,17 @@ build_coc_rent_burden <- function(year, tract_crosswalk) {
     make_coc_rent_burden(tract_crosswalk, year)
 }
 
+#' Census Tract level counts of rent-burdened households
 #'
 #' Gets ACS data that has the counts of households who pay more than 30 or 50
-#' percent of their income in rent.
+#' percent of their income in rent and the median rent burden
+#' (rent / household income) in the tract.
 #'
 #' @param year A numeric with the year of ACS data to fetch.
 #'
 #' @return A data frame:
 #' * `year`: Year (numeric)
-#' * `county_fips`: County FIPS code (character)
+#' * `tract_fips`: Census Tract FIPS code (character)
 #' * `count_30_plus`: Count of renting households paying more than 30% of their
 #'      income in rent (numeric)
 #' * `count_50_plus`: Count of renting households paying more than 50% of their
@@ -53,7 +72,8 @@ build_coc_rent_burden <- function(year, tract_crosswalk) {
 #' * `total_computed`: Count of renting households that have a calculated rent
 #'      share of income (numeric)
 #' * `median_rent_burden`: Median rent share of income in the county (numeric)
-#' @seealso [build_coc_rent_burdened_share()] for CoC-level rent burdened shares
+#' @seealso [build_coc_rent_burden()] for the main function
+#' @keywords internal
 fetch_acs_rent_burden <- function(state, year) {
   acs_variables <- c(
     "total" = "B25070_001",
@@ -87,15 +107,16 @@ fetch_acs_rent_burden <- function(state, year) {
     )
 }
 
-#' CoC-level shares of rent burdened households
+#' Construct CoC-level shares of rent burdened households
 #'
 #' Builds shares of renter households who pay more than 30 or 50 percent of
-#' their income in rent.
+#' their income in rent and the average median rent burden
+#' (rent / household income) in the CoC.
 #'
-#' @param county_rent_data A data frame of county level counts of rent burdened
+#' @param tract_rent_data A data frame of tract level counts of rent burdened
 #'   households created by [get_county_rent_burdened_count()].
-#' @param county_crosswalk A data frame with a county to CoC crosswalk created
-#'   by [build_county_crosswalk()].
+#' @param tract_crosswalk A data frame with a tract to CoC crosswalk created
+#'   by [build_tract_crosswalk()].
 #'
 #' @return A data frame:
 #' * `year`: Year (numeric)
@@ -105,8 +126,8 @@ fetch_acs_rent_burden <- function(state, year) {
 #' * `share_rent_over_50_pct_inc`: Share of renter households paying more than
 #'      50 percent of their income in rent (numeric)
 #' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
-#' @seealso [get_county_rent_burdened_count()] for fetching the ACS county-level
-#'   rent burdened counts
+#' @seealso [build_coc_rent_burden()] for the main function
+#' @keywords internal
 make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, year) {
   tract_crosswalk %>%
     filter(year == year, !is.na(coc_number)) %>% 
