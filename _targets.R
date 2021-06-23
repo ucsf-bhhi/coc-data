@@ -14,6 +14,7 @@ source("code/pit_rates.R")
 source("code/coc_renter_share.R")
 source("code/coc_fmr.R")
 source("code/coc_zillow_rent.R")
+source("code/coc_economic_indicators.R")
 
 # load packages used by functions
 tar_option_set(
@@ -196,6 +197,20 @@ list(
     build_coc_vacancy_rates(shapefile_years, tract_crosswalk),
     pattern = map(shapefile_years)
   ),
+  #### Unemployment Rate ####
+  tar_files_input(
+    unemployment_url,
+    "https://download.bls.gov/pub/time.series/la/la.data.64.County",
+    format = "url"
+  ),
+  tar_target(
+    raw_unemployment,
+    fetch_unemployment(unemployment_url)
+  ),
+  tar_target(
+    coc_unemployment_rate,
+    build_coc_unemployment(raw_unemployment, county_crosswalk)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
@@ -206,7 +221,8 @@ list(
       full_join(coc_fmr, by = c("coc_number", "year")) %>% 
       full_join(coc_zillow_rent, by = c("coc_number", "year")) %>% 
       full_join(coc_rent_burden, by = c("coc_number", "year")) %>% 
-      full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) 
+      full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
+      full_join(coc_unemployment_rate, by = c("coc_number", "year")) 
   ),
   #### Output Dataset Files ####
   tar_map(
