@@ -207,6 +207,10 @@ list(
     raw_unemployment,
     fetch_unemployment(unemployment_url)
   ),
+  tar_target(
+    coc_unemployment_rate,
+    build_coc_unemployment(raw_unemployment, county_crosswalk)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
