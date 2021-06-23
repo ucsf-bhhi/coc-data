@@ -1,4 +1,4 @@
-fetch_unemployment = function(url) {
+fetch_unemployment = function(url, min_year = 2010) {
   read_tsv(
     url,
     col_names = c("series", "year", "month", "value", "footnote"),
@@ -6,7 +6,7 @@ fetch_unemployment = function(url) {
     skip = 1,
     na = "-"
   ) %>% 
-    filter(str_sub(series, -2, -1) == "03", year >= 2010)
+    filter(str_sub(series, -2, -1) == "03", year >= min_year)
 }
 
 build_coc_unemployment = function(unemployment_data, county_crosswalk) {
@@ -14,9 +14,9 @@ build_coc_unemployment = function(unemployment_data, county_crosswalk) {
     make_coc_unemployment(county_crosswalk)
 }
 
-process_unemployment = function(unemployment_data) {
+process_unemployment = function(unemployment_data, use_month = "M01") {
   unemployment_data %>% 
-    filter(month == "M01") %>% 
+    filter(month == use_month) %>% 
     mutate(
       county_fips = str_sub(series, 6, 10),
       unemployment_rate = value / 100) %>%
