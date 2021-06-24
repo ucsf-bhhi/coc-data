@@ -106,7 +106,7 @@ make_coc_unemployment = function(unemployment_data, county_crosswalk) {
 }
 
 fetch_public_program_use <- function(year) {
-  acs_variables = c(
+  acs_variables <- c(
     "total_hh_snap" = "B22001_001",
     "hh_with_snap" = "B22001_002",
     "total_hh_pub_assist" = "B19057_001",
@@ -120,12 +120,12 @@ fetch_public_program_use <- function(year) {
     "total_female_19_64" = "C27007_016",
     "female_19_64_with_medicaid" = "C27007_017"
   )
-  
-  states = tidycensus::fips_codes %>% 
-    distinct(state_code) %>% 
-    filter(state_code < 60) %>% 
+
+  states <- tidycensus::fips_codes %>%
+    distinct(state_code) %>%
+    filter(state_code < 60) %>%
     pull()
-  
+
   map_dfr(
     states,
     ~ fetch_acs("tract", state = .x, year = year, output = "wide",
@@ -133,10 +133,10 @@ fetch_public_program_use <- function(year) {
   )
 }
 
-build_coc_public_program_use = function(acs_data, tract_crosswalk) {
-  tract_crosswalk %>% 
-    left_join(acs_data, by = c("tract_fips" = "fips", "year")) %>% 
-    group_by(coc_number, year) %>% 
+build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
+  tract_crosswalk %>%
+    left_join(acs_data, by = c("tract_fips" = "fips", "year")) %>%
+    group_by(coc_number, year) %>%
     summarise(
       across(
         c(
@@ -156,18 +156,18 @@ build_coc_public_program_use = function(acs_data, tract_crosswalk) {
         sum, na.rm = TRUE
       ),
       .groups = "keep"
-    ) %>% 
+    ) %>%
     transmute(
       share_hh_with_snap = hh_with_snap / total_hh_snap,
       share_hh_with_pub_assist = hh_with_pub_assist / total_hh_pub_assist,
-      share_hh_with_snap_or_pub_assist = 
+      share_hh_with_snap_or_pub_assist =
         hh_with_snap_or_pub_assist / total_hh_snap_or_pub_assist,
       share_hh_with_ssi = hh_with_ssi / total_hh_ssi,
-      total_19_64_with_medicaid = 
+      total_19_64_with_medicaid =
         male_19_64_with_medicaid + female_19_64_with_medicaid,
       total_19_64 = total_male_19_64 + total_female_19_64,
       share_with_medicaid = total_19_64_with_medicaid / total_19_64
-    ) %>% 
-    select(-total_19_64_with_medicaid, -total_19_64) %>% 
+    ) %>%
+    select(-total_19_64_with_medicaid, -total_19_64) %>%
     ungroup()
 }
