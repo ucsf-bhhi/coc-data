@@ -34,3 +34,8 @@
 | `rental_vacancy_rate`            | Share of rental housing units not rented                                                        | ACS                  | Census Tract              | coc\_rental\_vacancy\_rate |
 | `coc_unemployment_rate`          | Average January unemployment rate                                                               | BLS LAUS             | County                    | coc\_unemployment\_rate    |
 | `share_na_coc_unemployment_rate` | Share of CoC population with missing unemployment rate                                          | BLS LAUS             | County                    | coc\_unemployment\_rate    |
+| `shr_hh_with_snap`               | Share of households receiving SNAP benefits                                                     | ACS                  | Census Tract              | coc\_public\_program\_use  |
+| `shr_hh_with_pub_assist`         | Share of households receiving public assistance benefits                                        | ACS                  | Census Tract              | coc\_public\_program\_use  |
+| `shr_hh_with_snap_or_pub_assist` | Share of households receiving SNAP or public assistance benefits                                | ACS                  | Census Tract              | coc\_public\_program\_use  |
+| `shr_hh_with_ssi`                | Share of households receiving SSI benefits                                                      | ACS                  | Census Tract              | coc\_public\_program\_use  |
+| `shr_with_medicaid`              | Share of individuals age 19-64 enrolled in Medicaid                                             | ACS                  | Census Tract              | coc\_public\_program\_use  |

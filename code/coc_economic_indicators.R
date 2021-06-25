@@ -104,3 +104,115 @@ make_coc_unemployment = function(unemployment_data, county_crosswalk) {
       .groups = "drop"
     )
 }
+
+#' Fetch ACS public program use data
+#'
+#' Fetches Census Tract level enrollment in SNAP, public assistance, SSI, and
+#' Medicaid from the Census API. Medicaid data is for age 19-64.
+#'
+#' @param year A numeric with the year of the data to fetch.
+#'
+#' @return A data frame:
+#' * `fips`: Census Tract FIPS code
+#' * `year`: Year
+#' * `total_hh_snap`: Total number of households from the SNAP enrollment table
+#' * `hh_with_snap`: Number of households receiving SNAP benefits
+#' * `total_hh_pub_assist`: Total number of households from the public
+#'     assistance enrollment table
+#' * `hh_with_pub_assist`: Number of households receiving public assistance
+#'     benefits
+#' * `total_hh_ssi`: Total number of households from the SSI enrollment table
+#' * `hh_with_ssi`: Number of households receiving SSI benefits
+#' * `total_male_19_64`: Total number of males age 19-64
+#' * `male_19_64_with_medicaid`: Number of males age 19-64 enrolled in Medicaid
+#' * `total_female_19_64`: Total number of females age 19-64
+#' * `female_19_64_with_medicaid`: Number of females age 19-64 enrolled in
+#'     Medicaid
+#' @seealso [build_coc_public_program_use()] for CoC public program utilization
+#'   rates
+fetch_public_program_use <- function(year) {
+  acs_variables <- c(
+    "total_hh_snap" = "B22001_001",
+    "hh_with_snap" = "B22001_002",
+    "total_hh_pub_assist" = "B19057_001",
+    "hh_with_pub_assist" = "B19057_002",
+    "total_hh_snap_or_pub_assist" = "B19058_001",
+    "hh_with_snap_or_pub_assist" = "B19058_002",
+    "total_hh_ssi" = "B19056_001",
+    "hh_with_ssi" = "B19056_002",
+    "total_male_19_64" = "C27007_006",
+    "male_19_64_with_medicaid" = "C27007_007",
+    "total_female_19_64" = "C27007_016",
+    "female_19_64_with_medicaid" = "C27007_017"
+  )
+
+  states <- tidycensus::fips_codes %>%
+    distinct(state_code) %>%
+    filter(state_code < 60) %>%
+    pull()
+
+  map_dfr(
+    states,
+    ~ fetch_acs("tract", state = .x, year = year, output = "wide",
+                variables = acs_variables)
+  )
+}
+
+#' CoC public program utilization rates
+#'
+#' Builds CoC public program utilization rates by summing total enrollment in
+#' the Census Tracts within each CoC and dividing by the relevant total
+#' population in the CoC.
+#'
+#' @param acs_data A data frame with tract-level enrollment counts from
+#'   [fetch_public_program_use()].
+#' @param tract_crosswalk A data frame with a tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
+#'
+#' @return A data frame: 
+#' * `coc_number`: CoC number 
+#' * `year`: Year 
+#' * `share_hh_with_snap`: Share of households receiving SNAP benefits
+#' * `share_hh_with_pub_assist`: Share of households receiving public assistance
+#'     benefits 
+#' * `share_hh_with_ssi`: Share of households receiving SSI benefits
+#' * `share_with_medicaid`: Share of individuals age 19-64 enrolled in
+#'     Medicaid
+build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
+  tract_crosswalk %>%
+    left_join(acs_data, by = c("tract_fips" = "fips", "year")) %>%
+    group_by(coc_number, year) %>%
+    summarise(
+      across(
+        c(
+          "total_hh_snap",
+          "hh_with_snap",
+          "total_hh_pub_assist",
+          "hh_with_pub_assist",
+          "total_hh_snap_or_pub_assist",
+          "hh_with_snap_or_pub_assist",
+          "total_hh_ssi",
+          "hh_with_ssi",
+          "total_male_19_64",
+          "male_19_64_with_medicaid",
+          "total_female_19_64",
+          "female_19_64_with_medicaid"
+        ),
+        sum, na.rm = TRUE
+      ),
+      .groups = "keep"
+    ) %>%
+    transmute(
+      shr_hh_with_snap = hh_with_snap / total_hh_snap,
+      shr_hh_with_pub_assist = hh_with_pub_assist / total_hh_pub_assist,
+      shr_hh_with_snap_or_pub_assist =
+        hh_with_snap_or_pub_assist / total_hh_snap_or_pub_assist,
+      shr_hh_with_ssi = hh_with_ssi / total_hh_ssi,
+      total_19_64_with_medicaid =
+        male_19_64_with_medicaid + female_19_64_with_medicaid,
+      total_19_64 = total_male_19_64 + total_female_19_64,
+      shr_with_medicaid = total_19_64_with_medicaid / total_19_64
+    ) %>%
+    select(-total_19_64_with_medicaid, -total_19_64) %>%
+    ungroup()
+}

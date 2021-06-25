@@ -211,6 +211,16 @@ list(
     coc_unemployment_rate,
     build_coc_unemployment(raw_unemployment, county_crosswalk)
   ),
+  #### Public Program Use ###
+  tar_target(
+    tract_public_program_use,
+    fetch_public_program_use(shapefile_years),
+    pattern = map(shapefile_years)
+  ),
+  tar_target(
+    coc_public_program_use,
+    build_coc_public_program_use(tract_public_program_use, tract_crosswalk)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
@@ -222,7 +232,8 @@ list(
       full_join(coc_zillow_rent, by = c("coc_number", "year")) %>% 
       full_join(coc_rent_burden, by = c("coc_number", "year")) %>% 
       full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
-      full_join(coc_unemployment_rate, by = c("coc_number", "year")) 
+      full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
+      full_join(coc_public_program_use, by = c("coc_number", "year")) 
   ),
   #### Output Dataset Files ####
   tar_map(
