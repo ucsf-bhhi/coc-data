@@ -4,6 +4,7 @@ library(assertr, warn.conflicts = FALSE)
 library(glue, warn.conflicts = FALSE)
 library(rlang, warn.conflicts = FALSE)
 library(crayon, warn.conflicts = FALSE)
+library(pointblank, warn.conflicts = FALSE)
 
 expect_between <- function(data, column, min, max, tolerance = tt_tol) {
   column_exists({{ data }}, {{ column }})
