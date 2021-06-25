@@ -105,6 +105,31 @@ make_coc_unemployment = function(unemployment_data, county_crosswalk) {
     )
 }
 
+#' Fetch ACS public program use data
+#'
+#' Fetches Census Tract level enrollment in SNAP, public assistance, SSI, and
+#' Medicaid from the Census API. Medicaid data is for age 19-64.
+#'
+#' @param year A numeric with the year of the data to fetch.
+#'
+#' @return A data frame:
+#' * `fips`: Census Tract FIPS code
+#' * `year`: Year
+#' * `total_hh_snap`: Total number of households from the SNAP enrollment table
+#' * `hh_with_snap`: Number of households receiving SNAP benefits
+#' * `total_hh_pub_assist`: Total number of households from the public
+#'     assistance enrollment table
+#' * `hh_with_pub_assist`: Number of households receiving public assistance
+#'     benefits
+#' * `total_hh_ssi`: Total number of households from the SSI enrollment table
+#' * `hh_with_ssi`: Number of households receiving SSI benefits
+#' * `total_male_19_64`: Total number of males age 19-64
+#' * `male_19_64_with_medicaid`: Number of males age 19-64 enrolled in Medicaid
+#' * `total_female_19_64`: Total number of females age 19-64
+#' * `female_19_64_with_medicaid`: Number of females age 19-64 enrolled in
+#'     Medicaid
+#' @seealso [build_coc_public_program_use()] for CoC public program utilization
+#'   rates
 fetch_public_program_use <- function(year) {
   acs_variables <- c(
     "total_hh_snap" = "B22001_001",
@@ -133,6 +158,26 @@ fetch_public_program_use <- function(year) {
   )
 }
 
+#' CoC public program utilization rates
+#'
+#' Builds CoC public program utilization rates by summing total enrollment in
+#' the Census Tracts within each CoC and dividing by the relevant total
+#' population in the CoC.
+#'
+#' @param acs_data A data frame with tract-level enrollment counts from
+#'   [fetch_public_program_use()].
+#' @param tract_crosswalk A data frame with a tract to CoC crosswalk from
+#'   [build_tract_crosswalk()].
+#'
+#' @return A data frame: 
+#' * `coc_number`: CoC number 
+#' * `year`: Year 
+#' * `share_hh_with_snap`: Share of households receiving SNAP benefits
+#' * `share_hh_with_pub_assist`: Share of households receiving public assistance
+#'     benefits 
+#' * `share_hh_with_ssi`: Share of households receiving SSI benefits
+#' * `share_with_medicaid`: Share of individuals age 19-64 enrolled in
+#'     Medicaid
 build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
   tract_crosswalk %>%
     left_join(acs_data, by = c("tract_fips" = "fips", "year")) %>%
