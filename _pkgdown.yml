@@ -1,9 +1,9 @@
 reference:
-- title: Shapefile processing
+- title: Shapefile Processing
 - contents:
   - read_raw_coc_shapefile
   - simplify_shapefile
-- title: CoC crosswalk creation
+- title: CoC Crosswalk Creation
 - contents:
   - build_county_crosswalk
   - build_tract_crosswalk
@@ -12,13 +12,13 @@ reference:
   - fetch_tract_data
   - build_coc_populations
   - get_coc_categories
-- title: PiT counts
+- title: PiT Counts
 - contents:
   - build_pit_rates
   - get_long_pit_data
   - get_pit_years
   - parse_pit_year
-- title: Renter population share
+- title: Renter Population Share
 - contents:
   - build_coc_renter_shares
   - build_county_renter_share
@@ -36,14 +36,14 @@ reference:
 - title: Rent burden
 - contents:
   - build_coc_rent_burden
-- title: Rental vacancy rate 
+- title: Rental Vacancy Rate 
 - contents:
   - build_coc_vacancy_rates
 - title: Unemployment rate
 - contents:
   - build_coc_unemployment
   - fetch_unemployment
-- title: Public program utilization
+- title: Public Program Utilization
 - contents:
   - build_coc_public_program_use
   - fetch_public_program_use
