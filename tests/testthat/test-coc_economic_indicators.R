@@ -29,11 +29,11 @@ test_that("build_coc_public_program_use() works properly", {
   expected <- tibble(
     coc_number = c("AA-101", "AA-102"),
     year = rep(2019, 2),
-    share_hh_with_snap = c(0.045, 0.05),
-    share_hh_with_pub_assist = c(0.04, 0.03),
-    share_hh_with_snap_or_pub_assist = c(0.085, 0.08),
-    share_hh_with_ssi = c(0.05, 0.04),
-    share_with_medicaid = c(0.255, 0.235)
+    shr_hh_with_snap = c(0.045, 0.05),
+    shr_hh_with_pub_assist = c(0.04, 0.03),
+    shr_hh_with_snap_or_pub_assist = c(0.085, 0.08),
+    shr_hh_with_ssi = c(0.05, 0.04),
+    shr_with_medicaid = c(0.255, 0.235)
   )
 
   expect_equal(build_coc_public_program_use(test_acs, test_crosswalk), expected)

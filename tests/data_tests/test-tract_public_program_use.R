@@ -69,11 +69,11 @@ test_that("coc_public_program_use is valid", {
     expect_col_vals_not_null(names(.)) %>%
     expect_col_vals_between(
       c(
-        "share_hh_with_snap",
-        "share_hh_with_pub_assist",
-        "share_hh_with_snap_or_pub_assist",
-        "share_hh_with_ssi",
-        "share_with_medicaid"
+        "shr_hh_with_snap",
+        "shr_hh_with_pub_assist",
+        "shr_hh_with_snap_or_pub_assist",
+        "shr_hh_with_ssi",
+        "shr_with_medicaid"
       ),
       0, 1
     )

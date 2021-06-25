@@ -203,15 +203,15 @@ build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
       .groups = "keep"
     ) %>%
     transmute(
-      share_hh_with_snap = hh_with_snap / total_hh_snap,
-      share_hh_with_pub_assist = hh_with_pub_assist / total_hh_pub_assist,
-      share_hh_with_snap_or_pub_assist =
+      shr_hh_with_snap = hh_with_snap / total_hh_snap,
+      shr_hh_with_pub_assist = hh_with_pub_assist / total_hh_pub_assist,
+      shr_hh_with_snap_or_pub_assist =
         hh_with_snap_or_pub_assist / total_hh_snap_or_pub_assist,
-      share_hh_with_ssi = hh_with_ssi / total_hh_ssi,
+      shr_hh_with_ssi = hh_with_ssi / total_hh_ssi,
       total_19_64_with_medicaid =
         male_19_64_with_medicaid + female_19_64_with_medicaid,
       total_19_64 = total_male_19_64 + total_female_19_64,
-      share_with_medicaid = total_19_64_with_medicaid / total_19_64
+      shr_with_medicaid = total_19_64_with_medicaid / total_19_64
     ) %>%
     select(-total_19_64_with_medicaid, -total_19_64) %>%
     ungroup()
