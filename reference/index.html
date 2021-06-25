@@ -116,7 +116,143 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-shapefile-processing" class="hasAnchor"><a href="#section-shapefile-processing" class="anchor"></a>Shapefile processing</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="read_raw_coc_shapefile.html">read_raw_coc_shapefile()</a></code> </p>
+        </td>
+        <td><p>Read in original CoC shapefile</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simplify_shapefile.html">simplify_shapefile()</a></code> </p>
+        </td>
+        <td><p>Simplify shapefile and set projected CRS</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-coc-crosswalk-creation" class="hasAnchor"><a href="#section-coc-crosswalk-creation" class="anchor"></a>CoC crosswalk creation</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_county_crosswalk.html">build_county_crosswalk()</a></code> </p>
+        </td>
+        <td><p>Creates the county to CoC crosswalk</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="build_tract_crosswalk.html">build_tract_crosswalk()</a></code> </p>
+        </td>
+        <td><p>Creates the tract to CoC crosswalk</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="map_tracts_to_cocs.html">match_tract_to_coc()</a></code> <code><a href="map_tracts_to_cocs.html">recombine_tracts()</a></code> <code><a href="map_tracts_to_cocs.html">map_tracts_to_cocs()</a></code> </p>
+        </td>
+        <td><p>Match tracts to CoCs</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="clip_tracts.html">clip_tracts()</a></code> </p>
+        </td>
+        <td><p>Trim tracts outside of CoC boundaries</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="fetch_tract_data.html">fetch_tract_data()</a></code> </p>
+        </td>
+        <td><p>Gets ACS data from the Census API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="build_coc_populations.html">build_coc_populations()</a></code> </p>
+        </td>
+        <td><p>CoC populations and poverty rates</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_coc_categories.html">get_coc_categories()</a></code> </p>
+        </td>
+        <td><p>Creates a table of urban/rural CoC categories</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-pit-counts" class="hasAnchor"><a href="#section-pit-counts" class="anchor"></a>PiT counts</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_pit_rates.html">build_pit_rates()</a></code> </p>
+        </td>
+        <td><p>Calculate homelessness rates by CoC</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_long_pit_data.html">get_long_pit_data()</a></code> </p>
+        </td>
+        <td><p>Reshapes the PIT count data to long form</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_pit_years.html">get_pit_years()</a></code> </p>
+        </td>
+        <td><p>Parse the years covered by the PIT counts</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="parse_pit_year.html">parse_pit_year()</a></code> </p>
+        </td>
+        <td><p>Read and clean raw PIT count data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-renter-population-share" class="hasAnchor"><a href="#section-renter-population-share" class="anchor"></a>Renter population share</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_coc_renter_shares.html">build_county_renter_share()</a></code> <code><a href="build_coc_renter_shares.html">build_coc_renter_shares()</a></code> </p>
+        </td>
+        <td><p>Calculates the share of renters in each CoC</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-hud-fmrs-fair-market-rents-" class="hasAnchor"><a href="#section-hud-fmrs-fair-market-rents-" class="anchor"></a>HUD FMRs (Fair Market Rents)</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -134,40 +270,29 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="build_coc_populations.html">build_coc_populations()</a></code> </p>
+          <p><code><a href="process_fmr.html">process_fmr()</a></code> </p>
         </td>
-        <td><p>CoC populations and poverty rates</p></td>
+        <td><p>Read and process raw FMR data</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="build_coc_public_program_use.html">build_coc_public_program_use()</a></code> </p>
+          <p><code><a href="get_acs_county_sub.html">get_states_with_split_counties()</a></code> <code><a href="get_acs_county_sub.html">get_acs_county_sub()</a></code> </p>
         </td>
-        <td><p>CoC public program utilization rates</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_coc_rent_burden.html">build_coc_rent_burden()</a></code> </p>
-        </td>
-        <td><p>CoC-level shares of rent burdened households</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_coc_renter_shares.html">build_county_renter_share()</a></code> <code><a href="build_coc_renter_shares.html">build_coc_renter_shares()</a></code> </p>
-        </td>
-        <td><p>Calculates the share of renters in each CoC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_coc_unemployment.html">build_coc_unemployment()</a></code> </p>
-        </td>
-        <td><p>CoC-level unemployment rates</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_coc_vacancy_rates.html">build_coc_vacancy_rates()</a></code> </p>
-        </td>
-        <td><p>CoC housing vacancy rents</p></td>
-      </tr><tr>
+        <td><p>Fetches ACS renter household counts</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-zillow-rent-index" class="hasAnchor"><a href="#section-zillow-rent-index" class="anchor"></a>Zillow Rent Index</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="build_coc_zillow_rent.html">build_coc_zillow_rent()</a></code> </p>
@@ -176,99 +301,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="build_county_crosswalk.html">build_county_crosswalk()</a></code> </p>
-        </td>
-        <td><p>Creates the county to CoC crosswalk</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_pit_rates.html">build_pit_rates()</a></code> </p>
-        </td>
-        <td><p>Calculate homelessness rates by CoC</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="build_tract_crosswalk.html">build_tract_crosswalk()</a></code> </p>
-        </td>
-        <td><p>Creates the tract to CoC crosswalk</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="build_tract_zillow_rent.html">build_tract_zillow_rent()</a></code> </p>
         </td>
         <td><p>Creates a census tract level Zillow rent index</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="clip_tracts.html">clip_tracts()</a></code> </p>
-        </td>
-        <td><p>Trim tracts outside of CoC boundaries</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fetch_acs.html">fetch_acs()</a></code> </p>
-        </td>
-        <td><p>Fetches ACS table data from the Census Bureau API</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fetch_public_program_use.html">fetch_public_program_use()</a></code> </p>
-        </td>
-        <td><p>Fetch ACS public program use data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fetch_tract_data.html">fetch_tract_data()</a></code> </p>
-        </td>
-        <td><p>Gets ACS data from the Census API</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fetch_unemployment.html">fetch_unemployment()</a></code> </p>
-        </td>
-        <td><p>Fetch raw BLS unemployment rates</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_acs_county_sub.html">get_states_with_split_counties()</a></code> <code><a href="get_acs_county_sub.html">get_acs_county_sub()</a></code> </p>
-        </td>
-        <td><p>Fetches ACS renter household counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_coc_categories.html">get_coc_categories()</a></code> </p>
-        </td>
-        <td><p>Creates a table of urban/rural CoC categories</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_long_pit_data.html">get_long_pit_data()</a></code> </p>
-        </td>
-        <td><p>Reshapes the PIT count data to long form</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_pit_years.html">get_pit_years()</a></code> </p>
-        </td>
-        <td><p>Parse the years covered by the PIT counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="map_tracts_to_cocs.html">match_tract_to_coc()</a></code> <code><a href="map_tracts_to_cocs.html">recombine_tracts()</a></code> <code><a href="map_tracts_to_cocs.html">map_tracts_to_cocs()</a></code> </p>
-        </td>
-        <td><p>Match tracts to CoCs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="parse_pit_year.html">parse_pit_year()</a></code> </p>
-        </td>
-        <td><p>Read and clean raw PIT count data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="process_fmr.html">process_fmr()</a></code> </p>
-        </td>
-        <td><p>Read and process raw FMR data</p></td>
       </tr><tr>
         
         <td>
@@ -281,24 +316,113 @@
           <p><code><a href="process_zillow_data.html">process_zillow_data()</a></code> </p>
         </td>
         <td><p>Reads and processes raw Zillow rent index data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-rent-burden" class="hasAnchor"><a href="#section-rent-burden" class="anchor"></a>Rent burden</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_coc_rent_burden.html">build_coc_rent_burden()</a></code> </p>
+        </td>
+        <td><p>CoC-level shares of rent burdened households</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-rental-vacancy-rate" class="hasAnchor"><a href="#section-rental-vacancy-rate" class="anchor"></a>Rental vacancy rate</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_coc_vacancy_rates.html">build_coc_vacancy_rates()</a></code> </p>
+        </td>
+        <td><p>CoC housing vacancy rents</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-unemployment-rate" class="hasAnchor"><a href="#section-unemployment-rate" class="anchor"></a>Unemployment rate</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_coc_unemployment.html">build_coc_unemployment()</a></code> </p>
+        </td>
+        <td><p>CoC-level unemployment rates</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="read_raw_coc_shapefile.html">read_raw_coc_shapefile()</a></code> </p>
+          <p><code><a href="fetch_unemployment.html">fetch_unemployment()</a></code> </p>
         </td>
-        <td><p>Read in original CoC shapefile</p></td>
+        <td><p>Fetch raw BLS unemployment rates</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-public-program-utilization" class="hasAnchor"><a href="#section-public-program-utilization" class="anchor"></a>Public program utilization</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="build_coc_public_program_use.html">build_coc_public_program_use()</a></code> </p>
+        </td>
+        <td><p>CoC public program utilization rates</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="simplify_shapefile.html">simplify_shapefile()</a></code> </p>
+          <p><code><a href="fetch_public_program_use.html">fetch_public_program_use()</a></code> </p>
         </td>
-        <td><p>Simplify shapefile and set projected CRS</p></td>
-      </tr><tr>
+        <td><p>Fetch ACS public program use data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-helpers" class="hasAnchor"><a href="#section-helpers" class="anchor"></a>Helpers</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="write_crosswalk.html">write_crosswalk()</a></code> </p>
+          <p><code><a href="fetch_acs.html">fetch_acs()</a></code> </p>
         </td>
-        <td><p>Write the crosswalk to CSV</p></td>
+        <td><p>Fetches ACS table data from the Census Bureau API</p></td>
       </tr><tr>
         
         <td>
