@@ -2,7 +2,7 @@ test_that("fetching program use data works", {
   tar_load(tract_public_program_use)
 
   tract_public_program_use %>%
-    expect_col_vals_not_null(names(.)) %>%
+    expect_col_vals_not_null(everything()) %>%
     expect_col_vals_gte(
       c(
         "total_hh_snap",
@@ -66,15 +66,7 @@ test_that("fetching program use data works", {
 
 test_that("coc_public_program_use is valid", {
   tar_read(coc_public_program_use) %>%
-    expect_col_vals_not_null(names(.)) %>%
-    expect_col_vals_between(
-      c(
-        "shr_hh_with_snap",
-        "shr_hh_with_pub_assist",
-        "shr_hh_with_snap_or_pub_assist",
-        "shr_hh_with_ssi",
-        "shr_with_medicaid"
-      ),
-      0, 1
-    )
+    expect_col_vals_not_null(everything()) %>%
+    expect_rows_distinct(vars(coc_number, year)) %>%
+    expect_col_vals_between(starts_with("shr"), 0, 1)
 })
