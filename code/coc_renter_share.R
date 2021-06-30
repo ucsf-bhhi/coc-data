@@ -128,9 +128,9 @@ fetch_acs_rent_burden <- function(state, year) {
 #' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
 #' @seealso [build_coc_rent_burden()] for the main function
 #' @keywords internal
-make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, year) {
+make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, yr) {
   tract_crosswalk %>%
-    filter(year == year, !is.na(coc_number)) %>% 
+    filter(year == yr, !is.na(coc_number)) %>% 
     left_join(tract_rent_data, by = c("year", "tract_fips")) %>%
     group_by(year, coc_number) %>%
     summarise(
