@@ -1,3 +1,7 @@
+#template:
+#  params:
+#    bootswatch: default
+
 reference:
 - title: Shapefile Processing
 - contents:
