@@ -1,8 +1,10 @@
 ---
 title: "Data Dictionary"
-output:
-  md_document:
-    variant: gfm
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Dictionary}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -58,11 +60,7 @@ dictionary <- tribble(
 )
 ```
 
-# Data Dictionary
-
 ```{r print dictionary}
-kable(
-  dictionary,
-  format = "pipe"
-)
+kbl(dictionary) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
 ```

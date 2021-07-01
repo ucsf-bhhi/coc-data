@@ -1,6 +1,19 @@
-#template:
-#  params:
-#    bootswatch: default
+title: CoC Data
+
+url: https://fuzzy-barnacle-653bb83d.pages.github.io
+
+template:
+  params: 
+    bootswatch: spacelab
+
+repo:
+  branch: main
+
+navbar:
+  components:
+    intro:
+      text: Data Dictionary
+      href: articles/data-dictionary.html
 
 reference:
 - title: Shapefile Processing

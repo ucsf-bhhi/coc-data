@@ -8,7 +8,7 @@ To run the code, make sure you have the environmental variable `CENSUS_API_KEY` 
 
 The strategy to link census tracts and counties to CoCs is based on [Byrne, et al. \(2016\)](https://github.com/tomhbyrne/HUD-CoC-Geography-Crosswalk).
 
-A data dictionary is avaiable in [data-dictionary.md](data-dictionary.md).
+A data dictionary is available [here](https://fuzzy-barnacle-653bb83d.pages.github.io/articles/data-dictionary.html).
 
 ### Input Data Sources
 
@@ -17,6 +17,7 @@ A data dictionary is avaiable in [data-dictionary.md](data-dictionary.md).
 | CoC Shapefiles                         | `input_data/geography/input_data/coc_shapefiles`  | [HUD CoC GIS Geodatabases](https://www.hudexchange.info/programs/coc/gis-tools/)                                                                                 |
 | Census Tract Shapefiles                | **tigris** R package via **tidycensus** R package | [**tidycensus** package](https://walker-data.com/tidycensus/), [**tigris** package](https://github.com/walkerke/tigris)                                          |
 | American Community Survey (ACS) Tables | **tidycensus** R package                          | [**tidycensus** package](https://walker-data.com/tidycensus/)                                                                                                    |
+| Bureau of Labor Statistics - Local Area Unemployment Statistics | `unemployment_url` target in `_targets.R` | [County Level Raw Data](https://download.bls.gov/pub/time.series/la/la.data.64.County)
 | Census Tract to ZIP Code Crosswalks    | `input_data/geography/usps_tract_to_zip/`         | [HUD-USPS ZIP Code Crosswalk Files](https://www.huduser.gov/portal/datasets/usps_crosswalk.html)                                                                 |
 | HUD Fair Market Rents (FMR)            | `input_data/hud_fmr/`                             | [HUD Fair Market Rents, County Level Data](https://www.huduser.gov/portal/datasets/fmr.html)                                                                     |
 | HUD Point in Time (PIT) Counts         | `input_data/pit_counts/`                          | [HUD 2007-2019 PIT Counts by CoC](https://www.huduser.gov/portal/sites/default/files/xls/2007-2019-Point-in-Time-Estimates-by-CoC.xlsx)                          |
