@@ -1,6 +1,11 @@
 #template:
 #  params:
 #    bootswatch: default
+navbar:
+  components:
+    intro:
+      text: Data Dictionary
+      href: articles/data-dictionary.html
 
 reference:
 - title: Shapefile Processing
