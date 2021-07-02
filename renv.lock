@@ -186,10 +186,10 @@
     },
     "cli": {
       "Package": "cli",
-      "Version": "2.5.0",
+      "Version": "3.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a94ba44cee3ea571e813721e64184172"
+      "Hash": "096829b701eec2d2b4538be63de97e75"
     },
     "clipr": {
       "Package": "clipr",
@@ -1108,15 +1108,15 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "0.5.0.9000",
+      "Version": "0.5.0.9002",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "targets",
       "RemoteUsername": "ropensci",
       "RemoteRef": "HEAD",
-      "RemoteSha": "1b4332bcdee21e26d3dd511d3924ff8cb68545f0",
-      "Hash": "a21d9e8dc3a0e7f81d39645c2cb52fde"
+      "RemoteSha": "2b5f353a8f25b56d4ca7b2f89f776271adcac9ac",
+      "Hash": "9ffedae038e85040df4bd12c2fcb8321"
     },
     "testthat": {
       "Package": "testthat",
