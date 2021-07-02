@@ -1,4 +1,5 @@
 source("renv/activate.R")
+options(renv.config.auto.snapshot = TRUE)
 if (interactive()) {
   suppressMessages(require(devtools))
 }
