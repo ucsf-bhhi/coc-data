@@ -43,7 +43,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = TRUE)
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          renv::restore()
           install.packages("pkgdown", type = "binary")
         shell: Rscript {0}
 
