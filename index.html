@@ -5,8 +5,8 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Point-in-time homelessness counts and covariates by CoC • coc.data.package</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<title>Point-in-time homelessness counts and covariates by CoC • CoC Data</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/spacelab/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -30,7 +30,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">coc.data.package</a>
+        <a class="navbar-link" href="index.html">CoC Data</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
@@ -44,7 +44,22 @@
   </a>
 </li>
 <li>
+  <a href="articles/data-dictionary.html">Data Dictionary</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/data-dictionary.html">Data Dictionary</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -73,7 +88,7 @@
 <p>The project makes extensive use of the <a href="https://docs.ropensci.org/targets/"><strong>targets</strong> R package</a>.</p>
 <p>To run the code, make sure you have the environmental variable <code>CENSUS_API_KEY</code> set to your API key for U.S. Census Bureau data. You can get a free API key here: <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>.</p>
 <p>The strategy to link census tracts and counties to CoCs is based on <a href="https://github.com/tomhbyrne/HUD-CoC-Geography-Crosswalk">Byrne, et al. <span class="math inline">2016</span></a>.</p>
-<p>A data dictionary is avaiable in <a href="data-dictionary.html">data-dictionary.md</a>.</p>
+<p>A data dictionary is available <a href="https://fuzzy-barnacle-653bb83d.pages.github.io/articles/data-dictionary.html">here</a>.</p>
 <div id="input-data-sources" class="section level3">
 <h3 class="hasAnchor">
 <a href="#input-data-sources" class="anchor"></a>Input Data Sources</h3>
@@ -109,21 +124,28 @@
 <td><a href="https://walker-data.com/tidycensus/"><strong>tidycensus</strong> package</a></td>
 </tr>
 <tr class="even">
+<td>Bureau of Labor Statistics - Local Area Unemployment Statistics</td>
+<td>
+<code>unemployment_url</code> target in <code>_targets.R</code>
+</td>
+<td><a href="https://download.bls.gov/pub/time.series/la/la.data.64.County">County Level Raw Data</a></td>
+</tr>
+<tr class="odd">
 <td>Census Tract to ZIP Code Crosswalks</td>
 <td><code>input_data/geography/usps_tract_to_zip/</code></td>
 <td><a href="https://www.huduser.gov/portal/datasets/usps_crosswalk.html">HUD-USPS ZIP Code Crosswalk Files</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>HUD Fair Market Rents (FMR)</td>
 <td><code>input_data/hud_fmr/</code></td>
 <td><a href="https://www.huduser.gov/portal/datasets/fmr.html">HUD Fair Market Rents, County Level Data</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>HUD Point in Time (PIT) Counts</td>
 <td><code>input_data/pit_counts/</code></td>
 <td><a href="https://www.huduser.gov/portal/sites/default/files/xls/2007-2019-Point-in-Time-Estimates-by-CoC.xlsx">HUD 2007-2019 PIT Counts by CoC</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Zillow Rent Index</td>
 <td><code>input_data/zillow_rent_index/</code></td>
 <td><a href="https://www.zillow.com/research/data/">Zillow Observed Rent Index (Smoothed, Seasonally Adjusted): All Homes Plus Multifamily Time Series (Zip Code Geography)</a></td>
