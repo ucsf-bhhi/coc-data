@@ -72,7 +72,11 @@ get_long_pit_data <- function(wide_pit_data) {
 get_coc_categories <- function(wide_pit_data) {
   wide_pit_data %>%
     # category is only present in the last year of data so filter for that one
-    filter(!is.na(coc_category)) %>%
+    filter(
+      !is.na(coc_category),
+      !(str_sub(coc_number, 1, 2) %in% c("GU", "MP", "VI", "PR")),
+      coc_number != "MO-604a"
+    ) %>%
     # just keep these variables around
     select(coc_number, coc_name, coc_category)
 }
