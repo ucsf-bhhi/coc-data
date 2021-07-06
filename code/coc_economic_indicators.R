@@ -180,6 +180,7 @@ fetch_public_program_use <- function(year) {
 #'     Medicaid
 build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
   tract_crosswalk %>%
+    filter(!is.na(coc_number)) %>% 
     left_join(acs_data, by = c("tract_fips" = "fips", "year")) %>%
     group_by(coc_number, year) %>%
     summarise(
