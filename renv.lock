@@ -149,6 +149,13 @@
       "Repository": "CRAN",
       "Hash": "06015476250468fc013c30022118ce3a"
     },
+    "bslib": {
+      "Package": "bslib",
+      "Version": "0.2.5.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2f069f3f42847231aef7baa49bed97b0"
+    },
     "cachem": {
       "Package": "cachem",
       "Version": "1.0.4",
@@ -305,10 +312,15 @@
     },
     "downlit": {
       "Package": "downlit",
-      "Version": "0.2.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "f24f1e44320a978c03050b8403a83793"
+      "Version": "0.2.1.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "downlit",
+      "RemoteUsername": "r-lib",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "0778f600f74c41db12d8c69d8090e3163233beb9",
+      "Hash": "06ca4ca73385558f61bdbcfde754a0e4"
     },
     "dplyr": {
       "Package": "dplyr",
@@ -639,6 +651,13 @@
       "Repository": "CRAN",
       "Hash": "b8a2e63d67833aa65c6592cfc0fa8f65"
     },
+    "jquerylib": {
+      "Package": "jquerylib",
+      "Version": "0.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5aab57a3bd297eee1c1d862735972182"
+    },
     "jsonify": {
       "Package": "jsonify",
       "Version": "1.2.1",
@@ -816,10 +835,16 @@
     },
     "pkgdown": {
       "Package": "pkgdown",
-      "Version": "1.6.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "8896076540d9e9b556a2ec658c81f916"
+      "Version": "1.6.1.9001",
+      "Source": "GitHub",
+      "Remotes": "r-lib/downlit",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "pkgdown",
+      "RemoteUsername": "r-lib",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "ce9781a15c7ea07df9fb17a11295ba4abec0b54b",
+      "Hash": "5dbeba867201d11b11118ae87737708d"
     },
     "pkgload": {
       "Package": "pkgload",
