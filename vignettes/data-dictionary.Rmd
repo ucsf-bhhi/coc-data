@@ -1,6 +1,7 @@
 ---
 title: "Data Dictionary"
 output: rmarkdown::html_vignette
+full_width_article: true
 vignette: >
   %\VignetteIndexEntry{Data Dictionary}
   %\VignetteEngine{knitr::rmarkdown}
