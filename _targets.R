@@ -25,7 +25,8 @@ tar_option_set(
     "tidycensus",
     "fs",
     "readxl",
-    "haven"
+    "haven",
+    "rvest"
   )
 )
 
@@ -36,6 +37,12 @@ output_formats <- list(
 
 list(
   #### Input Data ####
+  tar_target(pre_2013_shapefile_years, 2011:2012),
+  tar_target(
+    raw_pre_2013_coc_shapefiles,
+    get_pre_2013_shapefiles(pre_2013_shapefile_years),
+    pattern = map(pre_2013_shapefile_years)
+  ),
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls(
