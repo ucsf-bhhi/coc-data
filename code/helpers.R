@@ -71,6 +71,8 @@ fetch_acs = function(..., quiet = TRUE) {
 write_dataset <- function(data, output_function, extension,
                           output_dir = "output_data",
                           file_name = "coc_data") {
+  # make sure output directory exists
+  dir_create(output_dir)
   file_path <- path(output_dir, file_name, ext = extension)
   # build the actual call to a function that will write the output file
   output_call <- call(output_function, data, file_path)
