@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,12 +39,6 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/data-dictionary.html">Data Dictionary</a>
 </li>
@@ -83,15 +79,15 @@
   <div class="contents col-md-9">
 <div id="coc-data" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#coc-data" class="anchor"></a>coc-data</h1></div>
+<a href="#coc-data" class="anchor" aria-hidden="true"></a>coc-data</h1></div>
 <p>Builds a dataset that combines Point in Time counts with housing market and other economic data converted to be at the Continuum of Care (CoC) level.</p>
-<p>The project makes extensive use of the <a href="https://docs.ropensci.org/targets/"><strong>targets</strong> R package</a>.</p>
-<p>To run the code, make sure you have the environmental variable <code>CENSUS_API_KEY</code> set to your API key for U.S. Census Bureau data. You can get a free API key here: <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a>.</p>
-<p>The strategy to link census tracts and counties to CoCs is based on <a href="https://github.com/tomhbyrne/HUD-CoC-Geography-Crosswalk">Byrne, et al. <span class="math inline">2016</span></a>.</p>
-<p>A data dictionary is available <a href="https://fuzzy-barnacle-653bb83d.pages.github.io/articles/data-dictionary.html">here</a>.</p>
+<p>The project makes extensive use of the <a href="https://docs.ropensci.org/targets/" class="external-link"><strong>targets</strong> R package</a>.</p>
+<p>To run the code, make sure you have the environmental variable <code>CENSUS_API_KEY</code> set to your API key for U.S. Census Bureau data. You can get a free API key here: <a href="https://api.census.gov/data/key_signup.html" class="external-link uri">https://api.census.gov/data/key_signup.html</a>.</p>
+<p>The strategy to link census tracts and counties to CoCs is based on <a href="https://github.com/tomhbyrne/HUD-CoC-Geography-Crosswalk" class="external-link">Byrne, et al. (2016)</a>.</p>
+<p>A data dictionary is available <a href="https://fuzzy-barnacle-653bb83d.pages.github.io/articles/data-dictionary.html" class="external-link">here</a>.</p>
 <div id="input-data-sources" class="section level3">
 <h3 class="hasAnchor">
-<a href="#input-data-sources" class="anchor"></a>Input Data Sources</h3>
+<a href="#input-data-sources" class="anchor" aria-hidden="true"></a>Input Data Sources</h3>
 <table class="table">
 <colgroup>
 <col width="15%">
@@ -107,48 +103,48 @@
 <tr class="odd">
 <td>CoC Shapefiles</td>
 <td><code>input_data/geography/input_data/coc_shapefiles</code></td>
-<td><a href="https://www.hudexchange.info/programs/coc/gis-tools/">HUD CoC GIS Geodatabases</a></td>
+<td><a href="https://www.hudexchange.info/programs/coc/gis-tools/" class="external-link">HUD CoC GIS Geodatabases</a></td>
 </tr>
 <tr class="even">
 <td>Census Tract Shapefiles</td>
 <td>
 <strong>tigris</strong> R package via <strong>tidycensus</strong> R package</td>
 <td>
-<a href="https://walker-data.com/tidycensus/"><strong>tidycensus</strong> package</a>, <a href="https://github.com/walkerke/tigris"><strong>tigris</strong> package</a>
+<a href="https://walker-data.com/tidycensus/" class="external-link"><strong>tidycensus</strong> package</a>, <a href="https://github.com/walkerke/tigris" class="external-link"><strong>tigris</strong> package</a>
 </td>
 </tr>
 <tr class="odd">
 <td>American Community Survey (ACS) Tables</td>
 <td>
 <strong>tidycensus</strong> R package</td>
-<td><a href="https://walker-data.com/tidycensus/"><strong>tidycensus</strong> package</a></td>
+<td><a href="https://walker-data.com/tidycensus/" class="external-link"><strong>tidycensus</strong> package</a></td>
 </tr>
 <tr class="even">
 <td>Bureau of Labor Statistics - Local Area Unemployment Statistics</td>
 <td>
 <code>unemployment_url</code> target in <code>_targets.R</code>
 </td>
-<td><a href="https://download.bls.gov/pub/time.series/la/la.data.64.County">County Level Raw Data</a></td>
+<td><a href="https://download.bls.gov/pub/time.series/la/la.data.64.County" class="external-link">County Level Raw Data</a></td>
 </tr>
 <tr class="odd">
 <td>Census Tract to ZIP Code Crosswalks</td>
 <td><code>input_data/geography/usps_tract_to_zip/</code></td>
-<td><a href="https://www.huduser.gov/portal/datasets/usps_crosswalk.html">HUD-USPS ZIP Code Crosswalk Files</a></td>
+<td><a href="https://www.huduser.gov/portal/datasets/usps_crosswalk.html" class="external-link">HUD-USPS ZIP Code Crosswalk Files</a></td>
 </tr>
 <tr class="even">
 <td>HUD Fair Market Rents (FMR)</td>
 <td><code>input_data/hud_fmr/</code></td>
-<td><a href="https://www.huduser.gov/portal/datasets/fmr.html">HUD Fair Market Rents, County Level Data</a></td>
+<td><a href="https://www.huduser.gov/portal/datasets/fmr.html" class="external-link">HUD Fair Market Rents, County Level Data</a></td>
 </tr>
 <tr class="odd">
 <td>HUD Point in Time (PIT) Counts</td>
 <td><code>input_data/pit_counts/</code></td>
-<td><a href="https://www.huduser.gov/portal/sites/default/files/xls/2007-2019-Point-in-Time-Estimates-by-CoC.xlsx">HUD 2007-2019 PIT Counts by CoC</a></td>
+<td><a href="https://www.huduser.gov/portal/sites/default/files/xls/2007-2019-Point-in-Time-Estimates-by-CoC.xlsx" class="external-link">HUD 2007-2019 PIT Counts by CoC</a></td>
 </tr>
 <tr class="even">
 <td>Zillow Rent Index</td>
 <td><code>input_data/zillow_rent_index/</code></td>
-<td><a href="https://www.zillow.com/research/data/">Zillow Observed Rent Index (Smoothed, Seasonally Adjusted): All Homes Plus Multifamily Time Series (Zip Code Geography)</a></td>
+<td><a href="https://www.zillow.com/research/data/" class="external-link">Zillow Observed Rent Index (Smoothed, Seasonally Adjusted): All Homes Plus Multifamily Time Series (Zip Code Geography)</a></td>
 </tr>
 </tbody>
 </table>
@@ -158,37 +154,44 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/ucsf-bhhi/coc-data/">https://​github.com/​ucsf-bhhi/​coc-data/​</a>
 </li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Eve Perry <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html">More on authors...</a></li>
 </ul>
 </div>
+
+
 
   </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Eve Perry.</p>
+  <p></p>
+<p>Developed by Eve Perry.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -196,6 +199,8 @@
 
   
 
+
+  
 
   </body>
 </html>

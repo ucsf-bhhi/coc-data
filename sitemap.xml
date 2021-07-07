@@ -1,126 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/index.html</loc>
+    <loc>/404.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_fmr.html</loc>
+    <loc>/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_populations.html</loc>
+    <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_public_program_use.html</loc>
+    <loc>/articles/data-dictionary.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_rent_burden.html</loc>
+    <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_renter_shares.html</loc>
+    <loc>/authors.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_unemployment.html</loc>
+    <loc>/index.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_vacancy_rates.html</loc>
+    <loc>/reference/build_coc_fmr.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_coc_zillow_rent.html</loc>
+    <loc>/reference/build_coc_populations.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_county_crosswalk.html</loc>
+    <loc>/reference/build_coc_public_program_use.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_pit_rates.html</loc>
+    <loc>/reference/build_coc_rent_burden.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_regex.html</loc>
+    <loc>/reference/build_coc_renter_shares.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_tract_crosswalk.html</loc>
+    <loc>/reference/build_coc_unemployment.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/build_tract_zillow_rent.html</loc>
+    <loc>/reference/build_coc_vacancy_rates.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/clip_tracts.html</loc>
+    <loc>/reference/build_coc_zillow_rent.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_acs.html</loc>
+    <loc>/reference/build_county_crosswalk.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_acs_rent_burden.html</loc>
+    <loc>/reference/build_pit_rates.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_acs_vacancy_data.html</loc>
+    <loc>/reference/build_regex.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_public_program_use.html</loc>
+    <loc>/reference/build_tract_crosswalk.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_tract_data.html</loc>
+    <loc>/reference/build_tract_zillow_rent.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/fetch_unemployment.html</loc>
+    <loc>/reference/clip_tracts.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_acs_county_sub.html</loc>
+    <loc>/reference/fetch_acs.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_coc_categories.html</loc>
+    <loc>/reference/fetch_acs_rent_burden.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_long_pit_data.html</loc>
+    <loc>/reference/fetch_acs_vacancy_data.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_overall_pit_counts.html</loc>
+    <loc>/reference/fetch_public_program_use.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_pit_years.html</loc>
+    <loc>/reference/fetch_tract_data.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/get_tract_to_zip_year.html</loc>
+    <loc>/reference/fetch_unemployment.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/make_coc_rent_burden.html</loc>
+    <loc>/reference/get_acs_county_sub.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/make_coc_unemployment.html</loc>
+    <loc>/reference/get_coc_categories.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/make_coc_vacancy_rates.html</loc>
+    <loc>/reference/get_long_pit_data.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/make_pit_rates.html</loc>
+    <loc>/reference/get_overall_pit_counts.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/map_tracts_to_cocs.html</loc>
+    <loc>/reference/get_pit_years.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/parse_pit_year.html</loc>
+    <loc>/reference/get_tract_to_zip_year.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/process_fmr.html</loc>
+    <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/process_tract_to_zip.html</loc>
+    <loc>/reference/make_coc_rent_burden.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/process_unemployment.html</loc>
+    <loc>/reference/make_coc_unemployment.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/process_zillow_data.html</loc>
+    <loc>/reference/make_coc_vacancy_rates.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/read_raw_coc_shapefile.html</loc>
+    <loc>/reference/make_pit_rates.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/simplify_shapefile.html</loc>
+    <loc>/reference/map_tracts_to_cocs.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/reference/write_dataset.html</loc>
+    <loc>/reference/parse_pit_year.html</loc>
   </url>
   <url>
-    <loc>https://fuzzy-barnacle-653bb83d.pages.github.io/articles/data-dictionary.html</loc>
+    <loc>/reference/process_fmr.html</loc>
+  </url>
+  <url>
+    <loc>/reference/process_tract_to_zip.html</loc>
+  </url>
+  <url>
+    <loc>/reference/process_unemployment.html</loc>
+  </url>
+  <url>
+    <loc>/reference/process_zillow_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/read_raw_coc_shapefile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simplify_shapefile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_dataset.html</loc>
   </url>
 </urlset>
