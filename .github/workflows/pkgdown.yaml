@@ -3,6 +3,7 @@ on:
     branches:
       - main
       - master
+      - test-ci-data-build
     tags:
       -'*'
 
@@ -42,6 +43,19 @@ jobs:
 
       - name: Install package
         run: R CMD INSTALL .
+        
+      - name: Restore targets cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/coc-data/coc-data/_targets
+          key: targets
+          restore-keys: targets
+        
+      - name: Build data
+        run: |
+          library(targets)
+          tar_make_future(workers = 2)
+        shell: Rscript {0}
 
       - name: Deploy package
         run: |
