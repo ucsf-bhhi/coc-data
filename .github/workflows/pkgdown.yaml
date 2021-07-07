@@ -59,7 +59,7 @@ jobs:
           library(targets)
           library(tidycensus)
           census_api_key(Sys.getenv("CENSUS_API_KEY"))
-          tar_make_future(workers = 2)
+          tar_make()
         shell: Rscript {0}
 
       - name: Deploy package
