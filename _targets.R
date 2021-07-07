@@ -243,6 +243,8 @@ list(
       write_dataset(combined_dataset, functions, extensions)
     ),
     names = extensions
-  )
+  ),
+  #### Basic Summary Stats ####
+  tar_target(summary_stats, build_summary_stats(combined_dataset))
 )
 
