@@ -21,12 +21,10 @@ tar_option_set(
   packages = c(
     "tidyverse",
     "sf",
-    "rmapshaper",
     "tidycensus",
     "fs",
     "readxl",
-    "haven",
-    "rvest"
+    "haven"
   )
 )
 
@@ -37,12 +35,7 @@ output_formats <- list(
 
 list(
   #### Input Data ####
-  tar_target(pre_2013_shapefile_years, 2011:2012),
-  tar_target(
-    raw_pre_2013_coc_shapefiles,
-    get_pre_2013_shapefiles(pre_2013_shapefile_years),
-    pattern = map(pre_2013_shapefile_years)
-  ),
+  tar_target(years, 2011:2019),
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls(
@@ -51,6 +44,12 @@ list(
       regex = build_regex()
     ),
     format = "file"
+  ),
+  tar_target(
+    coc_shapefiles,
+    get_shapefiles(years, raw_coc_shapefiles, crs = 2163),
+    pattern = map(years),
+    iteration = "list"
   ),
   tar_files_input(
     raw_pit_counts,
@@ -74,49 +73,19 @@ list(
   ),
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
-    shapefile_years,
-    parse_number(raw_coc_shapefiles)
-  ),
-  tar_target(
-    original_coc_shapefiles,
-    read_raw_coc_shapefile(raw_coc_shapefiles),
-    pattern = map(raw_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    simplified_coc_shapefiles, 
-    simplify_shapefile(original_coc_shapefiles),
-    pattern = map(original_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    dissolved_coc_shapefiles, 
-    ms_dissolve(simplified_coc_shapefiles, copy_fields = "year"),
-    pattern = map(simplified_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
     tracts, 
-    fetch_tract_data(shapefile_years, crs = 2163),
-    pattern = map(shapefile_years),
-    iteration = "list"
-  ),
-  tar_target(
-    clipped_tracts, 
-    clip_tracts(tracts, dissolved_coc_shapefiles),
-    pattern = map(tracts, dissolved_coc_shapefiles),
+    fetch_tract_data(years, crs = 2163),
+    pattern = map(years),
     iteration = "list"
   ),
   tar_target(
     tract_cocs, 
-    map_tracts_to_cocs(clipped_tracts, simplified_coc_shapefiles),
-    pattern = map(clipped_tracts, simplified_coc_shapefiles),
-    iteration = "list"
+    match_tract_to_coc(tracts, coc_shapefiles),
+    pattern = map(tracts, coc_shapefiles)
   ),
   tar_target(
     tract_crosswalk, 
-    build_tract_crosswalk(tract_cocs),
-    pattern = map(tract_cocs)
+    build_tract_crosswalk(tract_cocs)
   ),
   tar_target(
     county_crosswalk, 
@@ -152,8 +121,8 @@ list(
   #### Renter Shares ####
   tar_target(
     county_renter_shares,
-    build_county_renter_share(shapefile_years),
-    pattern = map(shapefile_years)
+    build_county_renter_share(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_renter_shares,
@@ -167,8 +136,8 @@ list(
   ),
   tar_target(
     acs_county_subdivision,
-    get_acs_county_sub(shapefile_years, processed_fmr),
-    pattern = map(shapefile_years)
+    get_acs_county_sub(years, processed_fmr),
+    pattern = map(years)
   ),
   tar_target(
     coc_fmr,
@@ -188,21 +157,21 @@ list(
     tract_zillow_rent,
     build_tract_zillow_rent(processed_zillow_data, tract_to_zip)
   ),
-  tar_target(
-    coc_zillow_rent,
-    build_coc_zillow_rent(tract_zillow_rent, tract_crosswalk)
-  ),
+  # tar_target(
+  #   coc_zillow_rent,
+  #   build_coc_zillow_rent(tract_zillow_rent, tract_crosswalk)
+  # ),
   #### Share Rent Burdened ####
   tar_target(
     coc_rent_burden,
-    build_coc_rent_burden(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_rent_burden(years, tract_crosswalk),
+    pattern - map(years)
   ),
   #### Rental Vacancy Rate ####
   tar_target(
     coc_rental_vacancy_rates,
-    build_coc_vacancy_rates(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_vacancy_rates(years, tract_crosswalk),
+    pattern = map(years)
   ),
   #### Unemployment Rate ####
   tar_files_input(
@@ -221,8 +190,8 @@ list(
   #### Public Program Use ###
   tar_target(
     tract_public_program_use,
-    fetch_public_program_use(shapefile_years),
-    pattern = map(shapefile_years)
+    fetch_public_program_use(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_public_program_use,
