@@ -11,6 +11,14 @@ build_regex <- function(file_extensions = c("gdb", "shp")) {
   paste0("[.](", paste(file_extensions, collapse = "|"), ")$")
 }
 
+#' Fetches pre-2013 CoC shapefiles
+#'
+#' Before 2013, HUD released individual shapefiles for each CoC instead of one
+#' national file. This downloads the individual shapefiles and combines them.
+#'
+#' @param year A numeric with the year of the shapefiles.
+#'
+#' @return A spatial data frame.
 get_pre_2013_shapefiles <- function(year) {
   # augment the built-in vector of state names & abbreviations with DC
   state_name <- c(state.name, "District of Columbia") 
@@ -20,6 +28,19 @@ get_pre_2013_shapefiles <- function(year) {
   map2_dfr(state_abb, state_name, download_shapefile, year)
 }
 
+#' Download a state's CoC shapefiles
+#'
+#' Downloads the CoC shapefiles for a state in the given year.
+#'
+#' @param state_abb A character vector with two letter state abbreviations.
+#' @param state_name A character vector with state names.
+#' @param year A numeric with the year of the shapefiles.
+#' @param td A directory where the shapefiles will be unzipped. Defaults to the
+#'   session temporary directory.
+#'
+#' @return A spatial data frame.
+#' @seealso [get_pre_2013_coc_shapefiles()] for the main function
+#' @keywords internal
 download_shapefile <- function(state_abb, state_name, year, td = tempdir()) {
   # paste together the url for the zip file with the state's shapefiles
   url <- paste0("https://files.hudexchange.info/reports/published/CoC_GIS_State_Shapefile_", state_abb, "_", year, ".zip")
