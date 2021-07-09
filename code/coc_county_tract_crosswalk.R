@@ -24,7 +24,9 @@ fetch_tract_data <- function(year, crs) {
     # clarify the tract FIPS code column name
     rename(tract_fips = fips) %>%
     # change the CRS for the tract boundaries
-    st_transform(crs)
+    st_transform(crs) %>% 
+    # all we need is the center point of the tract
+    st_point_on_surface()
 }
 
 #' Trim tracts outside of CoC boundaries
