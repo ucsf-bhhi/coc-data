@@ -11,6 +11,18 @@ build_regex <- function(file_extensions = c("gdb", "shp")) {
   paste0("[.](", paste(file_extensions, collapse = "|"), ")$")
 }
 
+get_shapefiles <- function(year, raw_coc_shapefiles, crs) {
+  if (year < 2013) {
+    raw = get_pre_2013_shapefiles(year)
+  } else {
+    raw = keep(raw_coc_shapefiles, ~ str_detect(.x, as.character(year))) %>% 
+      read_raw_coc_shapefile()
+  }
+  
+  raw %>% 
+    st_transform(crs = crs)
+}
+
 #' Fetches pre-2013 CoC shapefiles
 #'
 #' Before 2013, HUD released individual shapefiles for each CoC instead of one
@@ -88,29 +100,8 @@ read_raw_coc_shapefile <- function(shapefile_path) {
   # throw an error if we don't have a 4 digit number for the year
   stopifnot("coc shapefile year not 4 digits" = nchar(as.character(shapefile_year)) == 4)
   # read in the shapefile
-  st_read(shapefile_path) %>%
+  st_read(shapefile_path, quiet = TRUE) %>%
+    select(coc_number = COCNUM, coc_name = COCNAME) %>% 
     # add a column with the year
     mutate(year = shapefile_year)
-}
-
-
-#' Simplify shapefile and set projected CRS
-#'
-#' Simplifies a shapefile using [rmapshaper::ms_simplify()] and also sets a
-#' projected CRS using [sf::st_transform()] since [rmapshaper::ms_simplify()]
-#' prefers a projected CRS.
-#'
-#' @param shapefile An sf object with a raw CoC shapefile from
-#'   [read_raw_coc_shapefile()]
-#' @param projected_crs The EPSG code for the projected CRS
-#' @param simplify_keep_pct The share of the shapefile to keep when simplifying
-#'
-#' @return The simplified sf object now in the projected CRS.
-#' @seealso [read_raw_coc_shapefile()] for reading in the raw shapefile
-#' @seealso [match_tract_to_coc()] for using the shapefile to match CoCs to tracts
-simplify_shapefile <- function(shapefile, projected_crs = 2163, simplify_keep_pct = 0.1) {
-  # transform to the projected CRS
-  st_transform(shapefile, crs = projected_crs) %>%
-    # simplify the spatial object
-    ms_simplify(keep = simplify_keep_pct)
 }
