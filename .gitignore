@@ -29,9 +29,7 @@ README.html
 .Renviron
 output_data/
 _targets
-R/
 tests/data_tests/_targets.yaml
-R
 _targets.yaml
 docs
 inst/doc

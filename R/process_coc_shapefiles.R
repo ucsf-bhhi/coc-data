@@ -58,7 +58,7 @@ download_shapefile <- function(state_abb, state_name, year, td = tempdir()) {
   url <- paste0("https://files.hudexchange.info/reports/published/CoC_GIS_State_Shapefile_", state_abb, "_", year, ".zip")
   
   # download the zipfile to a tempfile
-  curl::curl_download(url, file_temp()) %>%
+  curl::curl_download(url, file_temp(), quiet = TRUE) %>%
     # extract the contents of the zipfile into the temp directory
     unzip(exdir = td)
   

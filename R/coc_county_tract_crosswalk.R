@@ -88,6 +88,8 @@ build_tract_crosswalk <- function(recombined_tracts) {
 build_county_crosswalk <- function(tract_crosswalk) {
   # start with the tract crosswalk
   tract_crosswalk %>%
+    # county fips is the first five digits of the tract fips
+    mutate(county_fips = str_sub(tract_fips, 1, 5)) %>% 
     # sum the county population in the CoC by grouping the tracts by county,
     # coc, and year
     group_by(county_fips, coc_number, year) %>%
@@ -114,25 +116,6 @@ build_county_crosswalk <- function(tract_crosswalk) {
     filter(!is.na(coc_number)) %>% 
     # remove grouping for when it's used later
     ungroup()
-}
-
-#' Write the crosswalk to CSV
-#' 
-#' Creates a CSV flat text file with the crosswalk data.
-#'
-#' @param crosswalk A crosswalk data frame
-#' @param type A string with the type of crosswalk. Either `"tract"` or `"county"`.
-#' @param output_directory A path to the directory to save the CSV
-#'
-#' @return Returns the CSV path so [targets] can track it
-write_crosswalk <- function(crosswalk, type, output_directory) {
-  filename <- paste(type, "coc_crosswalk", sep = "_")
-  
-  crosswalk_path <- path(output_directory, filename, ext = "csv")
-  write_csv(crosswalk, crosswalk_path)
-  
-  # return the CSV path so targets can track it
-  return(crosswalk_path)
 }
 
 #' CoC populations and poverty rates

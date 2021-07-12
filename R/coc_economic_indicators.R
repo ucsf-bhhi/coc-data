@@ -139,13 +139,21 @@ fetch_public_program_use <- function(year) {
     "total_hh_snap_or_pub_assist" = "B19058_001",
     "hh_with_snap_or_pub_assist" = "B19058_002",
     "total_hh_ssi" = "B19056_001",
-    "hh_with_ssi" = "B19056_002",
-    "total_male_19_64" = "C27007_006",
-    "male_19_64_with_medicaid" = "C27007_007",
-    "total_female_19_64" = "C27007_016",
-    "female_19_64_with_medicaid" = "C27007_017"
+    "hh_with_ssi" = "B19056_002"
   )
-
+  
+  # acs doesn't have these variables prior to 2012
+  # so only include them in 2012 and beyond
+  if (year >= 2012) {
+    acs_variables = c(
+      acs_variables,
+      "total_male_19_64" = "C27007_006",
+      "male_19_64_with_medicaid" = "C27007_007",
+      "total_female_19_64" = "C27007_016",
+      "female_19_64_with_medicaid" = "C27007_017"
+    )
+  }
+  
   states <- tidycensus::fips_codes %>%
     distinct(state_code) %>%
     filter(state_code < 60) %>%
