@@ -11,6 +11,26 @@ build_regex <- function(file_extensions = c("gdb", "shp")) {
   paste0("[.](", paste(file_extensions, collapse = "|"), ")$")
 }
 
+#' Read in CoC shapefiles
+#'
+#' Reads in all CoC shapefiles. Pre-2013 shapefiles are downloaded from HUD,
+#' 2013+ shapefiles are read from `input_data`.
+#'
+#' Prior to 2013, HUD released individual shapefiles for each CoC and grouped
+#' them by state. This function handles downloading and extracting those
+#' shapefiles in [pre_2013_shapefile()].
+#'
+#' @param year A numeric with the shapefile year.
+#' @param raw_coc_shapefiles A character vector of paths to shapefiles saved on
+#'   disk.
+#' @param crs A numeric with the coordinate reference system (CRS) to use for
+#'   the shapefiles.
+#'
+#' @return A spatial data frame:
+#' * coc_number: CoC number
+#' * coc_name: CoC name
+#' * year: Year
+#' * geometry: The CoC's spatial data in the provided CRS
 get_shapefiles <- function(year, raw_coc_shapefiles, crs) {
   if (year < 2013) {
     raw = get_pre_2013_shapefiles(year)
@@ -30,7 +50,12 @@ get_shapefiles <- function(year, raw_coc_shapefiles, crs) {
 #'
 #' @param year A numeric with the year of the shapefiles.
 #'
-#' @return A spatial data frame.
+#' @return A spatial data frame:
+#' * coc_number: CoC number
+#' * coc_name: CoC name
+#' * year: Year
+#' * geometry: The CoC's spatial data
+#' @seealso [get_shapefiles()]
 get_pre_2013_shapefiles <- function(year) {
   # augment the built-in vector of state names & abbreviations with DC
   state_name <- c(state.name, "District of Columbia") 
@@ -50,7 +75,11 @@ get_pre_2013_shapefiles <- function(year) {
 #' @param td A directory where the shapefiles will be unzipped. Defaults to the
 #'   session temporary directory.
 #'
-#' @return A spatial data frame.
+#' @return A spatial data frame:
+#' * coc_number: CoC number
+#' * coc_name: CoC name
+#' * year: Year
+#' * geometry: The CoC's spatial data
 #' @seealso [get_pre_2013_coc_shapefiles()] for the main function
 #' @keywords internal
 download_shapefile <- function(state_abb, state_name, year, td = tempdir()) {
@@ -91,9 +120,13 @@ download_shapefile <- function(state_abb, state_name, year, td = tempdir()) {
 #' @param shapefile_path Path to the shapefile or other spatial data
 #'   file/database
 #'
-#' @return The shapefile in a spatial data frame
-#' @seealso [simplify_shapefile()] for simplifying the shapefile to reduce its
-#'   complexity
+#' @return A spatial data frame:
+#' * coc_number: CoC number
+#' * coc_name: CoC name
+#' * year: Year
+#' * geometry: The CoC's spatial data
+#'
+#' @seealso [get_shapefiles()]
 read_raw_coc_shapefile <- function(shapefile_path) {
   # try to parse a year from the shapefile path
   shapefile_year <- parse_number(shapefile_path)
