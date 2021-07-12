@@ -16,7 +16,7 @@ fetch_tract_data <- function(year, crs) {
     distinct(state_code, state_name) %>%
     # filter out the territories (50 states & DC all have FIPS codes < 60)
     filter(as.integer(state_code) < 60)
-  
+
   # iterate over the list of states fetching the ACS data
   map_dfr(state_fips$state_code, ~
   # hit the census API for tract population and boundaries
@@ -24,7 +24,7 @@ fetch_tract_data <- function(year, crs) {
     # clarify the tract FIPS code column name
     rename(tract_fips = fips) %>%
     # change the CRS for the tract boundaries
-    st_transform(crs) %>% 
+    st_transform(crs) %>%
     # all we need is the center point of the tract
     st_point_on_surface()
 }
@@ -40,9 +40,9 @@ match_tracts_to_cocs <- function(tract_points, coc_boundaries) {
   # match up the tract centers and CoCs
   st_intersection(tract_points, coc_boundaries) %>%
     # strip off the spatial now that we're done with it
-    st_drop_geometry() %>% 
+    st_drop_geometry() %>%
     # just need the coc info
-    select(tract_fips, coc_number, coc_name) %>% 
+    select(tract_fips, coc_number, coc_name) %>%
     # tracts that aren't in a coc get dropped above so add them back in
     right_join(st_drop_geometry(tract_points))
 }
@@ -60,7 +60,7 @@ match_tracts_to_cocs <- function(tract_points, coc_boundaries) {
 build_tract_crosswalk <- function(recombined_tracts) {
   # start with the tract/CoC table
   recombined_tracts %>%
-    # calculate yearly CoC level stats by summing over the tracts in each CoC 
+    # calculate yearly CoC level stats by summing over the tracts in each CoC
     group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
@@ -79,7 +79,7 @@ build_tract_crosswalk <- function(recombined_tracts) {
 #'
 #' Calculates the CoC population, share of the CoC coming from each tract, and share of each CoC in each county.
 #' Both for the total population and the population under the poverty line.
-#' 
+#'
 #' @param tract_crosswalk A tract to CoC crosswalk
 #'
 #' @return A data frame with the CoC population,share of the CoC coming from
@@ -89,7 +89,7 @@ build_county_crosswalk <- function(tract_crosswalk) {
   # start with the tract crosswalk
   tract_crosswalk %>%
     # county fips is the first five digits of the tract fips
-    mutate(county_fips = str_sub(tract_fips, 1, 5)) %>% 
+    mutate(county_fips = str_sub(tract_fips, 1, 5)) %>%
     # sum the county population in the CoC by grouping the tracts by county,
     # coc, and year
     group_by(county_fips, coc_number, year) %>%
@@ -111,9 +111,9 @@ build_county_crosswalk <- function(tract_crosswalk) {
       pct_coc_poverty_pop_from_county = county_poverty_pop_in_coc / coc_poverty_pop,
       pct_county_pop_in_coc = county_pop_in_coc / county_pop,
       pct_county_poverty_pop_in_coc = county_poverty_pop_in_coc / county_pop_in_poverty
-    ) %>% 
+    ) %>%
     # get rid of the counties and pieces of counties which are not in CoCs
-    filter(!is.na(coc_number)) %>% 
+    filter(!is.na(coc_number)) %>%
     # remove grouping for when it's used later
     ungroup()
 }

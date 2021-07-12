@@ -33,13 +33,14 @@ build_regex <- function(file_extensions = c("gdb", "shp")) {
 #' * geometry: The CoC's spatial data in the provided CRS
 get_shapefiles <- function(year, raw_coc_shapefiles, crs) {
   if (year < 2013) {
-    raw = get_pre_2013_shapefiles(year)
+    raw <- get_pre_2013_shapefiles(year)
   } else {
-    raw = keep(raw_coc_shapefiles, ~ str_detect(.x, as.character(year))) %>% 
+    # look in the vector of shapefile paths and find the one for the given year
+    raw <- keep(raw_coc_shapefiles, ~ str_detect(.x, as.character(year))) %>%
       read_raw_coc_shapefile()
   }
-  
-  raw %>% 
+
+  raw %>%
     st_transform(crs = crs)
 }
 
@@ -58,9 +59,9 @@ get_shapefiles <- function(year, raw_coc_shapefiles, crs) {
 #' @seealso [get_shapefiles()]
 get_pre_2013_shapefiles <- function(year) {
   # augment the built-in vector of state names & abbreviations with DC
-  state_name <- c(state.name, "District of Columbia") 
+  state_name <- c(state.name, "District of Columbia")
   state_abb <- c(state.abb, "DC")
-  
+
   # iterate over the states and download the shapefiles
   map2_dfr(state_abb, state_name, download_shapefile, year)
 }
@@ -85,29 +86,29 @@ get_pre_2013_shapefiles <- function(year) {
 download_shapefile <- function(state_abb, state_name, year, td = tempdir()) {
   # paste together the url for the zip file with the state's shapefiles
   url <- paste0("https://files.hudexchange.info/reports/published/CoC_GIS_State_Shapefile_", state_abb, "_", year, ".zip")
-  
+
   # download the zipfile to a tempfile
   curl::curl_download(url, file_temp(), quiet = TRUE) %>%
     # extract the contents of the zipfile into the temp directory
     unzip(exdir = td)
-  
+
   # swap spaces for underscores in the state name
   state_name <- str_replace_all(state_name, " ", "_")
-  
+
   # find the directories with the shapefiles in them
   shapefile_dirs <- dir_ls(
     # look for paths in the temp directory with the state's name
     path(td, state_name),
-    # we don't want the metadata directory, so filter on that 
+    # we don't want the metadata directory, so filter on that
     glob = "*metadata*",
     # and take the paths that don't have metadata in them
     invert = TRUE
   )
-  
+
   # iterate over the directories and read in the shapefile and tack on the year
   map_dfr(shapefile_dirs, function(file) {
     st_read(file, quiet = TRUE) %>%
-      mutate(year = year) %>% 
+      mutate(year = year) %>%
       select(coc_number = COCNUM, coc_name = COCNAME, year, geometry)
   })
 }
@@ -134,7 +135,7 @@ read_raw_coc_shapefile <- function(shapefile_path) {
   stopifnot("coc shapefile year not 4 digits" = nchar(as.character(shapefile_year)) == 4)
   # read in the shapefile
   st_read(shapefile_path, quiet = TRUE) %>%
-    select(coc_number = COCNUM, coc_name = COCNAME) %>% 
+    select(coc_number = COCNUM, coc_name = COCNAME) %>%
     # add a column with the year
     mutate(year = shapefile_year)
 }
