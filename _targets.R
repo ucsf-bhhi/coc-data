@@ -6,15 +6,15 @@ plan(callr)
 library(fs)
 
 # load functions
-source("code/helpers.R")
-source("code/process_coc_shapefiles.R")
-source("code/coc_county_tract_crosswalk.R")
-source("code/pit_data_processing.R")
-source("code/pit_rates.R")
-source("code/coc_renter_share.R")
-source("code/coc_fmr.R")
-source("code/coc_zillow_rent.R")
-source("code/coc_economic_indicators.R")
+source("R/helpers.R")
+source("R/process_coc_shapefiles.R")
+source("R/coc_county_tract_crosswalk.R")
+source("R/pit_data_processing.R")
+source("R/pit_rates.R")
+source("R/coc_renter_share.R")
+source("R/coc_fmr.R")
+source("R/coc_zillow_rent.R")
+source("R/coc_economic_indicators.R")
 
 # load packages used by functions
 tar_option_set(
