@@ -89,8 +89,7 @@ list(
   ),
   tar_target(
     county_crosswalk, 
-    build_county_crosswalk(tract_crosswalk),
-    pattern = map(tract_crosswalk)
+    build_county_crosswalk(tract_crosswalk)
   ),
   tar_target(
     coc_populations,
