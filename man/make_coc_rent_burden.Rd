@@ -4,7 +4,7 @@
 \alias{make_coc_rent_burden}
 \title{Construct CoC-level shares of rent burdened households}
 \usage{
-make_coc_rent_burden(tract_rent_data, tract_crosswalk, year)
+make_coc_rent_burden(tract_rent_data, tract_crosswalk, yr)
 }
 \arguments{
 \item{tract_rent_data}{A data frame of tract level counts of rent burdened

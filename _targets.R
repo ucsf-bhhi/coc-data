@@ -21,7 +21,6 @@ tar_option_set(
   packages = c(
     "tidyverse",
     "sf",
-    "rmapshaper",
     "tidycensus",
     "fs",
     "readxl",
@@ -36,6 +35,7 @@ output_formats <- list(
 
 list(
   #### Input Data ####
+  tar_target(shapefile_years, 2011:2019),
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls(
@@ -67,25 +67,9 @@ list(
   ),
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
-    shapefile_years,
-    parse_number(raw_coc_shapefiles)
-  ),
-  tar_target(
-    original_coc_shapefiles,
-    read_raw_coc_shapefile(raw_coc_shapefiles),
-    pattern = map(raw_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    simplified_coc_shapefiles, 
-    simplify_shapefile(original_coc_shapefiles),
-    pattern = map(original_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    dissolved_coc_shapefiles, 
-    ms_dissolve(simplified_coc_shapefiles, copy_fields = "year"),
-    pattern = map(simplified_coc_shapefiles),
+    coc_shapefiles,
+    get_shapefiles(shapefile_years, raw_coc_shapefiles, crs = 2163),
+    pattern = map(shapefile_years),
     iteration = "list"
   ),
   tar_target(
@@ -95,26 +79,17 @@ list(
     iteration = "list"
   ),
   tar_target(
-    clipped_tracts, 
-    clip_tracts(tracts, dissolved_coc_shapefiles),
-    pattern = map(tracts, dissolved_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
     tract_cocs, 
-    map_tracts_to_cocs(clipped_tracts, simplified_coc_shapefiles),
-    pattern = map(clipped_tracts, simplified_coc_shapefiles),
-    iteration = "list"
+    match_tracts_to_cocs(tracts, coc_shapefiles),
+    pattern = map(tracts, coc_shapefiles)
   ),
   tar_target(
     tract_crosswalk, 
-    build_tract_crosswalk(tract_cocs),
-    pattern = map(tract_cocs)
+    build_tract_crosswalk(tract_cocs)
   ),
   tar_target(
     county_crosswalk, 
-    build_county_crosswalk(tract_crosswalk),
-    pattern = map(tract_crosswalk)
+    build_county_crosswalk(tract_crosswalk)
   ),
   tar_target(
     coc_populations,
