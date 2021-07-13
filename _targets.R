@@ -187,6 +187,10 @@ list(
     get_renting_households(years),
     pattern = map(years)
   ),
+  tar_target(
+    coc_evictions,
+    build_coc_evictions(eviction_data, renting_households, tract_crosswalk)
+  ),
   #### Unemployment Rate ####
   tar_files_input(
     unemployment_url,
