@@ -17,14 +17,14 @@ reference:
 - title: Shapefile Processing
 - contents:
   - read_raw_coc_shapefile
-  - simplify_shapefile
 - title: CoC Crosswalk Creation
 - contents:
   - build_county_crosswalk
   - build_tract_crosswalk
-  - map_tracts_to_cocs
-  - clip_tracts
+  - match_tracts_to_cocs
   - fetch_tract_data
+  - get_shapefiles
+  - get_pre_2013_shapefiles
   - build_coc_populations
   - get_coc_categories
 - title: PiT Counts
