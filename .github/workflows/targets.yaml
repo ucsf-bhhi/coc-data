@@ -49,9 +49,10 @@ jobs:
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install libcurl4-openssl-dev
-          sudo apt-get install libssl-dev
-          sudo apt-get install libzmq3-dev
+          sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev libssl-dev libxml2-dev libudunits2-dev libgdal-dev libgeos-dev libproj-dev libharfbuzz-dev libfribidi-dev libjq-dev libprotobuf-dev protobuf-compiler libzmq3-dev
+
 
       - name: Cache packages
         uses: actions/cache@v1
