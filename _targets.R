@@ -182,6 +182,11 @@ list(
     eviction_data,
     read_csv(raw_evictions_file)
   ),
+  tar_target(
+    renting_households,
+    get_renting_households(years),
+    pattern = map(years)
+  ),
   #### Unemployment Rate ####
   tar_files_input(
     unemployment_url,

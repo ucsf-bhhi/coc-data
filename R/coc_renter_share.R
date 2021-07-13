@@ -256,3 +256,16 @@ make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
     ) %>% 
     select(coc_number, year, gross_vacancy_rate, rental_vacancy_rate)
 }
+get_renting_households = function(year) {
+  map_dfr(
+    get_state_fips(),
+    ~ fetch_acs(
+      "tract",
+      state = .x,
+      year = year,
+      variables = c(renting_households = "B25003_003"),
+      output = "wide"
+    )
+  )
+}
+
