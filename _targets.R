@@ -177,6 +177,11 @@ list(
     build_coc_vacancy_rates(years, tract_crosswalk),
     pattern = map(years)
   ),
+  #### Evictions ####
+  tar_target(
+    eviction_data,
+    read_csv(raw_evictions_file)
+  ),
   #### Unemployment Rate ####
   tar_files_input(
     unemployment_url,
