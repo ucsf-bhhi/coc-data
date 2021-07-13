@@ -120,4 +120,9 @@ format_values = function(x) {
   )
 }
 
-
+get_state_fips <- function(fips_filter = 60) {
+  tidycensus::fips_codes %>%
+    distinct(state_code) %>%
+    filter(as.numeric(state_code) < fips_filter) %>%
+    pull(state_code)
+}
