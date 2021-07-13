@@ -63,10 +63,8 @@ jobs:
       - name: Restore packages
         shell: Rscript {0}
         run: |
-          options(repos = c(CRAN = "https://packagemanager.rstudio.com/all/latest"))
-          getOption("repos")
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-          renv::restore()
+          renv::restore(repos = "https://packagemanager.rstudio.com/all/latest")
 
       - name: Check if previous runs exist
         id: runs-exist
