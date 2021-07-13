@@ -35,7 +35,7 @@ output_formats <- list(
 
 list(
   #### Input Data ####
-  tar_target(shapefile_years, 2011:2019),
+  tar_target(years, 2011:2019),
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls(
@@ -73,14 +73,14 @@ list(
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
     coc_shapefiles,
-    get_shapefiles(shapefile_years, raw_coc_shapefiles, crs = 2163),
-    pattern = map(shapefile_years),
+    get_shapefiles(years, raw_coc_shapefiles, crs = 2163),
+    pattern = map(years),
     iteration = "list"
   ),
   tar_target(
     tracts, 
-    fetch_tract_data(shapefile_years, crs = 2163),
-    pattern = map(shapefile_years),
+    fetch_tract_data(years, crs = 2163),
+    pattern = map(years),
     iteration = "list"
   ),
   tar_target(
@@ -125,8 +125,8 @@ list(
   #### Renter Shares ####
   tar_target(
     county_renter_shares,
-    build_county_renter_share(shapefile_years),
-    pattern = map(shapefile_years)
+    build_county_renter_share(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_renter_shares,
@@ -140,8 +140,8 @@ list(
   ),
   tar_target(
     acs_county_subdivision,
-    get_acs_county_sub(shapefile_years, processed_fmr),
-    pattern = map(shapefile_years)
+    get_acs_county_sub(years, processed_fmr),
+    pattern = map(years)
   ),
   tar_target(
     coc_fmr,
@@ -168,14 +168,14 @@ list(
   #### Share Rent Burdened ####
   tar_target(
     coc_rent_burden,
-    build_coc_rent_burden(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_rent_burden(years, tract_crosswalk),
+    pattern = map(years)
   ),
   #### Rental Vacancy Rate ####
   tar_target(
     coc_rental_vacancy_rates,
-    build_coc_vacancy_rates(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_vacancy_rates(years, tract_crosswalk),
+    pattern = map(years)
   ),
   #### Unemployment Rate ####
   tar_files_input(
@@ -194,8 +194,8 @@ list(
   #### Public Program Use ###
   tar_target(
     tract_public_program_use,
-    fetch_public_program_use(shapefile_years),
-    pattern = map(shapefile_years)
+    fetch_public_program_use(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_public_program_use,
