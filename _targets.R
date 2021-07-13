@@ -66,7 +66,7 @@ list(
     format = "file"
   ),
   tar_files_input(
-    raw_evictions,
+    raw_evictions_file,
     "input_data/eviction_lab/all-tracts.csv",
     format = "file"
   ),
