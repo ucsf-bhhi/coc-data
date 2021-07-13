@@ -63,7 +63,8 @@ jobs:
       - name: Restore packages
         shell: Rscript {0}
         run: |
-          options(repos = c(REPO_NAME = "https://packagemanager.rstudio.com/all/latest"))
+          options(repos = c(CRAN = "https://packagemanager.rstudio.com/all/latest"))
+          getOption("repos")
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
           renv::restore()
 
