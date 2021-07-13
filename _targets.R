@@ -65,6 +65,11 @@ list(
     dir_ls("input_data/geography/usps_tract_to_zip"),
     format = "file"
   ),
+  tar_files_input(
+    raw_evictions,
+    "input_data/eviction_lab/all-tracts.csv",
+    format = "file"
+  ),
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
     coc_shapefiles,
