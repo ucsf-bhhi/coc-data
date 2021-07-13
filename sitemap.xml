@@ -64,7 +64,7 @@
     <loc>/reference/build_tract_zillow_rent.html</loc>
   </url>
   <url>
-    <loc>/reference/clip_tracts.html</loc>
+    <loc>/reference/download_shapefile.html</loc>
   </url>
   <url>
     <loc>/reference/fetch_acs.html</loc>
@@ -100,6 +100,12 @@
     <loc>/reference/get_pit_years.html</loc>
   </url>
   <url>
+    <loc>/reference/get_pre_2013_shapefiles.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_shapefiles.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_tract_to_zip_year.html</loc>
   </url>
   <url>
@@ -118,7 +124,7 @@
     <loc>/reference/make_pit_rates.html</loc>
   </url>
   <url>
-    <loc>/reference/map_tracts_to_cocs.html</loc>
+    <loc>/reference/match_tracts_to_cocs.html</loc>
   </url>
   <url>
     <loc>/reference/parse_pit_year.html</loc>
@@ -137,9 +143,6 @@
   </url>
   <url>
     <loc>/reference/read_raw_coc_shapefile.html</loc>
-  </url>
-  <url>
-    <loc>/reference/simplify_shapefile.html</loc>
   </url>
   <url>
     <loc>/reference/write_dataset.html</loc>

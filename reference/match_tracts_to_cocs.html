@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Match tracts to CoCs — match_tract_to_coc • CoC Data</title>
+<title>Match Census Tracts to CoCs — match_tracts_to_cocs • CoC Data</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Match tracts to CoCs — match_tract_to_coc" />
-<meta property="og:description" content="Calls functions that calculate the center points for tracts in CoCs, match
-them to the CoC the center point lies within, recombine the tracts in and not
-in CoCs, and does some light cleaning." />
+<meta property="og:title" content="Match Census Tracts to CoCs — match_tracts_to_cocs" />
+<meta property="og:description" content="Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
+lies within." />
 
 
 
@@ -82,7 +81,7 @@ in CoCs, and does some light cleaning." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CoC Data</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -130,22 +129,17 @@ in CoCs, and does some light cleaning." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Match tracts to CoCs</h1>
+    <h1>Match Census Tracts to CoCs</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/coc_county_tract_crosswalk.R'><code>R/coc_county_tract_crosswalk.R</code></a></small>
-    <div class="hidden name"><code>map_tracts_to_cocs.Rd</code></div>
+    <div class="hidden name"><code>match_tracts_to_cocs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calls functions that calculate the center points for tracts in CoCs, match
-them to the CoC the center point lies within, recombine the tracts in and not
-in CoCs, and does some light cleaning.</p>
+    <p>Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
+lies within.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>match_tract_to_coc</span><span class='op'>(</span><span class='va'>tract_points</span>, <span class='va'>coc_boundaries</span><span class='op'>)</span>
-
-<span class='fu'>recombine_tracts</span><span class='op'>(</span><span class='va'>tracts_in_cocs</span>, <span class='va'>tracts_not_in_cocs</span><span class='op'>)</span>
-
-<span class='fu'>map_tracts_to_cocs</span><span class='op'>(</span><span class='va'>clipped_tracts</span>, <span class='va'>coc_boundaries</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>match_tracts_to_cocs</span><span class='op'>(</span><span class='va'>tract_points</span>, <span class='va'>coc_boundaries</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,38 +150,10 @@ in CoCs, and does some light cleaning.</p>
     </tr>
     <tr>
       <th>coc_boundaries</th>
-      <td><p>An sf object with CoC boundaries</p></td>
-    </tr>
-    <tr>
-      <th>tracts_in_cocs</th>
-      <td><p>A data frame with tracts matched to CoCs</p></td>
-    </tr>
-    <tr>
-      <th>tracts_not_in_cocs</th>
-      <td><p>A data frame with tracts not in CoCs</p></td>
-    </tr>
-    <tr>
-      <th>clipped_tracts</th>
-      <td><p>A list with two elements: <code>tracts_in_cocs</code> &amp;
-<code>tracts_not_in_cocs</code></p></td>
+      <td><p>sf object with the CoC boundaries</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A clean data frame of all tracts, their tract population data, and
-the corresponding CoC if there is one.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>match_tract_to_coc</code>: Match Census Tracts to CoCs</p>
-<p>Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
-lies within.</p></li>
-<li><p><code>recombine_tracts</code>: Combine tables of tracts in and not in CoCs</p>
-<p>Takes the matched table of tracts in CoCs, joins it with the table of tracts
-not in CoCs and cleans up the variables.</p></li>
-</ul>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

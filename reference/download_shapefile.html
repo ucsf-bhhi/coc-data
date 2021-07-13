@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trim tracts outside of CoC boundaries — clip_tracts • CoC Data</title>
+<title>Download a state's CoC shapefiles — download_shapefile • CoC Data</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Trim tracts outside of CoC boundaries — clip_tracts" />
-<meta property="og:description" content="Not all Census tracts are in CoC boundaries, this separates out the tracts
-that are not in a CoC." />
+<meta property="og:title" content="Download a state's CoC shapefiles — download_shapefile" />
+<meta property="og:description" content="Downloads the CoC shapefiles for a state in the given year." />
 
 
 
@@ -81,7 +80,7 @@ that are not in a CoC." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CoC Data</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -129,36 +128,51 @@ that are not in a CoC." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Trim tracts outside of CoC boundaries</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/coc_county_tract_crosswalk.R'><code>R/coc_county_tract_crosswalk.R</code></a></small>
-    <div class="hidden name"><code>clip_tracts.Rd</code></div>
+    <h1>Download a state's CoC shapefiles</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/process_coc_shapefiles.R'><code>R/process_coc_shapefiles.R</code></a></small>
+    <div class="hidden name"><code>download_shapefile.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Not all Census tracts are in CoC boundaries, this separates out the tracts
-that are not in a CoC.</p>
+    <p>Downloads the CoC shapefiles for a state in the given year.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>clip_tracts</span><span class='op'>(</span><span class='va'>tract_geodata</span>, <span class='va'>dissolved_cocs</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>download_shapefile</span><span class='op'>(</span><span class='va'>state_abb</span>, <span class='va'>state_name</span>, <span class='va'>year</span>, td <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempdir</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tract_geodata</th>
-      <td><p>An sf object with the tract data &amp; boundaries</p></td>
+      <th>state_abb</th>
+      <td><p>A character vector with two letter state abbreviations.</p></td>
     </tr>
     <tr>
-      <th>dissolved_cocs</th>
-      <td><p>An sf object with the internal boundaries dissolved
-since we only care at this point if a tract is in <em>any</em> CoC</p></td>
+      <th>state_name</th>
+      <td><p>A character vector with state names.</p></td>
+    </tr>
+    <tr>
+      <th>year</th>
+      <td><p>A numeric with the year of the shapefiles.</p></td>
+    </tr>
+    <tr>
+      <th>td</th>
+      <td><p>A directory where the shapefiles will be unzipped. Defaults to the
+session temporary directory.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with two sf objects: one with the tracts that are in a CoC and
-one with the tracts that aren't in a CoC</p>
+    <p>A spatial data frame:</p><ul>
+<li><p>coc_number: CoC number</p></li>
+<li><p>coc_name: CoC name</p></li>
+<li><p>year: Year</p></li>
+<li><p>geometry: The CoC's spatial data</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code>get_pre_2013_coc_shapefiles()</code> for the main function</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

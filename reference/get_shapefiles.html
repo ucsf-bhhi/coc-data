@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simplify shapefile and set projected CRS — simplify_shapefile • CoC Data</title>
+<title>Read in CoC shapefiles — get_shapefiles • CoC Data</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Simplify shapefile and set projected CRS — simplify_shapefile" />
-<meta property="og:description" content="Simplifies a shapefile using rmapshaper::ms_simplify() and also sets a
-projected CRS using sf::st_transform() since rmapshaper::ms_simplify()
-prefers a projected CRS." />
+<meta property="og:title" content="Read in CoC shapefiles — get_shapefiles" />
+<meta property="og:description" content="Reads in all CoC shapefiles. Pre-2013 shapefiles are downloaded from HUD,
+2013+ shapefiles are read from input_data." />
 
 
 
@@ -82,7 +81,7 @@ prefers a projected CRS." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CoC Data</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -130,44 +129,51 @@ prefers a projected CRS." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simplify shapefile and set projected CRS</h1>
+    <h1>Read in CoC shapefiles</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/process_coc_shapefiles.R'><code>R/process_coc_shapefiles.R</code></a></small>
-    <div class="hidden name"><code>simplify_shapefile.Rd</code></div>
+    <div class="hidden name"><code>get_shapefiles.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Simplifies a shapefile using <code><a href='https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html'>rmapshaper::ms_simplify()</a></code> and also sets a
-projected CRS using <code><a href='https://r-spatial.github.io/sf/reference/st_transform.html'>sf::st_transform()</a></code> since <code><a href='https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html'>rmapshaper::ms_simplify()</a></code>
-prefers a projected CRS.</p>
+    <p>Reads in all CoC shapefiles. Pre-2013 shapefiles are downloaded from HUD,
+2013+ shapefiles are read from <code>input_data</code>.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>simplify_shapefile</span><span class='op'>(</span><span class='va'>shapefile</span>, projected_crs <span class='op'>=</span> <span class='fl'>2163</span>, simplify_keep_pct <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>get_shapefiles</span><span class='op'>(</span><span class='va'>year</span>, <span class='va'>raw_coc_shapefiles</span>, <span class='va'>crs</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>shapefile</th>
-      <td><p>An sf object with a raw CoC shapefile from
-<code><a href='read_raw_coc_shapefile.html'>read_raw_coc_shapefile()</a></code></p></td>
+      <th>year</th>
+      <td><p>A numeric with the shapefile year.</p></td>
     </tr>
     <tr>
-      <th>projected_crs</th>
-      <td><p>The EPSG code for the projected CRS</p></td>
+      <th>raw_coc_shapefiles</th>
+      <td><p>A character vector of paths to shapefiles saved on
+disk.</p></td>
     </tr>
     <tr>
-      <th>simplify_keep_pct</th>
-      <td><p>The share of the shapefile to keep when simplifying</p></td>
+      <th>crs</th>
+      <td><p>A numeric with the coordinate reference system (CRS) to use for
+the shapefiles.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The simplified sf object now in the projected CRS.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <p>A spatial data frame:</p><ul>
+<li><p>coc_number: CoC number</p></li>
+<li><p>coc_name: CoC name</p></li>
+<li><p>year: Year</p></li>
+<li><p>geometry: The CoC's spatial data in the provided CRS</p></li>
+</ul>
 
-    <div class='dont-index'><p><code><a href='read_raw_coc_shapefile.html'>read_raw_coc_shapefile()</a></code> for reading in the raw shapefile</p>
-<p><code><a href='map_tracts_to_cocs.html'>match_tract_to_coc()</a></code> for using the shapefile to match CoCs to tracts</p></div>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Prior to 2013, HUD released individual shapefiles for each CoC and grouped
+them by state. This function handles downloading and extracting those
+shapefiles in <code>pre_2013_shapefile()</code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
