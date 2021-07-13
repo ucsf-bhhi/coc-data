@@ -93,7 +93,9 @@ jobs:
         shell: Rscript {0}
 
       - name: Run targets pipeline
-        run: targets::tar_make_future(workers = 2)
+        run: |
+          tidycensus::census_api_key(Sys.getenv("CENSUS_API_KEY"))
+          targets::tar_make_future(workers = 2)
         shell: Rscript {0}
 
       - name: Identify files that the targets pipeline produced
