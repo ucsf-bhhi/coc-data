@@ -233,9 +233,9 @@ test_that("build_coc_evictions works properly", {
   )
   
   expected = tribble(
-    ~coc_number, ~year, ~eviction_filings, ~evictions, ~renting_households, ~eviction_filing_rate, ~eviction_rate,
-    "AA-101", 2019, 70, 50, 1000, 0.07, 0.05,
-    "AA-102", 2019, 50, 40, 1000, 0.05, 0.04
+    ~coc_number, ~year, ~eviction_filings, ~evictions, ~eviction_filing_rate, ~eviction_rate,
+    "AA-101", 2019, 70, 50, 0.07, 0.05,
+    "AA-102", 2019, 50, 40, 0.05, 0.04
   )
   
   expect_equal(build_coc_evictions(evictions, acs_data, tract_crosswalk), expected)
