@@ -257,41 +257,25 @@ make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
     select(coc_number, year, gross_vacancy_rate, rental_vacancy_rate)
 }
 
-build_coc_evictions <- function(evictions, renting_households, tract_crosswalk) {
-  tract_crosswalk %>%
-    left_join(evictions, by = c("tract_fips" = "GEOID", "year")) %>%
+build_coc_evictions <- function(evictions, county_crosswalk) {
+  county_crosswalk %>%
+    left_join(evictions, by = c("county_fips" = "GEOID", "year")) %>%
     rename(eviction_filings = eviction.filings) %>%
-    left_join(renting_households, by = c("tract_fips" = "fips", "year")) %>%
-    filter(!is.na(coc_number)) %>%
     group_by(coc_number, year) %>%
     summarise(
-      missing_evictions = sum(renting_households[is.na(evictions)]),
+      coc_renting_hh = first(coc_renting_hh),
+      missing_evictions_rate = sum(pct_coc_renting_hh_from_county[is.na(evictions)]),
       across(
-        c(eviction_filings, evictions, renting_households),
-        sum,
-        na.rm = TRUE
+        c(eviction_filings, evictions),
+        ~ sum(.x * pct_coc_renting_hh_from_county, na.rm = TRUE)
       ),
       .groups = "drop"
     ) %>%
     mutate(
       across(
-        c(eviction_filings, evictions, missing_evictions),
-        ~ .x / renting_households,
+        c(eviction_filings, evictions),
+        ~ .x / coc_renting_hh,
         .names = "{str_sub({.col}, 1, -2)}_rate"
       )
-    ) %>% 
-    select(-renting_households, -missing_evictions)
-}
-
-get_renting_households <- function(year) {
-  map_dfr(
-    get_state_fips(),
-    ~ fetch_acs(
-      "tract",
-      state = .x,
-      year = year,
-      variables = c(renting_households = "B25003_003"),
-      output = "wide"
     )
-  )
 }
