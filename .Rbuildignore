@@ -1,0 +1,10 @@
+^renv$
+^renv\.lock$
+^coc-data-package\.Rproj$
+^\.Rproj\.user$
+^code$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^LICENSE\.md$

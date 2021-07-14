@@ -1,0 +1,67 @@
+---
+title: "Data Dictionary"
+output: rmarkdown::html_vignette
+full_width_article: true
+vignette: >
+  %\VignetteIndexEntry{Data Dictionary}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+library(kableExtra)
+library(tibble)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+```
+
+```{r dictionary tibble}
+dictionary <- tribble(
+  ~Variable, ~Description, ~`Data Source`, ~`Original Geographic Unit`, ~`Creator Target`,
+  "`coc_number`", "CoC number", "CoC Shapefiles", "CoC", "coc_categories",
+  "`coc_name`", "CoC name", "CoC Shapefiles", "CoC", "coc_categories",
+  "`coc_category`", "CoC urban/rural categorization", "CoC Shapefiles", "CoC", "coc_categories",
+  "`year`", "Year", "CoC Shapefiles", "", "pit_rates",
+  "`overall_homeless`", "Count of all unhoused people in the CoC",  "HUD PiT Counts", "CoC", "pit_rates",
+  "`homeless_rate_total_pop`", "Share of total CoC population that is unhoused", "HUD PiT Counts & ACS", "CoC & County", "pit_rates",
+  "`homeless_rate_in_poverty`", "Total unhoused count divided by population below poverty line", "HUD PiT Counts & ACS", "CoC & County", "pit_rates",
+  "`homeless_per_1000_total_pop`", "Number of unhoused people per 1,000 people in the overall population", "HUD PiT Counts & ACS", "CoC & County", "pit_rates",
+  "`homeless_per_1000_in_poverty`", "Number of unhoused people per 1,000 people below the poverty line", "HUD PiT Counts & ACS", "CoC & County", "pit_rates",
+  "`coc_pop`", "CoC total population", "ACS", "Census Tract", "coc_populations",
+  "`coc_poverty_pop`", "CoC population below poverty line", "ACS", "Census Tract", "coc_populations",
+  "`coc_poverty_rate`", "Share of CoC population below poverty line", "ACS", "Census Tract", "coc_populations",
+  "`avg_renter_share`", "Share of CoC households that are renters", "ACS", "County", "coc_renter_shares",
+  "`avg_fmr0`", "CoC average 0-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`avg_fmr1`", "CoC average 1-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`avg_fmr2`", "CoC average 2-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`avg_fmr3`", "CoC average 3-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`avg_fmr4`", "CoC average 4-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`fmr0_pct_coc_na_rent`", "Share of CoC population in region without a 0-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`fmr1_pct_coc_na_rent`", "Share of CoC population in region without a 1-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`fmr2_pct_coc_na_rent`", "Share of CoC population in region without a 2-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`fmr3_pct_coc_na_rent`", "Share of CoC population in region without a 3-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`fmr4_pct_coc_na_rent`", "Share of CoC population in region without a 4-bedroom FMR", "HUD FMR", "County/County Subdivision", "coc_fmr",
+  "`coc_rent_zillow`", "Annual average Zillow rent index, NA for CoC with no zip codes covered by the Zillow rent index", "Zillow Rent Index", "Zip Code", "coc_zillow_rent",
+  "`coc_share_na_rent_zillow`", "Share of the CoC's population in zip codes not covered by the Zillow rent index", "Zillow Rent Index", "Zip Code", "coc_zillow_rent",
+  "`share_rent_over_30_pct_inc`", "Share of renter households paying more than 30 percent of their income in rent", "ACS", "Census Tract", "coc_rent_burdened_share",
+  "`share_rent_over_50_pct_inc`", "Share of renter households paying more than 50 percent of their income in rent", "ACS", "Census Tract", "coc_rent_burdened_share",
+  "`median_rent_burden`", "Median rent share of income in the CoC", "ACS", "Census Tract", "coc_rent_burdened_share",
+  "`gross_vacancy_rate`", "Share of all housing units that are unoccupied", "ACS", "Census Tract", "coc_rental_vacancy_rate",
+  "`rental_vacancy_rate`", "Share of rental housing units not rented", "ACS", "Census Tract", "coc_rental_vacancy_rate",
+  "`coc_unemployment_rate`","Average January unemployment rate", "BLS LAUS", "County", "coc_unemployment_rate",
+  "`share_na_coc_unemployment_rate`","Share of CoC population with missing unemployment rate", "BLS LAUS", "County", "coc_unemployment_rate",
+  "`shr_hh_with_snap`", "Share of households receiving SNAP benefits", "ACS", "Census Tract", "coc_public_program_use",
+  "`shr_hh_with_pub_assist`", "Share of households receiving public assistance benefits", "ACS", "Census Tract", "coc_public_program_use",
+  "`shr_hh_with_snap_or_pub_assist`", "Share of households receiving SNAP or public assistance benefits", "ACS", "Census Tract", "coc_public_program_use",
+  "`shr_hh_with_ssi`", "Share of households receiving SSI benefits", "ACS", "Census Tract", "coc_public_program_use",
+  "`shr_with_medicaid`", "Share of individuals age 19-64 enrolled in Medicaid", "ACS", "Census Tract", "coc_public_program_use",
+)
+```
+
+```{r print dictionary}
+kbl(dictionary) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```

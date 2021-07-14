@@ -1,0 +1,4 @@
+* text=auto
+input_data/** filter=lfs diff=lfs merge=lfs -text
+tests/**/*.rds filter=lfs diff=lfs merge=lfs -text
+tests/**/*.xlsx filter=lfs diff=lfs merge=lfs -text

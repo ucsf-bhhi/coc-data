@@ -1,0 +1,69 @@
+on:
+  push:
+    branches:
+      - main
+      - master
+      - test-ci-data-build
+    tags:
+      -'*'
+
+name: pkgdown
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - uses: r-lib/actions/setup-r@v1
+
+      - uses: r-lib/actions/setup-pandoc@v1
+      
+      - name: Install outside dependencies
+        run: |
+          sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev libssl-dev libxml2-dev libudunits2-dev libgdal-dev libgeos-dev libproj-dev libharfbuzz-dev libfribidi-dev libjq-dev libprotobuf-dev protobuf-compiler
+
+      - name: Restore R package cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/renv
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Install dependencies
+        run: |
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          renv::restore()
+        shell: Rscript {0}
+
+      - name: Install package
+        run: R CMD INSTALL .
+        
+      - name: Restore targets cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/coc-data/coc-data/_targets
+          key: targets
+          restore-keys: targets
+        
+      - name: Build data
+        run: |
+          library(targets)
+          library(tidycensus)
+          census_api_key(Sys.getenv("CENSUS_API_KEY"))
+          tar_make()
+        shell: Rscript {0}
+
+      - name: Deploy package
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'

@@ -1,0 +1,68 @@
+title: CoC Data
+
+template:
+  params: 
+    bootswatch: spacelab
+
+repo:
+  branch: main
+
+navbar:
+  components:
+    intro:
+      text: Data Dictionary
+      href: articles/data-dictionary.html
+
+reference:
+- title: Shapefile Processing
+- contents:
+  - read_raw_coc_shapefile
+  - simplify_shapefile
+- title: CoC Crosswalk Creation
+- contents:
+  - build_county_crosswalk
+  - build_tract_crosswalk
+  - map_tracts_to_cocs
+  - clip_tracts
+  - fetch_tract_data
+  - build_coc_populations
+  - get_coc_categories
+- title: PiT Counts
+- contents:
+  - build_pit_rates
+  - get_long_pit_data
+  - get_pit_years
+  - parse_pit_year
+- title: Renter Population Share
+- contents:
+  - build_coc_renter_shares
+  - build_county_renter_share
+- title: HUD FMRs (Fair Market Rents)
+- contents:
+  - build_coc_fmr
+  - process_fmr
+  - get_acs_county_sub
+- title: Zillow Rent Index
+- contents:
+  - build_coc_zillow_rent
+  - build_tract_zillow_rent
+  - process_tract_to_zip
+  - process_zillow_data
+- title: Rent burden
+- contents:
+  - build_coc_rent_burden
+- title: Rental Vacancy Rate 
+- contents:
+  - build_coc_vacancy_rates
+- title: Unemployment rate
+- contents:
+  - build_coc_unemployment
+  - fetch_unemployment
+- title: Public Program Utilization
+- contents:
+  - build_coc_public_program_use
+  - fetch_public_program_use
+- title: Helpers
+- contents:
+  - fetch_acs
+  - write_dataset
