@@ -118,10 +118,10 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           rm .gitignore
-          git add --all -- ':!renv'
+          git add -f --all -- ':!renv'
           for file in $(git ls-files -mo --exclude=renv)
           do
-            git add $file
+            git add -f $file
           done
           git commit -am "Run pipeline"
           git push origin targets-runs
