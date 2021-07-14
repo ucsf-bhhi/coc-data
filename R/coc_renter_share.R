@@ -258,10 +258,10 @@ make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
 }
 
 build_coc_evictions <- function(evictions, renting_households, tract_crosswalk) {
-  renting_households %>%
-    left_join(evictions, by = c("fips" = "GEOID", "year")) %>%
+  tract_crosswalk %>%
+    left_join(evictions, by = c("tract_fips" = "GEOID", "year")) %>%
     rename(eviction_filings = eviction.filings) %>%
-    left_join(tract_crosswalk, by = c("fips" = "tract_fips", "year")) %>%
+    left_join(renting_households, by = c("tract_fips" = "fips", "year")) %>%
     filter(!is.na(coc_number)) %>%
     group_by(coc_number, year) %>%
     summarise(
