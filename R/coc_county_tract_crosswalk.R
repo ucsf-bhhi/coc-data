@@ -18,9 +18,23 @@ fetch_tract_data <- function(year, crs) {
     filter(as.integer(state_code) < 60)
 
   # iterate over the list of states fetching the ACS data
-  map_dfr(state_fips$state_code, ~
-  # hit the census API for tract population and boundaries
-  fetch_acs("tract", year = year, variables = c(tract_pop = "B01003_001", tract_pop_in_poverty = "B17001_002"), key = Sys.getenv("CENSUS_API_KEY"), state = .x, survey = "acs5", geometry = TRUE, output = "wide")) %>%
+  map_dfr(
+    state_fips$state_code,
+    # hit the census API for tract population and boundaries
+    ~ fetch_acs(
+        "tract",
+        year = year,
+        state = .x,
+        survey = "acs5",
+        geometry = TRUE,
+        output = "wide",
+        variables = c(
+          tract_pop = "B01003_001",
+          tract_poverty_pop = "B17001_002",
+          tract_renting_hh = "B25003_003"
+        )
+      )
+  ) %>%
     # clarify the tract FIPS code column name
     rename(tract_fips = fips) %>%
     # change the CRS for the tract boundaries
@@ -64,12 +78,16 @@ build_tract_crosswalk <- function(recombined_tracts) {
     group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
-      coc_poverty_pop = sum(tract_pop_in_poverty, na.rm = TRUE),
+      coc_poverty_pop = sum(tract_poverty_pop),
+      coc_renting_hh = sum(tract_renting_hh),
       pct_coc_pop_from_tract = tract_pop / coc_pop,
-      pct_coc_poverty_pop_from_tract = tract_pop_in_poverty / coc_poverty_pop,
+      pct_coc_renting_hh_from_tract = tract_renting_hh / coc_renting_hh,
       # make sure these variables are NA for tracts that aren't in a CoC (where
       # coc_number is NA)
-      across(c(coc_pop, coc_poverty_pop, pct_coc_pop_from_tract, pct_coc_poverty_pop_from_tract), ~ if_else(is.na(coc_number), NA_real_, .x))
+      across(
+        c(coc_pop, coc_poverty_pop, coc_renting_hh, pct_coc_pop_from_tract, pct_coc_renting_hh_from_tract),
+        ~ if_else(is.na(coc_number), NA_real_, .x)
+      )
     ) %>%
     # remove grouping for when it's used later
     ungroup()
@@ -95,9 +113,9 @@ build_county_crosswalk <- function(tract_crosswalk) {
     group_by(county_fips, coc_number, year) %>%
     # grab the first value of these label columns that are the same for every
     # tract in a given CoC
-    summarise(across(c(coc_name, coc_pop, coc_poverty_pop), first),
+    summarise(across(c(coc_name, coc_pop, coc_renting_hh), first),
       county_pop_in_coc = sum(tract_pop),
-      county_poverty_pop_in_coc = sum(tract_pop_in_poverty, na.rm = TRUE)
+      county_renting_hh_in_coc = sum(tract_renting_hh)
     ) %>%
     # now, grouping by county sum the county population, % of CoC from the
     # county, and % of the county in each of its CoCs
@@ -106,11 +124,11 @@ build_county_crosswalk <- function(tract_crosswalk) {
       # sum the total county population by adding up its population in each CoC
       # it's part of
       county_pop = sum(county_pop_in_coc),
-      county_pop_in_poverty = sum(county_poverty_pop_in_coc),
+      county_renting_hh = sum(county_renting_hh_in_coc),
       pct_coc_pop_from_county = county_pop_in_coc / coc_pop,
-      pct_coc_poverty_pop_from_county = county_poverty_pop_in_coc / coc_poverty_pop,
+      pct_coc_renting_hh_from_county = county_renting_hh_in_coc / coc_renting_hh,
       pct_county_pop_in_coc = county_pop_in_coc / county_pop,
-      pct_county_poverty_pop_in_coc = county_poverty_pop_in_coc / county_pop_in_poverty
+      pct_county_renting_hh_in_coc = county_renting_hh_in_coc / county_renting_hh
     ) %>%
     # get rid of the counties and pieces of counties which are not in CoCs
     filter(!is.na(coc_number)) %>%
