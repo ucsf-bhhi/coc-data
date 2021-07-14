@@ -265,6 +265,7 @@ build_coc_evictions <- function(evictions, renting_households, tract_crosswalk) 
     filter(!is.na(coc_number)) %>%
     group_by(coc_number, year) %>%
     summarise(
+      missing_evictions = sum(renting_households[is.na(evictions)]),
       across(
         c(eviction_filings, evictions, renting_households),
         sum,
@@ -274,12 +275,12 @@ build_coc_evictions <- function(evictions, renting_households, tract_crosswalk) 
     ) %>%
     mutate(
       across(
-        c(eviction_filings, evictions),
+        c(eviction_filings, evictions, missing_evictions),
         ~ .x / renting_households,
         .names = "{str_sub({.col}, 1, -2)}_rate"
       )
     ) %>% 
-    select(-renting_households)
+    select(-renting_households, -missing_evictions)
 }
 
 get_renting_households <- function(year) {
