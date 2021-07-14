@@ -200,3 +200,43 @@ test_that("building coc vacancy rates works", {
     expected
   )
 })
+
+test_that("build_coc_evictions works properly", {
+  evictions = tribble(
+    ~GEOID, ~year, ~evictions, ~eviction.filings,
+    "99999", 2019, 10, 15,
+    "99998", 2019, 20, 25,
+    "99997", 2019, 20, 30,
+    "99996", 2019, 15, 20,
+    "99995", 2019, 25, 30,
+    "99994", 2019, NA, NA
+  )
+  
+  acs_data = tribble(
+    ~fips, ~year, ~renting_households,
+    "99999", 2019, 250,
+    "99998", 2019, 500,
+    "99997", 2019, 250,
+    "99996", 2019, 700,
+    "99995", 2019, 200,
+    "99994", 2019, 100
+  )
+  
+  tract_crosswalk = tribble(
+    ~tract_fips, ~year, ~coc_number,
+    "99999", 2019, "AA-101",
+    "99998", 2019, "AA-101",
+    "99997", 2019, "AA-101",
+    "99996", 2019, "AA-102",
+    "99995", 2019, "AA-102",
+    "99994", 2019, "AA-102"
+  )
+  
+  expected = tribble(
+    ~coc_number, ~year, ~eviction_filings, ~evictions, ~renting_households, ~eviction_filing_rate, ~eviction_rate,
+    "AA-101", 2019, 70, 50, 1000, 0.07, 0.05,
+    "AA-102", 2019, 50, 40, 1000, 0.05, 0.04
+  )
+  
+  expect_equal(build_coc_evictions(evictions, acs_data, tract_crosswalk), expected)
+})
