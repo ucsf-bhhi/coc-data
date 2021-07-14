@@ -67,7 +67,7 @@ list(
   ),
   tar_files_input(
     raw_evictions_file,
-    "input_data/eviction_lab/all-tracts.csv",
+    "input_data/eviction_lab/all-counties.csv",
     format = "file"
   ),
   #### Tract/County to CoC Crosswalk Creation ####
@@ -184,12 +184,14 @@ list(
   ),
   tar_target(
     renting_households,
-    get_renting_households(years),
+    fetch_acs("county", year = years, output = "wide",
+              variables = c(renting_households = "B25003_003")
+    ),
     pattern = map(years)
   ),
   tar_target(
     coc_evictions,
-    build_coc_evictions(eviction_data, renting_households, tract_crosswalk)
+    build_coc_evictions(eviction_data, renting_households, county_crosswalk)
   ),
   #### Unemployment Rate ####
   tar_files_input(
