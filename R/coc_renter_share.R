@@ -256,3 +256,47 @@ make_coc_vacancy_rates <- function(acs_data, yr, tract_crosswalk) {
     ) %>% 
     select(coc_number, year, gross_vacancy_rate, rental_vacancy_rate)
 }
+
+#' Creates eviction data
+#'
+#' Builds counts and rates of eviction and eviction court case filing at the CoC level.
+#' The rates are the number of evictions/court cases divided by the number of renting
+#' households in the CoC.
+#'
+#' @param evictions A data frame with county-level eviction data.
+#' @param county_crosswalk A data frame with the county to CoC crosswalk.
+#'
+#' @return A data frame:
+#' * `coc_number`: CoC number
+#' * `year`: Year
+#' * `eviction_filings`: Number of eviction court cases filed
+#' * `evictions`: Number of evictions
+#' * `eviction_filing_rate`: Number of eviction court cases filed / renting households
+#' * `eviction_rate`: Number of evictions / renting households
+#' * `missing_evictions_rate`: Share of the CoC's renting households in counties with missing eviction data
+build_coc_evictions <- function(evictions, county_crosswalk) {
+  county_crosswalk %>%
+    left_join(evictions, by = c("county_fips" = "GEOID", "year")) %>%
+    rename(eviction_filings = eviction.filings) %>%
+    group_by(coc_number, year) %>%
+    summarise(
+      missing_evictions_rate = sum(pct_coc_renting_hh_from_county[is.na(evictions)]),
+      coc_renting_hh_with_evictions_data = coc_renting_hh * (1 - missing_evictions_rate),
+      across(
+        c(eviction_filings, evictions),
+        ~ sum(.x * pct_county_renting_hh_in_coc, na.rm = TRUE)
+      ),
+      .groups = "drop"
+    ) %>%
+    distinct() %>%
+    mutate(
+      across(
+        c(eviction_filings, evictions),
+        ~ .x / coc_renting_hh_with_evictions_data,
+        # chop off the final s from eviction_filings and
+        # evictions when naming the rate variables
+        .names = "{str_sub({.col}, 1, -2)}_rate"
+      )
+    ) %>%
+    select(-coc_renting_hh_with_evictions_data)
+}

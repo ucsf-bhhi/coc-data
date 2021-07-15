@@ -65,6 +65,11 @@ list(
     dir_ls("input_data/geography/usps_tract_to_zip"),
     format = "file"
   ),
+  tar_files_input(
+    raw_evictions_file,
+    "input_data/eviction_lab/all-counties.csv",
+    format = "file"
+  ),
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
     coc_shapefiles,
@@ -172,6 +177,22 @@ list(
     build_coc_vacancy_rates(years, tract_crosswalk),
     pattern = map(years)
   ),
+  #### Evictions ####
+  tar_target(
+    eviction_data,
+    read_csv(raw_evictions_file)
+  ),
+  tar_target(
+    renting_households,
+    fetch_acs("county", year = years, output = "wide",
+              variables = c(renting_households = "B25003_003")
+    ),
+    pattern = map(years)
+  ),
+  tar_target(
+    coc_evictions,
+    build_coc_evictions(eviction_data, county_crosswalk)
+  ),
   #### Unemployment Rate ####
   tar_files_input(
     unemployment_url,
@@ -208,7 +229,8 @@ list(
       full_join(coc_rent_burden, by = c("coc_number", "year")) %>% 
       full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
       full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
-      full_join(coc_public_program_use, by = c("coc_number", "year")) 
+      full_join(coc_public_program_use, by = c("coc_number", "year")) %>% 
+      full_join(coc_evictions, by = c("coc_number", "year")) 
   ),
   #### Output Dataset Files ####
   tar_map(

@@ -78,7 +78,7 @@ build_tract_crosswalk <- function(recombined_tracts) {
     group_by(coc_number, year) %>%
     mutate(
       coc_pop = sum(tract_pop),
-      coc_poverty_pop = sum(tract_poverty_pop),
+      coc_poverty_pop = sum(tract_poverty_pop, na.rm = TRUE),
       coc_renting_hh = sum(tract_renting_hh),
       pct_coc_pop_from_tract = tract_pop / coc_pop,
       pct_coc_renting_hh_from_tract = tract_renting_hh / coc_renting_hh,

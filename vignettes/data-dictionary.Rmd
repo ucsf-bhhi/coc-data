@@ -58,6 +58,10 @@ dictionary <- tribble(
   "`shr_hh_with_snap_or_pub_assist`", "Share of households receiving SNAP or public assistance benefits", "ACS", "Census Tract", "coc_public_program_use",
   "`shr_hh_with_ssi`", "Share of households receiving SSI benefits", "ACS", "Census Tract", "coc_public_program_use",
   "`shr_with_medicaid`", "Share of individuals age 19-64 enrolled in Medicaid", "ACS", "Census Tract", "coc_public_program_use",
+  "`eviction_filings`", "Number of eviction court cases filed", "Eviction Lab", "County", "coc_evictions",
+  "`evictions`", "Number of evictions", "Eviction Lab", "County", "coc_evictions",
+  "`eviction_filing_rate`", "Eviction court cases / renting households", "Eviction Lab", "County", "coc_evictions",
+  "`eviction_rate`", "Evictions / renting households", "Eviction Lab", "County", "coc_evictions"
 )
 ```
 
