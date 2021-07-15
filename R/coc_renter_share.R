@@ -129,7 +129,7 @@ make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, yr) {
 #'   (occupied rental units + unoccupied rental units that are for rent +
 #'   rented units that are unoccupied)
 #'
-#' @param yr A numeric with the year of the data.
+#' @param year A numeric with the year of the data.
 #' @param tract_crosswalk A data frame with a census tract to CoC crosswalk from
 #'   [build_tract_crosswalk()].
 #'

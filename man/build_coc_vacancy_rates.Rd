@@ -4,10 +4,10 @@
 \alias{build_coc_vacancy_rates}
 \title{CoC housing vacancy rents}
 \usage{
-build_coc_vacancy_rates(yr, tract_crosswalk)
+build_coc_vacancy_rates(year, tract_crosswalk)
 }
 \arguments{
-\item{yr}{A numeric with the year of the data.}
+\item{year}{A numeric with the year of the data.}
 
 \item{tract_crosswalk}{A data frame with a census tract to CoC crosswalk from
 \code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}.}

@@ -10,8 +10,6 @@ make_coc_vacancy_rates(acs_data, yr, tract_crosswalk)
 \item{acs_data}{A data frame with tract vacancy data from
 \code{\link[=fetch_acs_vacancy_data]{fetch_acs_vacancy_data()}}}
 
-\item{yr}{A numeric with the year of the data.}
-
 \item{tract_crosswalk}{A data frame with a census tract to CoC crosswalk from
 \code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}.}
 }
