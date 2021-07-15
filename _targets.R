@@ -191,7 +191,7 @@ list(
   ),
   tar_target(
     coc_evictions,
-    build_coc_evictions(eviction_data, renting_households, county_crosswalk)
+    build_coc_evictions(eviction_data, county_crosswalk)
   ),
   #### Unemployment Rate ####
   tar_files_input(
