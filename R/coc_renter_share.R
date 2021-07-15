@@ -46,35 +46,6 @@ build_coc_renter_shares = function(renter_shares, crosswalk) {
 #'      50 percent of their income in rent (numeric)
 #' * `median_rent_burden`: Median rent share of income in the CoC (numeric)
 build_coc_rent_burden <- function(year, tract_crosswalk) {
-  states = tidycensus::fips_codes %>% 
-    distinct(state_code) %>% 
-    filter(as.numeric(state_code) < 60)
-  
-  map_dfr(states, fetch_acs_rent_burden, year) %>%
-    make_coc_rent_burden(tract_crosswalk, year)
-}
-
-#' Census Tract level counts of rent-burdened households
-#'
-#' Gets ACS data that has the counts of households who pay more than 30 or 50
-#' percent of their income in rent and the median rent burden
-#' (rent / household income) in the tract.
-#'
-#' @param year A numeric with the year of ACS data to fetch.
-#'
-#' @return A data frame:
-#' * `year`: Year (numeric)
-#' * `tract_fips`: Census Tract FIPS code (character)
-#' * `count_30_plus`: Count of renting households paying more than 30% of their
-#'      income in rent (numeric)
-#' * `count_50_plus`: Count of renting households paying more than 50% of their
-#'      income in rent (numeric)
-#' * `total_computed`: Count of renting households that have a calculated rent
-#'      share of income (numeric)
-#' * `median_rent_burden`: Median rent share of income in the county (numeric)
-#' @seealso [build_coc_rent_burden()] for the main function
-#' @keywords internal
-fetch_acs_rent_burden <- function(state, year) {
   acs_variables <- c(
     "total" = "B25070_001",
     "count_30_35" = "B25070_007",
@@ -84,27 +55,16 @@ fetch_acs_rent_burden <- function(state, year) {
     "not_computed" = "B25070_011",
     "median_rent_burden" = "B25071_001"
   )
-  fetch_acs(
-    "tract",
-    state = state,
-    year = year,
-    variables = acs_variables,
-    output = "wide"
-  ) %>%
+  
+  fetch_acs_tracts(year, variables = acs_variables, output = "wide") %>%
     mutate(
       year = year,
       total_computed = total - not_computed,
       count_30_plus = count_30_35 + count_35_40 + count_40_50 + count_50_plus,
       median_rent_burden = median_rent_burden / 100,
     ) %>%
-    select(
-      year,
-      tract_fips = fips,
-      count_30_plus,
-      count_50_plus,
-      total_computed,
-      median_rent_burden
-    )
+    select(year, tract_fips = fips, count_30_plus, count_50_plus, total_computed, median_rent_burden) %>% 
+    make_coc_rent_burden(tract_crosswalk, year)
 }
 
 #' Construct CoC-level shares of rent burdened households
@@ -179,36 +139,9 @@ make_coc_rent_burden <- function(tract_rent_data, tract_crosswalk, yr) {
 #' * `gross_vacancy_rate`: Share of all housing units that are unoccupied
 #'      (numeric)
 #' * `rental_vacancy_rate`: Share of rental housing units not rented (numeric)
-build_coc_vacancy_rates <- function(yr, tract_crosswalk) {
-  states = tidycensus::fips_codes %>% 
-    distinct(state_code) %>% 
-    filter(as.numeric(state_code) < 60)
-  
-  map_dfr(states, fetch_acs_vacancy_data, yr) %>%
-    make_coc_vacancy_rates(yr, tract_crosswalk)
-}
-
-#' Fetches ACS vacancy data
-#'
-#' @inheritParams build_coc_vacancy_rates
-#' 
-#' @return A data frame with tract vacancy counts:
-#' * `fips`: County FIPS code (character)
-#' * `year`: Year (numeric)
-#' * `total_housing_units`: Total housing units (numeric)
-#' * `vacant_housing_units`: Total vacant housing units (numeric)
-#' * `occupied_rental_units`: Occupied rental housing units (numeric)
-#' * `for_rent`: Rental housing units that are unoccupied and for rent (numeric)
-#' * `rented_not_occupied`: Rental housing units that have been rented but are
-#'      unoccupied (numeric)
-#' 
-#' @keywords internal
-#' @seealso [build_coc_vacancy_rates()]
-fetch_acs_vacancy_data <- function(state, year) {
-  fetch_acs(
-    "tract",
-    year = year,
-    state = state,
+build_coc_vacancy_rates <- function(year, tract_crosswalk) {
+  fetch_acs_tracts(
+    year,
     variables = c(
       "total_housing_units" = "B25002_001",
       "vacant_housing_units" = "B25002_003",
@@ -217,7 +150,8 @@ fetch_acs_vacancy_data <- function(state, year) {
       "rented_not_occupied" = "B25004_003"
     ),
     output = "wide"
-  )
+  ) %>%
+    make_coc_vacancy_rates(year, tract_crosswalk)
 }
 
 #' Constructs the CoC vacancy rates

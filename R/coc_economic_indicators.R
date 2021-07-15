@@ -153,17 +153,8 @@ fetch_public_program_use <- function(year) {
       "female_19_64_with_medicaid" = "C27007_017"
     )
   }
-  
-  states <- tidycensus::fips_codes %>%
-    distinct(state_code) %>%
-    filter(state_code < 60) %>%
-    pull()
 
-  map_dfr(
-    states,
-    ~ fetch_acs("tract", state = .x, year = year, output = "wide",
-                variables = acs_variables)
-  )
+  fetch_acs_tracts(year = year, variables = acs_variables, output = "wide")
 }
 
 #' CoC public program utilization rates
