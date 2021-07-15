@@ -280,22 +280,23 @@ build_coc_evictions <- function(evictions, county_crosswalk) {
     rename(eviction_filings = eviction.filings) %>%
     group_by(coc_number, year) %>%
     summarise(
-      # coc_renting_hh is constant over all obs within a coc_number, year so just keep the first
-      coc_renting_hh = first(coc_renting_hh),
       missing_evictions_rate = sum(pct_coc_renting_hh_from_county[is.na(evictions)]),
+      coc_renting_hh_with_evictions_data = coc_renting_hh * (1 - missing_evictions_rate),
       across(
         c(eviction_filings, evictions),
-        ~ sum(.x * pct_coc_renting_hh_from_county, na.rm = TRUE)
+        ~ sum(.x * pct_county_renting_hh_in_coc, na.rm = TRUE)
       ),
       .groups = "drop"
     ) %>%
+    distinct() %>%
     mutate(
       across(
         c(eviction_filings, evictions),
-        ~ .x / coc_renting_hh,
+        ~ .x / coc_renting_hh_with_evictions_data,
         # chop off the final s from eviction_filings and
         # evictions when naming the rate variables
         .names = "{str_sub({.col}, 1, -2)}_rate"
       )
-    )
+    ) %>%
+    select(-coc_renting_hh_with_evictions_data)
 }
