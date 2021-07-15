@@ -62,6 +62,9 @@ reference:
 - contents:
   - build_coc_public_program_use
   - fetch_public_program_use
+- title: Evictions
+- contents:
+  - build_coc_evictions
 - title: Helpers
 - contents:
   - fetch_acs
