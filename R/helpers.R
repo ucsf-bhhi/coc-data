@@ -126,3 +126,10 @@ get_state_fips <- function(fips_filter = 60) {
     filter(as.numeric(state_code) < fips_filter) %>%
     pull(state_code)
 }
+
+fetch_acs_tracts = function(year, variables, states = get_state_fips(), ...) {
+  map_dfr(
+     states,
+     function(x) fetch_acs("tract", state = x, year = year, variables = variables, ...)
+  )
+}
