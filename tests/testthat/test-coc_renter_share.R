@@ -1,11 +1,3 @@
-# load packages used by the tests and the functions being tested b/c this is a
-# fake package which doesn't use package::function when calling external
-# functions we need to load those packages first here so they are available when
-# the functions are called during the test
-library(dplyr, warn.conflicts = FALSE)
-library(tidycensus, warn.conflicts = FALSE)
-library(stringr, warn.conflicts = FALSE)
-
 test_that("county renter shares work", {
   test_year = 2019
   test_county = "06001" # alameda county
@@ -67,36 +59,6 @@ test_that("CoC renter shares work", {
   expect_equal(test_multi_county$avg_renter_share, 0.5)
 })
 
-test_that("fetch_acs_rent_burden is working for 2013", {
-  expected = tibble(
-    year = 2013,
-    tract_fips = "06001403300",
-    count_30_plus = 926,
-    count_50_plus = 468,
-    total_computed = 1577,
-    median_rent_burden = 0.349 
-  )
-  
-  fetch_acs_rent_burden("06", 2013) %>%
-    filter(tract_fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
-test_that("fetch_acs_rent_burden is working for 2019", {
-  expected = tibble(
-    year = 2019,
-    tract_fips = "06001403300",
-    count_30_plus = 716,
-    count_50_plus = 357,
-    total_computed = 1309,
-    median_rent_burden = 0.320 
-  )
-  
-  fetch_acs_rent_burden("06", 2019) %>%
-    filter(tract_fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
 test_that("coc share rent burdened is working correctly", {
   test_yr <- 2019
   
@@ -132,38 +94,6 @@ test_that("coc share rent burdened is working correctly", {
     make_coc_rent_burden(test_acs, test_crosswalk, test_yr),
     expected
   )
-})
-
-test_that("fetch_acs_rental_vacancy_data is working for 2013", {
-  expected = tibble(
-    fips = "06001403300",
-    year = 2013,
-    total_housing_units = 2365,
-    vacant_housing_units = 225,
-    occupied_rental_units = 1617,
-    for_rent = 83,
-    rented_not_occupied = 0
-  )
-  
-  fetch_acs_vacancy_data("06", 2013) %>%
-    filter(fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
-test_that("fetch_acs_rental_vacancy_data is working for 2019", {
-  expected = tibble(
-    fips = "06001403300",
-    year = 2019,
-    total_housing_units = 2393,
-    vacant_housing_units = 250,
-    occupied_rental_units = 1440,
-    for_rent = 91,
-    rented_not_occupied = 0
-  )
-  
-  fetch_acs_vacancy_data("06", 2019) %>%
-    filter(fips == "06001403300") %>% 
-    expect_equal(expected)
 })
 
 test_that("building coc vacancy rates works", {
