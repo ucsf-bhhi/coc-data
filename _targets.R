@@ -217,6 +217,19 @@ list(
     coc_public_program_use,
     build_coc_public_program_use(tract_public_program_use, tract_crosswalk)
   ),
+  #### Income ####
+  tar_target(
+    coc_income,
+    build_coc_income(
+      years, county_crosswalk,
+      income_variables = c(
+        "household_income" = "S1901_C01_012",
+        "family_income" = "S1901_C02_012",
+        "individual_earnings" = "S2001_C01_002"
+      )
+    ),
+    pattern = map(years)
+  ),
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
@@ -230,7 +243,8 @@ list(
       full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
       full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
       full_join(coc_public_program_use, by = c("coc_number", "year")) %>% 
-      full_join(coc_evictions, by = c("coc_number", "year")) 
+      full_join(coc_evictions, by = c("coc_number", "year")) %>% 
+      full_join(coc_income, by = c("coc_number", "year"))
   ),
   #### Output Dataset Files ####
   tar_map(
@@ -244,4 +258,3 @@ list(
   #### Basic Summary Stats ####
   tar_target(summary_stats, build_summary_stats(combined_dataset))
 )
-

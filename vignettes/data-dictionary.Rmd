@@ -61,7 +61,10 @@ dictionary <- tribble(
   "`eviction_filings`", "Number of eviction court cases filed", "Eviction Lab", "County", "coc_evictions",
   "`evictions`", "Number of evictions", "Eviction Lab", "County", "coc_evictions",
   "`eviction_filing_rate`", "Eviction court cases / renting households", "Eviction Lab", "County", "coc_evictions",
-  "`eviction_rate`", "Evictions / renting households", "Eviction Lab", "County", "coc_evictions"
+  "`eviction_rate`", "Evictions / renting households", "Eviction Lab", "County", "coc_evictions",
+  "`household_income`", "Average median household income", "ACS", "County", "coc_income",
+  "`family_income`", "Average median family income", "ACS", "County", "coc_income",
+  "`individual_earnings`", "Average median invididual earnings", "ACS", "County", "coc_income"
 )
 ```
 
