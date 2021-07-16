@@ -243,7 +243,8 @@ list(
       full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
       full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
       full_join(coc_public_program_use, by = c("coc_number", "year")) %>% 
-      full_join(coc_evictions, by = c("coc_number", "year")) 
+      full_join(coc_evictions, by = c("coc_number", "year")) %>% 
+      full_join(coc_income, by = c("coc_number", "year"))
   ),
   #### Output Dataset Files ####
   tar_map(
@@ -257,4 +258,3 @@ list(
   #### Basic Summary Stats ####
   tar_target(summary_stats, build_summary_stats(combined_dataset))
 )
-
