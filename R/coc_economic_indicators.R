@@ -216,3 +216,17 @@ build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
     select(-total_19_64_with_medicaid, -total_19_64) %>%
     ungroup()
 }
+
+build_coc_income <- function(yr, county_crosswalk, income_variables) {
+  fetch_acs("county", year = yr, variables = income_variables, output = "wide") %>%
+    right_join(county_crosswalk, by = c("fips" = "county_fips", "year")) %>%
+    filter(year == yr) %>%
+    group_by(coc_number, year) %>%
+    summarise(
+      across(
+        all_of(names(income_variables)),
+        ~ weighted.mean(.x, pct_coc_pop_from_county, na.rm = TRUE) %>% round(0)
+      ),
+      .groups = "drop"
+    )
+}
