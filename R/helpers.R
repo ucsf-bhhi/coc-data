@@ -71,6 +71,8 @@ fetch_acs = function(..., quiet = TRUE) {
 write_dataset <- function(data, output_function, extension,
                           output_dir = "output_data",
                           file_name = "coc_data") {
+  # make sure output directory exists
+  dir_create(output_dir)
   file_path <- path(output_dir, file_name, ext = extension)
   # build the actual call to a function that will write the output file
   output_call <- call(output_function, data, file_path)
@@ -78,4 +80,56 @@ write_dataset <- function(data, output_function, extension,
   eval(output_call)
   # invisibly return the file path so targets can monitor it
   invisible(return(file_path))
+}
+
+build_summary_stats = function(data) {
+  data %>%
+    pivot_longer(-c(coc_number, coc_name, coc_category, year), names_to = "Variable", values_to = "values") %>% 
+    group_by(Variable) %>% 
+    summarise(
+      N = n(),
+      across(
+        values,
+        list(
+          `Share missing` = ~ sum(is.na(.x)) / N,
+          `Mean` = ~ mean(.x, na.rm = TRUE),
+          `Median` = ~ median(.x, na.rm = TRUE),
+          `Min` = ~ min(.x, na.rm = TRUE),
+          `Max` = ~ max(.x, na.rm = TRUE),
+          `10th` = ~ quantile(.x, 0.1, na.rm = TRUE),
+          `25th` = ~ quantile(.x, 0.25, na.rm = TRUE),
+          `75th` = ~ quantile(.x, 0.75, na.rm = TRUE),
+          `90th` = ~ quantile(.x, 0.9, na.rm = TRUE),
+          `99th` = ~ quantile(.x, 0.99, na.rm = TRUE)
+        ),
+        .names = "{.fn}"
+      )
+    ) %>% 
+    mutate(
+      across(c(where(is.numeric), -N), format_values),
+      N = scales::comma(N, accuracy = 1)
+    )
+  
+}
+
+format_values = function(x) {
+  case_when(
+    abs(x) <= 1 ~ scales::comma(x, accuracy = 0.001, trim = FALSE),
+    abs(x) > 1 & abs(x) < 100000 ~ scales::comma(x, accuracy = 0.1, trim = FALSE),
+    abs(x) >= 100000 ~ scales::comma(x, accuracy = 1, trim = FALSE)
+  )
+}
+
+get_state_fips <- function(fips_filter = 60) {
+  tidycensus::fips_codes %>%
+    distinct(state_code) %>%
+    filter(as.numeric(state_code) < fips_filter) %>%
+    pull(state_code)
+}
+
+fetch_acs_tracts = function(year, variables, states = get_state_fips(), ...) {
+  map_dfr(
+     states,
+     function(x) fetch_acs("tract", state = x, year = year, variables = variables, ...)
+  )
 }

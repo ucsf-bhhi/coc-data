@@ -6,22 +6,21 @@ plan(callr)
 library(fs)
 
 # load functions
-source("code/helpers.R")
-source("code/process_coc_shapefiles.R")
-source("code/coc_county_tract_crosswalk.R")
-source("code/pit_data_processing.R")
-source("code/pit_rates.R")
-source("code/coc_renter_share.R")
-source("code/coc_fmr.R")
-source("code/coc_zillow_rent.R")
-source("code/coc_economic_indicators.R")
+source("R/helpers.R")
+source("R/process_coc_shapefiles.R")
+source("R/coc_county_tract_crosswalk.R")
+source("R/pit_data_processing.R")
+source("R/pit_rates.R")
+source("R/coc_renter_share.R")
+source("R/coc_fmr.R")
+source("R/coc_zillow_rent.R")
+source("R/coc_economic_indicators.R")
 
 # load packages used by functions
 tar_option_set(
   packages = c(
     "tidyverse",
     "sf",
-    "rmapshaper",
     "tidycensus",
     "fs",
     "readxl",
@@ -36,6 +35,7 @@ output_formats <- list(
 
 list(
   #### Input Data ####
+  tar_target(years, 2011:2019),
   tar_files_input(
     raw_coc_shapefiles,
     dir_ls(
@@ -65,56 +65,36 @@ list(
     dir_ls("input_data/geography/usps_tract_to_zip"),
     format = "file"
   ),
+  tar_files_input(
+    raw_evictions_file,
+    "input_data/eviction_lab/all-counties.csv",
+    format = "file"
+  ),
   #### Tract/County to CoC Crosswalk Creation ####
   tar_target(
-    shapefile_years,
-    parse_number(raw_coc_shapefiles)
-  ),
-  tar_target(
-    original_coc_shapefiles,
-    read_raw_coc_shapefile(raw_coc_shapefiles),
-    pattern = map(raw_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    simplified_coc_shapefiles, 
-    simplify_shapefile(original_coc_shapefiles),
-    pattern = map(original_coc_shapefiles),
-    iteration = "list"
-  ),
-  tar_target(
-    dissolved_coc_shapefiles, 
-    ms_dissolve(simplified_coc_shapefiles, copy_fields = "year"),
-    pattern = map(simplified_coc_shapefiles),
+    coc_shapefiles,
+    get_shapefiles(years, raw_coc_shapefiles, crs = 2163),
+    pattern = map(years),
     iteration = "list"
   ),
   tar_target(
     tracts, 
-    fetch_tract_data(shapefile_years, crs = 2163),
-    pattern = map(shapefile_years),
-    iteration = "list"
-  ),
-  tar_target(
-    clipped_tracts, 
-    clip_tracts(tracts, dissolved_coc_shapefiles),
-    pattern = map(tracts, dissolved_coc_shapefiles),
+    fetch_tract_data(years, crs = 2163),
+    pattern = map(years),
     iteration = "list"
   ),
   tar_target(
     tract_cocs, 
-    map_tracts_to_cocs(clipped_tracts, simplified_coc_shapefiles),
-    pattern = map(clipped_tracts, simplified_coc_shapefiles),
-    iteration = "list"
+    match_tracts_to_cocs(tracts, coc_shapefiles),
+    pattern = map(tracts, coc_shapefiles)
   ),
   tar_target(
     tract_crosswalk, 
-    build_tract_crosswalk(tract_cocs),
-    pattern = map(tract_cocs)
+    build_tract_crosswalk(tract_cocs)
   ),
   tar_target(
     county_crosswalk, 
-    build_county_crosswalk(tract_crosswalk),
-    pattern = map(tract_crosswalk)
+    build_county_crosswalk(tract_crosswalk)
   ),
   tar_target(
     coc_populations,
@@ -145,8 +125,8 @@ list(
   #### Renter Shares ####
   tar_target(
     county_renter_shares,
-    build_county_renter_share(shapefile_years),
-    pattern = map(shapefile_years)
+    build_county_renter_share(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_renter_shares,
@@ -160,8 +140,8 @@ list(
   ),
   tar_target(
     acs_county_subdivision,
-    get_acs_county_sub(shapefile_years, processed_fmr),
-    pattern = map(shapefile_years)
+    get_acs_county_sub(years, processed_fmr),
+    pattern = map(years)
   ),
   tar_target(
     coc_fmr,
@@ -188,14 +168,30 @@ list(
   #### Share Rent Burdened ####
   tar_target(
     coc_rent_burden,
-    build_coc_rent_burden(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_rent_burden(years, tract_crosswalk),
+    pattern = map(years)
   ),
   #### Rental Vacancy Rate ####
   tar_target(
     coc_rental_vacancy_rates,
-    build_coc_vacancy_rates(shapefile_years, tract_crosswalk),
-    pattern = map(shapefile_years)
+    build_coc_vacancy_rates(years, tract_crosswalk),
+    pattern = map(years)
+  ),
+  #### Evictions ####
+  tar_target(
+    eviction_data,
+    read_csv(raw_evictions_file)
+  ),
+  tar_target(
+    renting_households,
+    fetch_acs("county", year = years, output = "wide",
+              variables = c(renting_households = "B25003_003")
+    ),
+    pattern = map(years)
+  ),
+  tar_target(
+    coc_evictions,
+    build_coc_evictions(eviction_data, county_crosswalk)
   ),
   #### Unemployment Rate ####
   tar_files_input(
@@ -214,12 +210,25 @@ list(
   #### Public Program Use ###
   tar_target(
     tract_public_program_use,
-    fetch_public_program_use(shapefile_years),
-    pattern = map(shapefile_years)
+    fetch_public_program_use(years),
+    pattern = map(years)
   ),
   tar_target(
     coc_public_program_use,
     build_coc_public_program_use(tract_public_program_use, tract_crosswalk)
+  ),
+  #### Income ####
+  tar_target(
+    coc_income,
+    build_coc_income(
+      years, county_crosswalk,
+      income_variables = c(
+        "household_income" = "S1901_C01_012",
+        "family_income" = "S1901_C02_012",
+        "individual_earnings" = "S2001_C01_002"
+      )
+    ),
+    pattern = map(years)
   ),
   #### Combined Dataset ####
   tar_target(
@@ -233,7 +242,9 @@ list(
       full_join(coc_rent_burden, by = c("coc_number", "year")) %>% 
       full_join(coc_rental_vacancy_rates, by = c("coc_number", "year")) %>%  
       full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
-      full_join(coc_public_program_use, by = c("coc_number", "year")) 
+      full_join(coc_public_program_use, by = c("coc_number", "year")) %>% 
+      full_join(coc_evictions, by = c("coc_number", "year")) %>% 
+      full_join(coc_income, by = c("coc_number", "year"))
   ),
   #### Output Dataset Files ####
   tar_map(
@@ -243,6 +254,7 @@ list(
       write_dataset(combined_dataset, functions, extensions)
     ),
     names = extensions
-  )
+  ),
+  #### Basic Summary Stats ####
+  tar_target(summary_stats, build_summary_stats(combined_dataset))
 )
-

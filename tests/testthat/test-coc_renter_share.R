@@ -1,11 +1,3 @@
-# load packages used by the tests and the functions being tested b/c this is a
-# fake package which doesn't use package::function when calling external
-# functions we need to load those packages first here so they are available when
-# the functions are called during the test
-library(dplyr, warn.conflicts = FALSE)
-library(tidycensus, warn.conflicts = FALSE)
-library(stringr, warn.conflicts = FALSE)
-
 test_that("county renter shares work", {
   test_year = 2019
   test_county = "06001" # alameda county
@@ -67,36 +59,6 @@ test_that("CoC renter shares work", {
   expect_equal(test_multi_county$avg_renter_share, 0.5)
 })
 
-test_that("fetch_acs_rent_burden is working for 2013", {
-  expected = tibble(
-    year = 2013,
-    tract_fips = "06001403300",
-    count_30_plus = 926,
-    count_50_plus = 468,
-    total_computed = 1577,
-    median_rent_burden = 0.349 
-  )
-  
-  fetch_acs_rent_burden("06", 2013) %>%
-    filter(tract_fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
-test_that("fetch_acs_rent_burden is working for 2019", {
-  expected = tibble(
-    year = 2019,
-    tract_fips = "06001403300",
-    count_30_plus = 716,
-    count_50_plus = 357,
-    total_computed = 1309,
-    median_rent_burden = 0.320 
-  )
-  
-  fetch_acs_rent_burden("06", 2019) %>%
-    filter(tract_fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
 test_that("coc share rent burdened is working correctly", {
   test_yr <- 2019
   
@@ -134,38 +96,6 @@ test_that("coc share rent burdened is working correctly", {
   )
 })
 
-test_that("fetch_acs_rental_vacancy_data is working for 2013", {
-  expected = tibble(
-    fips = "06001403300",
-    year = 2013,
-    total_housing_units = 2365,
-    vacant_housing_units = 225,
-    occupied_rental_units = 1617,
-    for_rent = 83,
-    rented_not_occupied = 0
-  )
-  
-  fetch_acs_vacancy_data("06", 2013) %>%
-    filter(fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
-test_that("fetch_acs_rental_vacancy_data is working for 2019", {
-  expected = tibble(
-    fips = "06001403300",
-    year = 2019,
-    total_housing_units = 2393,
-    vacant_housing_units = 250,
-    occupied_rental_units = 1440,
-    for_rent = 91,
-    rented_not_occupied = 0
-  )
-  
-  fetch_acs_vacancy_data("06", 2019) %>%
-    filter(fips == "06001403300") %>% 
-    expect_equal(expected)
-})
-
 test_that("building coc vacancy rates works", {
   test_yr <- 2019
 
@@ -199,4 +129,34 @@ test_that("building coc vacancy rates works", {
     make_coc_vacancy_rates(test_acs, test_yr, test_crosswalk),
     expected
   )
+})
+
+test_that("build_coc_evictions works properly", {
+  evictions = tribble(
+    ~GEOID, ~year, ~evictions, ~eviction.filings,
+    "99999", 2019, 12, 24,
+    "99998", 2019, 20, 40,
+    "99997", 2019, 20, 40,
+    "99996", 2019, 20, 40,
+    "99995", 2019, 12, 24,
+    "99994", 2019, NA, NA
+  )
+  
+  county_crosswalk = tribble(
+    ~county_fips, ~year, ~coc_number, ~pct_coc_renting_hh_from_county, ~pct_county_renting_hh_in_coc, ~county_renting_hh, ~coc_renting_hh,
+    "99999", 2019, "AA-101", 0.5, 1, 500, 1000,
+    "99998", 2019, "AA-101", 0.27, 0.9, 300, 1000,
+    "99997", 2019, "AA-101", 0.23, 1, 230, 1000,
+    "99996", 2019, "AA-102", 0.27, 0.9, 300, 1000,
+    "99995", 2019, "AA-102", 0.13, 1, 130, 1000,
+    "99994", 2019, "AA-102", 0.6, 0.75, 800, 1000
+  )
+  
+  expected = tribble(
+    ~coc_number, ~year, ~missing_evictions_rate, ~eviction_filings, ~evictions, ~eviction_filing_rate, ~eviction_rate,
+    "AA-101", 2019, 0, 100, 50, 0.1, 0.05,
+    "AA-102", 2019, 0.6, 60, 30, 0.15, 0.075 
+  )
+  
+  expect_equal(build_coc_evictions(evictions, county_crosswalk), expected)
 })

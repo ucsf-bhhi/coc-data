@@ -11,7 +11,13 @@ read_raw_coc_shapefile(shapefile_path)
 file/database}
 }
 \value{
-The shapefile in a spatial data frame
+A spatial data frame:
+\itemize{
+\item coc_number: CoC number
+\item coc_name: CoC name
+\item year: Year
+\item geometry: The CoC's spatial data
+}
 }
 \description{
 Loads an original CoC shapefile from HUD as a spatial data frame and adds a
@@ -19,6 +25,5 @@ year column. Returns an error if it cannot parse a 4-digit year from the file
 path.
 }
 \seealso{
-\code{\link[=simplify_shapefile]{simplify_shapefile()}} for simplifying the shapefile to reduce its
-complexity
+\code{\link[=get_shapefiles]{get_shapefiles()}}
 }

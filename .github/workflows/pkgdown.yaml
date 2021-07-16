@@ -3,6 +3,7 @@ on:
     branches:
       - main
       - master
+      - test-ci-data-build
     tags:
       -'*'
 
@@ -13,8 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          lfs: true
 
       - uses: r-lib/actions/setup-r@v1
 
@@ -42,6 +46,21 @@ jobs:
 
       - name: Install package
         run: R CMD INSTALL .
+        
+      - name: Restore targets cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/coc-data/coc-data/_targets
+          key: targets
+          restore-keys: targets
+        
+      - name: Build data
+        run: |
+          library(targets)
+          library(tidycensus)
+          census_api_key(Sys.getenv("CENSUS_API_KEY"))
+          tar_make()
+        shell: Rscript {0}
 
       - name: Deploy package
         run: |
