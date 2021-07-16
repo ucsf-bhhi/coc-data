@@ -25,6 +25,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/build_coc_evictions.html</loc>
+  </url>
+  <url>
     <loc>/reference/build_coc_fmr.html</loc>
   </url>
   <url>
@@ -68,12 +71,6 @@
   </url>
   <url>
     <loc>/reference/fetch_acs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fetch_acs_rent_burden.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fetch_acs_vacancy_data.html</loc>
   </url>
   <url>
     <loc>/reference/fetch_public_program_use.html</loc>

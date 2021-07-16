@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fetches ACS vacancy data — fetch_acs_vacancy_data • CoC Data</title>
+<title>Creates eviction data — build_coc_evictions • CoC Data</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Fetches ACS vacancy data — fetch_acs_vacancy_data" />
-<meta property="og:description" content="Fetches ACS vacancy data" />
+<meta property="og:title" content="Creates eviction data — build_coc_evictions" />
+<meta property="og:description" content="Builds counts and rates of eviction and eviction court case filing at the CoC level.
+The rates are the number of evictions/court cases divided by the number of renting
+households in the CoC." />
 
 
 
@@ -80,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CoC Data</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -128,34 +130,44 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fetches ACS vacancy data</h1>
+    <h1>Creates eviction data</h1>
     <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/coc_renter_share.R'><code>R/coc_renter_share.R</code></a></small>
-    <div class="hidden name"><code>fetch_acs_vacancy_data.Rd</code></div>
+    <div class="hidden name"><code>build_coc_evictions.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Fetches ACS vacancy data</p>
+    <p>Builds counts and rates of eviction and eviction court case filing at the CoC level.
+The rates are the number of evictions/court cases divided by the number of renting
+households in the CoC.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>fetch_acs_vacancy_data</span><span class='op'>(</span><span class='va'>state</span>, <span class='va'>year</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>build_coc_evictions</span><span class='op'>(</span><span class='va'>evictions</span>, <span class='va'>county_crosswalk</span><span class='op'>)</span></code></pre></div>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>evictions</th>
+      <td><p>A data frame with county-level eviction data.</p></td>
+    </tr>
+    <tr>
+      <th>county_crosswalk</th>
+      <td><p>A data frame with the county to CoC crosswalk.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with tract vacancy counts:</p><ul>
-<li><p><code>fips</code>: County FIPS code (character)</p></li>
-<li><p><code>year</code>: Year (numeric)</p></li>
-<li><p><code>total_housing_units</code>: Total housing units (numeric)</p></li>
-<li><p><code>vacant_housing_units</code>: Total vacant housing units (numeric)</p></li>
-<li><p><code>occupied_rental_units</code>: Occupied rental housing units (numeric)</p></li>
-<li><p><code>for_rent</code>: Rental housing units that are unoccupied and for rent (numeric)</p></li>
-<li><p><code>rented_not_occupied</code>: Rental housing units that have been rented but are
-unoccupied (numeric)</p></li>
+    <p>A data frame:</p><ul>
+<li><p><code>coc_number</code>: CoC number</p></li>
+<li><p><code>year</code>: Year</p></li>
+<li><p><code>eviction_filings</code>: Number of eviction court cases filed</p></li>
+<li><p><code>evictions</code>: Number of evictions</p></li>
+<li><p><code>eviction_filing_rate</code>: Number of eviction court cases filed / renting households</p></li>
+<li><p><code>eviction_rate</code>: Number of evictions / renting households</p></li>
+<li><p><code>missing_evictions_rate</code>: Share of the CoC's renting households in counties with missing eviction data</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='build_coc_vacancy_rates.html'>build_coc_vacancy_rates()</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
