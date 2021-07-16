@@ -217,6 +217,23 @@ build_coc_public_program_use <- function(acs_data, tract_crosswalk) {
     ungroup()
 }
 
+#' Creates CoC average median income measures
+#'
+#' Takes the weighted average of the provided income measures, where the weights are 
+#' the county's share of the total CoC population. The default measures are: median 
+#' household income, median family income, and median individual earnings (pay from 
+#' wages and salary).
+#'
+#' @param yr A numeric with the year of the data.
+#' @param county_crosswalk A data frame with the county to CoC crosswalk.
+#' @param income_variables A character vector (optionally named with variable names) 
+#'   with the ACS variable codes.
+#'
+#' @return A data frame: 
+#' * `coc_number`: CoC_Number 
+#' * `year`: Year 
+#' * Variables: Weighted average of the provided variables
+#'     (weights are county share of the CoC population)
 build_coc_income <- function(yr, county_crosswalk, income_variables) {
   fetch_acs("county", year = yr, variables = income_variables, output = "wide") %>%
     right_join(county_crosswalk, by = c("fips" = "county_fips", "year")) %>%
