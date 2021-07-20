@@ -124,7 +124,44 @@ homelessness_rate_correlation_plot <- correlation_dataset %>%
 girafe(ggobj = homelessness_rate_correlation_plot, height_svg = 7)
 ```
 
+## Dataset Correlation Grid
+```{r dataset correlation grid}
+row_order <- correlation_dataset %>%
+  shave() %>%
+  pull(term)
 
+correlation_grid_plot <- correlation_dataset %>%
+  shave() %>%
+  stretch(na.rm = TRUE) %>%
+  mutate(
+    x = factor(x, levels = row_order),
+    y = factor(y, levels = rev(row_order)),
+    short_r = round(r, 2),
+    tooltip = glue("{x}, {y}: {short_r}")
+  ) %>%
+  ggplot() +
+  geom_point_interactive(
+    aes(x = x, y = y, color = r, tooltip = tooltip),
+    shape = 16
+  ) +
+  scale_color_distiller(name = NULL, type = "div", palette = "RdYlGn", limits = c(-1, 1)) +
+  labs(
+    x = NULL,
+    y = NULL
+  ) +
+  base_theme +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = c(0.75, 0.75),
+    legend.direction = "horizontal",
+    legend.key.height = unit(0.5, "lines"),
+    legend.key.width = unit(3, "lines"),
+    legend.title = element_text(vjust = 1),
+  )
+
+girafe(ggobj = correlation_grid_plot, width_svg = 10, height_svg = 7)
+```
 
 
 combined_dataset %>% 
