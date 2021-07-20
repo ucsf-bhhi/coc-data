@@ -17,7 +17,7 @@ library(showtext)
 font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
 
-base_theme = theme_minimal(base_family = "libre franklin") +
+base_theme <- theme_minimal(base_family = "libre franklin") +
   theme(
     panel.grid.minor = element_blank(),
     panel.grid.major = element_line(color = "grey90")
