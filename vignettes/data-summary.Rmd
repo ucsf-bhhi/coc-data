@@ -177,3 +177,26 @@ combined_dataset %>%
   base_theme
 ```
 
+## Categorical Variable Frequencies
+```{r cat var freq}
+frequency_plot = combined_dataset %>% 
+  select(coc_category, year) %>% 
+  mutate(across(everything(), as.character)) %>% 
+  pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
+  count(variable, value, name = "count") %>% 
+  group_by(variable) %>%
+  mutate(share = percent(count / sum(count), 1)) %>% 
+  ggplot() + 
+  geom_bar_interactive(
+    aes(x = value, y = count, tooltip = glue("{value}: {comma(count, 1)} ({share})")),
+    stat = "identity"
+  ) +
+  scale_y_continuous(name = NULL, labels = label_comma()) +
+  labs(x = NULL) +
+  facet_wrap(~ variable, scales = "free", ncol = 1) +
+  base_theme
+
+girafe(ggobj = frequency_plot, height_svg = 8, width_svg = 10)
+
+```
+
