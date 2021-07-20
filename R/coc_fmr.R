@@ -114,7 +114,7 @@ build_coc_fmr <- function(processed_fmr, acs, crosswalk) {
       # (weights are county share of CoC population)
       across(starts_with("fmr"), ~ weighted.mean(.x, pct_coc_pop_from_county, na.rm = TRUE), .names = "avg_{.col}"),
       # calculate the share of each CoC that was missing an FMR
-      across(starts_with("fmr"), ~ sum(pct_coc_pop_from_county[is.na(.x)]), .names = "{.col}_pct_coc_na_rent"),
+      pct_coc_na_fmr = sum(pct_coc_pop_from_county[is.na(fmr0)]),
       .groups = "drop"
     )
 }
