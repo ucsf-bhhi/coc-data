@@ -163,6 +163,16 @@ correlation_grid_plot <- correlation_dataset %>%
 girafe(ggobj = correlation_grid_plot, width_svg = 10, height_svg = 7)
 ```
 
-
+## Histograms
+```{r histograms, fig.height=16, fig.width=10, message=FALSE}
 combined_dataset %>% 
+  select(where(is.numeric), -year) %>% 
+  pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
+  ggplot() + 
+  geom_histogram(aes(x = value)) +
+  scale_x_continuous(name = NULL, labels = scales::comma) +
+  scale_y_continuous(name = "Counts", labels = scales::comma) +
+  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  base_theme
 ```
+
