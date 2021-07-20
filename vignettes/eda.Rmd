@@ -45,63 +45,18 @@ assertthat::assert_that(
 tar_load(combined_dataset)
 ```
 
-```{r helper functions, include = FALSE}
-all_breaks = function(x) {
-  seq(round(min(x)), round(max(x)), 1)
-}
 ```
 
-```{r }
-combined_dataset %>% 
-  group_by(year) %>% 
-  summarise(across(c(overall_homeless, coc_pop), sum, na.rm = TRUE)) %>% 
-  mutate(homeless_per_1000 = (overall_homeless / coc_pop) * 1000) %>% 
-  ggplot(aes(x = year, y = homeless_per_1000)) +
-    geom_line() +
-    geom_point() +
-    labs(
-      y = NULL,
-      title = "U.S. homelessness rate, 2013-2019",
-      subtitle = "People experiencing homelessness per 1,000 people in the overall population"
-    ) +
-    scale_x_continuous(name = NULL, breaks = all_breaks) +
-    base_theme
 ```
 
-```{r distribution of homelessness rates, 2019}
-combined_dataset %>% 
-  filter(year == 2019) %>% 
-  ggplot(aes(homeless_per_1000_total_pop, after_stat(density))) +
-  geom_histogram(bins = 75) +
   labs(
     x = NULL,
-    y = "Density",
-    title = "Distribution of homelessness rates by CoC, 2019",
-    subtitle = "Unhoused people per 1,000 people in the total population"
   ) +
-  base_theme
 
 ```
 
 
 
-```{r top 5 homeless rate 2019}
-top_5_cocs_homeless_rate_2019 = combined_dataset %>% 
-  filter(year == 2019) %>% 
-  slice_max(homeless_per_1000_total_pop, n = 5) %>% 
-  pull(coc_number)
 
 combined_dataset %>% 
-  filter(coc_number %in% top_5_cocs_homeless_rate_2019) %>% 
-  ggplot(aes(x = year, y = homeless_per_1000_total_pop, color = coc_name)) +
-    geom_line() +
-    geom_point() +
-    labs(
-      y = NULL,
-      title = "Top 5 CoCs by homelessness rate in 2019",
-      subtitle = "People experiencing homelessness per 1,000 people in the overall population"
-    ) +
-    scale_x_continuous(name = NULL, breaks = all_breaks) +
-    scale_color_brewer(name = NULL, type = "qual", palette = "Set2") +
-    base_theme
 ```
