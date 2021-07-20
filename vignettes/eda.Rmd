@@ -13,6 +13,7 @@ library(hrbrthemes)
 library(tidyverse)
 library(here)
 library(showtext)
+library(DataExplorer)
 
 font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
@@ -50,6 +51,23 @@ purrr::walk(targets, check_outdated, outdated = tar_outdated())
 tar_load(all_of(targets))
 ```
 
+## Data Introduction
+
+```{r intro table}
+introduce(combined_dataset) %>%
+  mutate(memory_usage = round(memory_usage / 1000, 0)) %>%
+  rename(`memory_usage_(kb)` = memory_usage) %>%
+  pivot_longer(everything(), names_to = "stat", values_to = "value") %>%
+  mutate(
+    stat = str_replace_all(stat, "_", " "),
+    stat = str_to_sentence(stat)
+  ) %>%
+  kbl(
+    col.names = c("", ""),
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling()
+```
 ```
 
 ```
