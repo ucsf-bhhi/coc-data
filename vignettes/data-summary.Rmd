@@ -18,6 +18,7 @@ library(kableExtra)
 library(corrr)
 library(ggiraph)
 library(glue)
+library(scales)
 
 font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
@@ -170,8 +171,8 @@ combined_dataset %>%
   pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
   ggplot() + 
   geom_histogram(aes(x = value)) +
-  scale_x_continuous(name = NULL, labels = scales::comma) +
-  scale_y_continuous(name = "Counts", labels = scales::comma) +
+  scale_x_continuous(name = NULL, labels = comma) +
+  scale_y_continuous(name = "Counts", labels = comma) +
   facet_wrap(~ variable, ncol = 3, scales = "free") +
   base_theme
 ```
