@@ -15,6 +15,9 @@ library(here)
 library(showtext)
 library(DataExplorer)
 library(kableExtra)
+library(corrr)
+library(ggiraph)
+library(glue)
 
 font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
@@ -83,12 +86,42 @@ summary_stats %>%
 ```
 The observations with missing homelessness counts and rates are from CoCs that did not conduct a PiT count in a given year or result from the "shared jurisdiction" Massachusetts CoC which is present in the shapefiles but not in the PiT count data.
 
+## Correlation with Homelessness Rate
+```{r correlations, include=FALSE}
+correlation_dataset <- combined_dataset %>%
+  select(where(is.numeric), -eviction_filing_rate, -starts_with("homeless_rate"), -fmr1_pct_coc_na_rent, -fmr2_pct_coc_na_rent, -fmr3_pct_coc_na_rent, -fmr4_pct_coc_na_rent) %>%
+  correlate()
 ```
 
-  labs(
-    x = NULL,
+```{r corr with homelessness, fig.height=7}
+homelessness_rate_correlation_plot <- correlation_dataset %>%
+  focus(homeless_per_1000_total_pop) %>%
+  filter(!str_detect(term, "homeless")) %>%
+  mutate(
+    pos_neg = homeless_per_1000_total_pop >= 0,
+    tt = round(homeless_per_1000_total_pop, 2)
+  ) %>%
+  ggplot() +
+  geom_bar_interactive(
+    aes(x = term, y = homeless_per_1000_total_pop, fill = pos_neg, tooltip = tt),
+    stat = "identity",
+    width = 0.6
   ) +
+  scale_fill_manual(
+    guide = "none",
+    values = c("TRUE" = "#d7191c", "FALSE" = "#1a9641")
+  ) +
+  ylim(c(-0.5, 0.5)) +
+  labs(
+    subtitle = "Correlation coefficient with homeless_per_1000_total_pop",
+    x = NULL,
+    y = NULL
+  ) +
+  coord_flip() +
+  base_theme +
+  theme(plot.title.position = "plot")
 
+girafe(ggobj = homelessness_rate_correlation_plot, height_svg = 7)
 ```
 
 
