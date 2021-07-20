@@ -89,7 +89,7 @@ The observations with missing homelessness counts and rates are from CoCs that d
 ## Correlation with Homelessness Rate
 ```{r correlations, include=FALSE}
 correlation_dataset <- combined_dataset %>%
-  select(where(is.numeric), -eviction_filing_rate, -starts_with("homeless_rate"), -fmr1_pct_coc_na_rent, -fmr2_pct_coc_na_rent, -fmr3_pct_coc_na_rent, -fmr4_pct_coc_na_rent) %>%
+  select(where(is.numeric), -eviction_filing_rate, -starts_with("homeless_rate")) %>%
   correlate()
 ```
 
