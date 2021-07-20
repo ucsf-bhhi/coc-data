@@ -1,8 +1,8 @@
 ---
-title: "CoC Data EDA"
+title: "Data Summary"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{CoC Data EDA}
+  %\VignetteIndexEntry{Data Summary}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
