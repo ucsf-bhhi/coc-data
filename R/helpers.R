@@ -114,9 +114,8 @@ build_summary_stats = function(data) {
 
 format_values = function(x) {
   case_when(
-    abs(x) <= 1 ~ scales::comma(x, accuracy = 0.001, trim = FALSE),
-    abs(x) > 1 & abs(x) < 100000 ~ scales::comma(x, accuracy = 0.1, trim = FALSE),
-    abs(x) >= 100000 ~ scales::comma(x, accuracy = 1, trim = FALSE)
+    abs(x) <= 1 ~ scales::comma(x, accuracy = 0.01, trim = FALSE),
+    abs(x) > 1  ~ scales::comma(x, accuracy = 1, trim = FALSE)
   )
 }
 
