@@ -1,0 +1,221 @@
+---
+title: "Data Summary"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Summary}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(targets)
+library(hrbrthemes)
+library(tidyverse)
+library(here)
+library(showtext)
+library(DataExplorer)
+library(kableExtra)
+library(corrr)
+library(ggiraph)
+library(glue)
+library(scales)
+
+font_add_google("Libre Franklin", family = "libre franklin")
+showtext_auto()
+
+base_theme <- theme_minimal(base_family = "libre franklin") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "grey90")
+  )
+
+knitr::opts_chunk$set(
+  fig.showtext = TRUE,
+  echo = FALSE,
+  warning = FALSE,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r load data, include = FALSE}
+# for this chunk only set wd to project root so targets can find everything it
+# needs to validate and load the data
+setwd(here())
+
+# a function that stops the document knitting if the target is outdated
+check_outdated <- function(target, outdated = tar_outdated()) {
+  assertthat::assert_that(
+    !(target %in% outdated),
+    msg = paste(target, "is out of date, run tar_make() or tar_make_future() to update it")
+  )
+}
+targets <- c("summary_stats", "combined_dataset")
+purrr::walk(targets, check_outdated, outdated = tar_outdated())
+
+tar_load(all_of(targets))
+```
+
+## Data Introduction
+
+```{r intro table}
+introduce(combined_dataset) %>%
+  mutate(memory_usage = round(memory_usage / 1000, 0)) %>%
+  rename(`memory_usage_(kb)` = memory_usage) %>%
+  pivot_longer(everything(), names_to = "stat", values_to = "value") %>%
+  mutate(
+    stat = str_replace_all(stat, "_", " "),
+    stat = str_to_sentence(stat)
+  ) %>%
+  kbl(
+    col.names = c("", ""),
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling()
+```
+
+## Summary Statistics
+```{r summary_stats_table}
+summary_stats %>%
+  select(-c(N, `10th`, `90th`, `99th`)) %>%
+  # align first column (variable name) left and all others (values) right
+  kbl(align = c("l", rep("r", ncol(.) - 1))) %>%
+  kable_styling(
+    bootstrap_options = c("striped")
+  ) %>%
+  add_header_above(c(" " = 6, "Percentiles" = 2))
+```
+The observations with missing homelessness counts and rates are from CoCs that did not conduct a PiT count in a given year or result from the "shared jurisdiction" Massachusetts CoC which is present in the shapefiles but not in the PiT count data.
+
+## Correlation with Homelessness Rate
+```{r correlations, include=FALSE}
+correlation_dataset <- combined_dataset %>%
+  select(where(is.numeric), -eviction_filing_rate, -starts_with("homeless_rate")) %>%
+  correlate()
+```
+
+```{r corr with homelessness, fig.height=7}
+homelessness_rate_correlation_plot <- correlation_dataset %>%
+  focus(homeless_per_1000_total_pop) %>%
+  filter(!str_detect(term, "homeless")) %>%
+  mutate(
+    pos_neg = homeless_per_1000_total_pop >= 0,
+    tt = round(homeless_per_1000_total_pop, 2)
+  ) %>%
+  ggplot() +
+  geom_bar_interactive(
+    aes(x = term, y = homeless_per_1000_total_pop, fill = pos_neg, tooltip = tt),
+    stat = "identity",
+    width = 0.6
+  ) +
+  scale_fill_manual(
+    guide = "none",
+    values = c("TRUE" = "#d7191c", "FALSE" = "#1a9641")
+  ) +
+  ylim(c(-0.5, 0.5)) +
+  labs(
+    subtitle = "Correlation coefficient with homeless_per_1000_total_pop",
+    x = NULL,
+    y = NULL
+  ) +
+  coord_flip() +
+  base_theme +
+  theme(plot.title.position = "plot")
+
+girafe(ggobj = homelessness_rate_correlation_plot, height_svg = 7)
+```
+
+## Scatterplots with Homelessness Rate
+```{r scatterplots, fig.height=30, fig.width=10}
+combined_dataset %>% 
+  select(-c(coc_category, homeless_rate_total_pop, homeless_rate_in_poverty)) %>% 
+  pivot_longer(
+    -c(coc_name, coc_number, year, homeless_per_1000_total_pop),
+    names_to = "variable",
+    values_to = "value"
+  ) %>% 
+  ggplot() +
+  geom_point(aes(x = value, y = homeless_per_1000_total_pop)) +
+  scale_x_continuous(name = NULL, labels = label_comma()) +
+  labs(
+    y = NULL,
+    subtitle = "Y-axis is the number of people experiencing homelessness per 1,000 people in the overall CoC population"
+  ) +
+  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  base_theme
+```
+
+## Dataset Correlation Grid
+```{r dataset correlation grid}
+row_order <- correlation_dataset %>%
+  shave() %>%
+  pull(term)
+
+correlation_grid_plot <- correlation_dataset %>%
+  shave() %>%
+  stretch(na.rm = TRUE) %>%
+  mutate(
+    x = factor(x, levels = row_order),
+    y = factor(y, levels = rev(row_order)),
+    short_r = round(r, 2),
+    tooltip = glue("{x}, {y}: {short_r}")
+  ) %>%
+  ggplot() +
+  geom_point_interactive(
+    aes(x = x, y = y, color = r, tooltip = tooltip),
+    shape = 16
+  ) +
+  scale_color_distiller(name = NULL, type = "div", palette = "RdYlGn", limits = c(-1, 1)) +
+  labs(
+    x = NULL,
+    y = NULL
+  ) +
+  base_theme +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = c(0.75, 0.75),
+    legend.direction = "horizontal",
+    legend.key.height = unit(0.5, "lines"),
+    legend.key.width = unit(3, "lines"),
+    legend.title = element_text(vjust = 1),
+  )
+
+girafe(ggobj = correlation_grid_plot, width_svg = 10, height_svg = 7)
+```
+
+## Histograms
+```{r histograms, fig.height=16, fig.width=10, message=FALSE}
+combined_dataset %>% 
+  select(where(is.numeric), -year) %>% 
+  pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
+  ggplot() + 
+  geom_histogram(aes(x = value)) +
+  scale_x_continuous(name = NULL, labels = comma) +
+  scale_y_continuous(name = "Counts", labels = comma) +
+  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  base_theme
+```
+
+## Categorical Variable Frequencies
+```{r cat var freq}
+frequency_plot = combined_dataset %>% 
+  select(coc_category, year) %>% 
+  mutate(across(everything(), as.character)) %>% 
+  pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
+  count(variable, value, name = "count") %>% 
+  group_by(variable) %>%
+  mutate(share = percent(count / sum(count), 1)) %>% 
+  ggplot() + 
+  geom_bar_interactive(
+    aes(x = value, y = count, tooltip = glue("{value}: {comma(count, 1)} ({share})")),
+    stat = "identity"
+  ) +
+  scale_y_continuous(name = NULL, labels = label_comma()) +
+  labs(x = NULL) +
+  facet_wrap(~ variable, scales = "free", ncol = 1) +
+  base_theme +
+  theme(panel.grid.major.x = element_blank())
+
+girafe(ggobj = frequency_plot, height_svg = 8, width_svg = 10)
+```

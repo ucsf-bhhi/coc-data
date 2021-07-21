@@ -8,11 +8,20 @@ repo:
   branch: main
 
 navbar:
+  structure:
+    left: [home, data-download, data-dictionary, data-summary, reference]
+    right: [github]
   components:
-    intro:
+    data-download:
+      text: Download Data
+      href: https://github.com/ucsf-bhhi/coc-data/releases/latest
+    data-dictionary:
       text: Data Dictionary
       href: articles/data-dictionary.html
-
+    data-summary:
+      text: Data Summary
+      href: articles/data-summary.html
+      
 reference:
 - title: Shapefile Processing
 - contents:
