@@ -11,10 +11,26 @@ build_tract_crosswalk(recombined_tracts)
 corresponding CoC}
 }
 \value{
-A data frame with the CoC population and share of the CoC coming from
-each tract.
+A data frame:
+\itemize{
+\item \code{tract_fips}: Census Tract FIPS code
+\item \code{coc_number}: CoC number
+\item \code{coc_name}: CoC name
+\item \code{year}: Year
+\item \code{tract_pop}: Census Tract population
+\item \code{tract_poverty_pop}: Census Tract population below poverty line
+\item \code{tract_renting_hh}: Number of renter households in the Census Tract
+\item \code{coc_pop}: CoC population
+\item \code{coc_poverty_pop}: CoC population below poverty line
+\item \code{coc_renting_hh}: Number of renter households in the CoC
+\item \code{pct_coc_pop_from_tract}: Share of the CoC population from the Census Tract
+\item \code{pct_coc_renting_hh_from_tract}: Share of the CoC renter households from the Census Tract
+}
 }
 \description{
 Calculates the CoC population and share of the CoC coming from each tract.
 Both for the total population and the population under the poverty line.
+}
+\seealso{
+\code{\link[=fetch_tract_data]{fetch_tract_data()}}, \code{\link[=match_tracts_to_cocs]{match_tracts_to_cocs()}}, \code{\link[=build_county_crosswalk]{build_county_crosswalk()}}
 }
