@@ -143,11 +143,26 @@ Both for the total population and the population under the poverty line.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with the CoC population,share of the CoC coming from
-each county, and share of each CoC in each county.</p>
+    <p>A data frame:</p><ul>
+<li><p><code>county_fips</code>: County FIPS code</p></li>
+<li><p><code>coc_number</code>: CoC number</p></li>
+<li><p><code>coc_name</code>: CoC name</p></li>
+<li><p><code>year</code>: Year</p></li>
+<li><p><code>coc_pop</code>: CoC population</p></li>
+<li><p><code>coc_renting_hh</code>: Number of renter households in the CoC</p></li>
+<li><p><code>county_pop_in_coc</code>: Number of county residents in the CoC</p></li>
+<li><p><code>county_renting_hh_in_coc</code>: Number of county renting households in the CoC</p></li>
+<li><p><code>county_pop</code>: County population</p></li>
+<li><p><code>county_renting_hh</code>: Number of renter households in the county</p></li>
+<li><p><code>pct_coc_pop_from_county</code>: Share of the CoC population from the county</p></li>
+<li><p><code>pct_coc_renting_hh_from_county</code>: Share of the CoC renter households from the county</p></li>
+<li><p><code>pct_county_pop_in_coc</code>: Share of the county population in the CoC</p></li>
+<li><p><code>pct_county_renting_hh_in_coc</code>:Share of the county renter households in the CoC</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='build_tract_crosswalk.html'>build_tract_crosswalk()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='fetch_tract_data.html'>fetch_tract_data()</a></code>, <code><a href='match_tracts_to_cocs.html'>match_tracts_to_cocs()</a></code>, <code><a href='build_tract_crosswalk.html'>build_tract_crosswalk()</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
