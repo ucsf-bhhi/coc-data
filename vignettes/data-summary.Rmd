@@ -125,6 +125,26 @@ homelessness_rate_correlation_plot <- correlation_dataset %>%
 girafe(ggobj = homelessness_rate_correlation_plot, height_svg = 7)
 ```
 
+## Scatterplots with Homelessness Rate
+```{r scatterplots, fig.height=30, fig.width=10}
+combined_dataset %>% 
+  select(-c(coc_category, homeless_rate_total_pop, homeless_rate_in_poverty)) %>% 
+  pivot_longer(
+    -c(coc_name, coc_number, year, homeless_per_1000_total_pop),
+    names_to = "variable",
+    values_to = "value"
+  ) %>% 
+  ggplot() +
+  geom_point(aes(x = value, y = homeless_per_1000_total_pop)) +
+  scale_x_continuous(name = NULL, labels = label_comma()) +
+  labs(
+    y = NULL,
+    subtitle = "Y-axis is the number of people experiencing homelessness per 1,000 people in the overall CoC population"
+  ) +
+  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  base_theme
+```
+
 ## Dataset Correlation Grid
 ```{r dataset correlation grid}
 row_order <- correlation_dataset %>%
@@ -194,9 +214,8 @@ frequency_plot = combined_dataset %>%
   scale_y_continuous(name = NULL, labels = label_comma()) +
   labs(x = NULL) +
   facet_wrap(~ variable, scales = "free", ncol = 1) +
-  base_theme
+  base_theme +
+  theme(panel.grid.major.x = element_blank())
 
 girafe(ggobj = frequency_plot, height_svg = 8, width_svg = 10)
-
 ```
-
