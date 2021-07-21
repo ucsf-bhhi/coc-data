@@ -11,7 +11,22 @@ match_tracts_to_cocs(tract_points, coc_boundaries)
 
 \item{coc_boundaries}{sf object with the CoC boundaries}
 }
+\value{
+A data frame:
+\itemize{
+\item \code{tract_fips}: Census Tract FIPS code
+\item \code{coc_number}: CoC number
+\item \code{coc_name}: CoC name
+\item \code{year}: Year
+\item \code{tract_pop}: Census Tract population
+\item \code{tract_poverty_pop}: Census Tract population below poverty line
+\item \code{tract_renting_hh}: Number of renter households in the Census Tract
+}
+}
 \description{
 Matches Census Tracts to CoCs based on the CoC the center of the Census Tract
 lies within.
+}
+\seealso{
+\code{\link[=fetch_tract_data]{fetch_tract_data()}}, \code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}, \code{\link[=build_county_crosswalk]{build_county_crosswalk()}}
 }

@@ -10,13 +10,28 @@ build_county_crosswalk(tract_crosswalk)
 \item{tract_crosswalk}{A tract to CoC crosswalk}
 }
 \value{
-A data frame with the CoC population,share of the CoC coming from
-each county, and share of each CoC in each county.
+A data frame:
+\itemize{
+\item \code{county_fips}: County FIPS code
+\item \code{coc_number}: CoC number
+\item \code{coc_name}: CoC name
+\item \code{year}: Year
+\item \code{coc_pop}: CoC population
+\item \code{coc_renting_hh}: Number of renter households in the CoC
+\item \code{county_pop_in_coc}: Number of county residents in the CoC
+\item \code{county_renting_hh_in_coc}: Number of county renting households in the CoC
+\item \code{county_pop}: County population
+\item \code{county_renting_hh}: Number of renter households in the county
+\item \code{pct_coc_pop_from_county}: Share of the CoC population from the county
+\item \code{pct_coc_renting_hh_from_county}: Share of the CoC renter households from the county
+\item \code{pct_county_pop_in_coc}: Share of the county population in the CoC
+\item \code{pct_county_renting_hh_in_coc}:Share of the county renter households in the CoC
+}
 }
 \description{
 Calculates the CoC population, share of the CoC coming from each tract, and share of each CoC in each county.
 Both for the total population and the population under the poverty line.
 }
 \seealso{
-\code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}
+\code{\link[=fetch_tract_data]{fetch_tract_data()}}, \code{\link[=match_tracts_to_cocs]{match_tracts_to_cocs()}}, \code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}
 }

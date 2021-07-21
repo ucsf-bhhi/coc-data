@@ -12,10 +12,21 @@ fetch_tract_data(year, crs)
 \item{crs}{The EPSG code for the tract spatial data CRS}
 }
 \value{
-An sf object with tract population data and boundaries
+A spatial data frame:
+\itemize{
+\item \code{tract_fips}: Census Tract FIPS code
+\item \code{year}: Year
+\item \code{tract_pop}: Census Tract population
+\item \code{tract_poverty_pop}: Census Tract population below poverty line
+\item \code{tract_renting_hh}: Number of renter households in Census Tract
+\item \code{geometry}: Census Tract border spatial data
+}
 }
 \description{
 Requests ACS population data for all tracts in the 50 states + DC as well as
 spatial data for the tracts. It also converts the spatial data to the given
 CRS.
+}
+\seealso{
+\code{\link[=match_tracts_to_cocs]{match_tracts_to_cocs()}}, \code{\link[=build_tract_crosswalk]{build_tract_crosswalk()}}, \code{\link[=build_county_crosswalk]{build_county_crosswalk()}}
 }
