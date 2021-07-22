@@ -24,6 +24,11 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
       
+      - name: Install outside dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev
+      
       - name: Restore R package cache
         uses: actions/cache@v2
         with:
