@@ -26,25 +26,42 @@ jobs:
       
       - name: Install outside dependencies
         run: |
+          sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
           sudo apt-get update
-          sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
-      
+          sudo apt-get install libcurl4-openssl-dev libssl-dev libxml2-dev libudunits2-dev libgdal-dev libgeos-dev libproj-dev libharfbuzz-dev libfribidi-dev libjq-dev libprotobuf-dev protobuf-compiler
+
       - name: Restore R package cache
         uses: actions/cache@v2
         with:
           path: ~/.local/share/renv
-          key: ${{ runner.os }}-pkgdown-packages }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pkgdown-packages
+            ${{ runner.os }}-renv-
 
       - name: Install dependencies
         run: |
-          install.packages(c("pkgdown", "tibble", "kableExtra", "dplyr", "ggplot2", "purrr", "showtext", "DataExplorer", "corrr", "ggiraph", "scales", "targets", "glue", "gh", "httr"))
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          renv::restore()
         shell: Rscript {0}
 
       - name: Install package
         run: R CMD INSTALL .
         
+      - name: Restore targets cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/coc-data/coc-data/_targets
+          key: targets
+          restore-keys: targets
+        
+      - name: Build data
+        run: |
+          library(targets)
+          library(tidycensus)
+          census_api_key(Sys.getenv("CENSUS_API_KEY"))
+          tar_make()
+        shell: Rscript {0}
+
       - name: Deploy package
         run: |
           git config --local user.email "actions@github.com"
