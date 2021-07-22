@@ -28,10 +28,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.local/share/renv
+          key: ${{ runner.os }}-pkgdown-packages }}
           restore-keys: |
+            ${{ runner.os }}-pkgdown-packages
 
       - name: Install dependencies
         run: |
+          install.packages(c("pkgdown", "tibble", "kableExtra", "dplyr", "ggplot2", "purrr", "showtext", "DataExplorer", "corrr", "ggiraph", "scales", "targets", "glue", "gh", "httr"))
         shell: Rscript {0}
 
       - name: Install package
