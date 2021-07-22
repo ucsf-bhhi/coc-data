@@ -47,21 +47,6 @@ jobs:
       - name: Install package
         run: R CMD INSTALL .
         
-      - name: Restore targets cache
-        uses: actions/cache@v2
-        with:
-          path: /home/runner/work/coc-data/coc-data/_targets
-          key: targets
-          restore-keys: targets
-        
-      - name: Build data
-        run: |
-          library(targets)
-          library(tidycensus)
-          census_api_key(Sys.getenv("CENSUS_API_KEY"))
-          tar_make()
-        shell: Rscript {0}
-
       - name: Deploy package
         run: |
           git config --local user.email "actions@github.com"
