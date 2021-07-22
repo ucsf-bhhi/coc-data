@@ -2,10 +2,9 @@ on:
   push:
     branches:
       - main
-      - master
-      - simple-pkgdown-action
     tags:
       -'*'
+  release:
 
 name: pkgdown
 
