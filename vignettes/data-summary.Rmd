@@ -8,10 +8,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-library(targets)
-library(hrbrthemes)
 library(tidyverse)
-library(here)
 library(showtext)
 library(DataExplorer)
 library(kableExtra)
@@ -39,21 +36,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r load data, include = FALSE}
-# for this chunk only set wd to project root so targets can find everything it
-# needs to validate and load the data
-setwd(here())
 
-# a function that stops the document knitting if the target is outdated
-check_outdated <- function(target, outdated = tar_outdated()) {
-  assertthat::assert_that(
-    !(target %in% outdated),
-    msg = paste(target, "is out of date, run tar_make() or tar_make_future() to update it")
-  )
-}
-targets <- c("summary_stats", "combined_dataset")
-purrr::walk(targets, check_outdated, outdated = tar_outdated())
-
-tar_load(all_of(targets))
 ```
 
 ## Data Introduction
