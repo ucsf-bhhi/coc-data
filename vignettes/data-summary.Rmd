@@ -36,7 +36,30 @@ knitr::opts_chunk$set(
 ```
 
 ```{r load data, include = FALSE}
+latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest")
+asset_position = purrr::detect_index(
+  latest_release$assets, 
+  ~ purrr::pluck(.x, "name") == "coc_data.rds"
+)
+asset_url = purrr::pluck(latest_release$assets, asset_position, "url")
 
+# setup a tempfile
+tf = tempfile()
+
+# download the release
+response = httr::GET(
+  asset_url, 
+  httr::add_headers(
+    c(
+      Authorization = paste("token", gh::gh_token()),
+      Accept = "application/octet-stream"
+    )
+  ),
+  httr::write_disk(tf, overwrite = TRUE)
+)
+
+# load the data
+combined_dataset = read_rds(tf)
 ```
 
 ## Data Introduction
