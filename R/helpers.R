@@ -82,6 +82,7 @@ write_dataset <- function(data, output_function, extension,
   invisible(return(file_path))
 }
 
+#' @export
 build_summary_stats = function(data) {
   data %>%
     pivot_longer(-c(coc_number, coc_name, coc_category, year), names_to = "Variable", values_to = "values") %>% 
