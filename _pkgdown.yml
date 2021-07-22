@@ -4,6 +4,10 @@ template:
   params: 
     bootswatch: spacelab
 
+home:
+  sidebar:
+      structure: [links, authors]
+
 repo:
   branch: main
 

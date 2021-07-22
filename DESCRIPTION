@@ -8,6 +8,10 @@ Authors@R: c(
     family = "Perry",
     role = c("aut", "cre"),
     email = "eve.perry@ucsf.edu"
+  ),
+  person(
+    given = "UCSF Benioff Homelessness and Housing Initiative",
+    role = "aut"
   ))
 Description: Processes the point-in-time homelessness counts from HUD and adds covariates for later analysis of factors associated with homelessness. Covariates are converted to CoC level through crosswalks that map census tracts, zip codes, counties, etc. onto CoCs.
 Encoding: UTF-8
