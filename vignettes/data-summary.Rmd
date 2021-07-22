@@ -16,6 +16,7 @@ library(corrr)
 library(ggiraph)
 library(glue)
 library(scales)
+library(coc.data.package)
 
 font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
@@ -82,7 +83,7 @@ introduce(combined_dataset) %>%
 
 ## Summary Statistics
 ```{r summary_stats_table}
-summary_stats %>%
+build_summary_stats(combined_dataset) %>%
   select(-c(N, `10th`, `90th`, `99th`)) %>%
   # align first column (variable name) left and all others (values) right
   kbl(align = c("l", rep("r", ncol(.) - 1))) %>%
