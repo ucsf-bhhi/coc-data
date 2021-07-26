@@ -24,7 +24,9 @@ tar_option_set(
     "tidycensus",
     "fs",
     "readxl",
-    "haven"
+    "haven",
+    "rmapshaper",
+    "maptools"
   )
 )
 
