@@ -52,6 +52,9 @@
     <loc>/reference/build_county_crosswalk.html</loc>
   </url>
   <url>
+    <loc>/reference/build_display_map.html</loc>
+  </url>
+  <url>
     <loc>/reference/build_pit_rates.html</loc>
   </url>
   <url>
@@ -119,6 +122,9 @@
   </url>
   <url>
     <loc>/reference/match_tracts_to_cocs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/move_state.html</loc>
   </url>
   <url>
     <loc>/reference/parse_pit_year.html</loc>
