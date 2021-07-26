@@ -90,26 +90,38 @@ People experiencing homelessness per 1,000 people in CoC population, 2019
 
 ```{r leaflet, fig.width=8.5}
 map = read_rds("../maps/coc_display_maps.rds") %>% 
+  # this is 2019
   pluck(9) %>%  
+  # join on the data
   left_join(combined_dataset, by = c("coc_number", "coc_name", "year")) %>% 
+  # set the crs to web mercator to play nice with leaflet
   st_transform(4326)
 
+# set up the color pallette for the homelessness rates
 fill_map = colorNumeric("GnBu", map$homeless_per_1000_total_pop)
 
+# generate the text for the hover popups
 popups = glue("{map$coc_number} - {map$coc_name}: {round(map$homeless_per_1000_total_pop, 1)}")
 
+# grab the map bounding box to later set the zoom limits
 map_bbox = st_bbox(map) %>% as.numeric()
 
+# get the center of the map for setting the initial view
 map_center = st_bbox(map) %>% st_as_sfc() %>% st_centroid() %>% unlist()
 
+# start the map and set the zoom limits
 leaflet(map, options = leafletOptions(minZoom = 4, 7)) %>% 
   addPolygons(
+    # turn down the smoothing so the states don't look weird
     smoothFactor = 0.5,
     fillColor = ~fill_map(homeless_per_1000_total_pop),
+    # border line weight
     weight = 0.5,
     opacity = 1,
+    # border line color
     color = "grey",
     fillOpacity = 0.9,
+    # options to highlight a coc when hovering over it
     highlight = highlightOptions(
       weight = 1,
       bringToFront = TRUE,
@@ -124,7 +136,9 @@ leaflet(map, options = leafletOptions(minZoom = 4, 7)) %>%
     position = "bottomright",
     title = NULL
   ) %>% 
+  # don't allow panning the map outside of it's bounds
   setMaxBounds(map_bbox[3], map_bbox[4], map_bbox[1], map_bbox[2]) %>% 
+  # set the initial view (map center) and zoom level
   setView(lng = map_center[1], lat = map_center[2], zoom = 4.25)
 ```
 
