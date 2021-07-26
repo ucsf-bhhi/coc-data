@@ -133,6 +133,22 @@ fetch_acs_tracts = function(year, variables, states = get_state_fips(), ...) {
      function(x) fetch_acs("tract", state = x, year = year, variables = variables, ...)
   )
 }
+
+build_display_map = function(
+  shapefile, smooth = 0.005,
+  rotate_ak = -27, scale_ak = 0.4, shift_ak = c(-500000, -3250000), 
+  rotate_hi = -25, scale_hi = 1,   shift_hi = c(5000000, -1400000)
+) {
+  shapefile %>% 
+    rename("Shape" = contains("geometry")) %>% 
+    mutate(st = str_sub(coc_number, 1, 2)) %>% 
+    filter(!(st %in% c("AS", "GU", "MP", "PR", "VI"))) %>% 
+    ms_simplify(keep = smooth, keep_shapes = TRUE) %>% 
+    move_state("AK", rotate_ak, scale_ak, shift_ak) %>% 
+    move_state("HI", rotate_hi, scale_hi, shift_hi) %>% 
+    select(-st)
+}
+
 move_state = function(map, state, rotation = 0, scale = 1, shift = c(0,0)) {
   new_state = map %>% 
     filter(st == state) %>% 
