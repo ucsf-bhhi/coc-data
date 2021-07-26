@@ -16,6 +16,8 @@ library(corrr)
 library(ggiraph)
 library(glue)
 library(scales)
+library(sf)
+library(leaflet)
 library(coc.data.package)
 
 font_add_google("Libre Franklin", family = "libre franklin")
@@ -64,7 +66,6 @@ combined_dataset = read_rds(tf)
 ```
 
 ## Data Introduction
-
 ```{r intro table}
 introduce(combined_dataset) %>%
   mutate(memory_usage = round(memory_usage / 1000, 0)) %>%
@@ -79,6 +80,52 @@ introduce(combined_dataset) %>%
     format.args = list(big.mark = ",")
   ) %>%
   kable_styling()
+```
+
+## CoC Map
+People experiencing homelessness per 1,000 people in CoC population, 2019
+```{css, echo=FALSE}
+.leaflet-container { background: #ffffff26; }
+```
+
+```{r leaflet, fig.width=8.5}
+map = read_rds("../maps/coc_display_maps.rds") %>% 
+  pluck(9) %>%  
+  left_join(combined_dataset, by = c("coc_number", "coc_name", "year")) %>% 
+  st_transform(4326)
+
+fill_map = colorNumeric("GnBu", map$homeless_per_1000_total_pop)
+
+popups = glue("{map$coc_number} - {map$coc_name}: {round(map$homeless_per_1000_total_pop, 1)}")
+
+map_bbox = st_bbox(map) %>% as.numeric()
+
+map_center = st_bbox(map) %>% st_as_sfc() %>% st_centroid() %>% unlist()
+
+leaflet(map, options = leafletOptions(minZoom = 4, 7)) %>% 
+  addPolygons(
+    smoothFactor = 0.5,
+    fillColor = ~fill_map(homeless_per_1000_total_pop),
+    weight = 0.5,
+    opacity = 1,
+    color = "grey",
+    fillOpacity = 0.9,
+    highlight = highlightOptions(
+      weight = 1,
+      bringToFront = TRUE,
+      fillOpacity = 1
+    ),
+    label = popups
+  ) %>% 
+  addLegend(
+    pal = fill_map,
+    values = ~homeless_per_1000_total_pop,
+    opacity = 0.7,
+    position = "bottomright",
+    title = NULL
+  ) %>% 
+  setMaxBounds(map_bbox[3], map_bbox[4], map_bbox[1], map_bbox[2]) %>% 
+  setView(lng = map_center[1], lat = map_center[2], zoom = 4.25)
 ```
 
 ## Summary Statistics
