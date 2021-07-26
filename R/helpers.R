@@ -165,3 +165,14 @@ move_state = function(map, state, rotation = 0, scale = 1, shift = c(0,0)) {
     filter(st != state) %>% 
     bind_rows(new_state)
 }
+
+save_maps = function(maps, output_dir = "maps") {
+  # make sure output directory exists, create it if it doesn't
+  dir_create(output_dir)
+  # build the path to the output file
+  output_file = path(output_dir, "coc_display_maps.rds")
+  # save the maps object
+  write_rds(maps, output_file)
+  # invisibly return the file path so targets can track it
+  invisible(output_file)
+}
