@@ -80,6 +80,17 @@ list(
     iteration = "list"
   ),
   tar_target(
+    display_maps,
+    build_display_map(coc_shapefiles),
+    pattern = map(coc_shapefiles),
+    iteration = "list"
+  ),
+  tar_target(
+    coc_display_maps_file,
+    save_maps(display_maps),
+    format = "file"
+  ),
+  tar_target(
     tracts, 
     fetch_tract_data(years, crs = 2163),
     pattern = map(years),
