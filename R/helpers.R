@@ -134,6 +134,21 @@ fetch_acs_tracts = function(year, variables, states = get_state_fips(), ...) {
   )
 }
 
+#' Moves Alaska and Hawaii for compact 50 state map
+#'
+#' Moves, scales, and rotates Alaska and Hawaii to make a compact 50 state map for
+#' data vizualization.
+#'
+#' @param shapefile A shapefile with CoC boundaries.
+#' @param smooth A numeric parameter for shapefile simplification.
+#' @param rotate_ak Rotation parameter for Alaksa, in degrees.
+#' @param scale_ak Scale factor for Alaska.
+#' @param shift_ak A vector with the horizonal and vertical shift for Alaska.
+#' @param rotate_hi Rotation parameter for Hawaii, in degrees
+#' @param scale_hi Scale factor for Hawaii.
+#' @param shift_hi A vector with the horizonal and vertical shift for Hawaii
+#'
+#' @return A spatial data frame with adjusted representations of Alaska and Hawaii. 
 build_display_map = function(
   shapefile, smooth = 0.005,
   rotate_ak = -27, scale_ak = 0.4, shift_ak = c(-500000, -3250000), 
@@ -149,6 +164,22 @@ build_display_map = function(
     select(-st)
 }
 
+#' Move, scale, rotate a state on a map
+#'
+#' Helps move states like Alaska and Hawaii so the map-based visualizations can be 
+#' more compact. This function simplifies changing the position of the state 
+#' (shifting), changing the size of the state (scaling), and rotating the state.
+#'
+#' @param map A spatial data frame with the map data.
+#' @param state A string with the abbreviation of the state to adjust (ie. "AK").
+#' @param rotation A numeric with rotation adjustment given in degrees.
+#' @param scale A numeric with the scale factor for the state.
+#' @param shift A numeric vector with the horizontal and vertical adjustments for
+#'  the state's position.
+#'
+#' @return The same spatial data frame but with the adjusted state.
+#' 
+#' @keywords internal
 move_state = function(map, state, rotation = 0, scale = 1, shift = c(0,0)) {
   new_state = map %>% 
     filter(st == state) %>% 

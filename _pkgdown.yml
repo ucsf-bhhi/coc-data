@@ -85,3 +85,4 @@ reference:
 - contents:
   - fetch_acs
   - write_dataset
+  - build_display_map
