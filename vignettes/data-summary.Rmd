@@ -16,6 +16,7 @@ library(corrr)
 library(ggiraph)
 library(glue)
 library(scales)
+library(sf)
 library(coc.data.package)
 
 font_add_google("Libre Franklin", family = "libre franklin")
@@ -64,7 +65,6 @@ combined_dataset = read_rds(tf)
 ```
 
 ## Data Introduction
-
 ```{r intro table}
 introduce(combined_dataset) %>%
   mutate(memory_usage = round(memory_usage / 1000, 0)) %>%
@@ -79,6 +79,37 @@ introduce(combined_dataset) %>%
     format.args = list(big.mark = ",")
   ) %>%
   kable_styling()
+```
+
+## CoC Map
+People experiencing homelessness per 1,000 people in CoC population, 2019
+```{r maps}
+coc_map = read_rds("../maps/coc_display_maps.rds") %>% 
+  pluck(9) %>% 
+  left_join(combined_dataset, by = c("coc_number", "coc_name", "year")) %>% 
+  mutate(
+    tooltip = glue(
+      "{coc_number} - {coc_name}: {round(homeless_per_1000_total_pop, 1)}"
+    )
+  ) %>%
+  ggplot() +
+  geom_sf_interactive(
+    aes(fill = homeless_per_1000_total_pop, tooltip = tooltip), size = 0.1) +
+  coord_sf(crs = 3857, datum = NULL) +
+  scale_fill_distiller_interactive(palette = "GnBu", direction = 1, na.value = "grey75") +
+  base_theme +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text = element_blank(),
+    legend.direction = "horizontal",
+    legend.position = "bottom"
+  )
+
+girafe(ggobj = coc_map, width_svg = 10, height_svg = 9,
+  options = list(
+    opts_zoom(max = 5)
+  )
+)
 ```
 
 ## Summary Statistics
