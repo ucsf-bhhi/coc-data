@@ -195,7 +195,7 @@ combined_dataset %>%
     y = NULL,
     subtitle = "Y-axis is the number of people experiencing homelessness per 1,000 people in the overall CoC population"
   ) +
-  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  facet_wrap(~ variable, ncol = 3, scales = "free", switch = "x") +
   base_theme
 ```
 
@@ -247,7 +247,7 @@ combined_dataset %>%
   geom_histogram(aes(x = value)) +
   scale_x_continuous(name = NULL, labels = comma) +
   scale_y_continuous(name = "Counts", labels = comma) +
-  facet_wrap(~ variable, ncol = 3, scales = "free") +
+  facet_wrap(~ variable, ncol = 3, scales = "free", switch = "x") +
   base_theme
 ```
 
