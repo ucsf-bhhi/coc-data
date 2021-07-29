@@ -1,0 +1,11 @@
+---
+title: "Data Explorer"
+output: rmarkdown::html_vignette
+full_width_article: true
+vignette: >
+  %\VignetteIndexEntry{Data Explorer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<iframe height="500" width="100%" frameborder="no" src="https://ucsf-bhhi.shinyapps.io/data-explorer/"> </iframe>
