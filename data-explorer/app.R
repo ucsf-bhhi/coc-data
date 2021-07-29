@@ -51,6 +51,8 @@ base_plot = ggplot(coc_data) +
   theme(
     panel.grid.minor = element_blank(),
     panel.grid.major = element_line(color = "grey93"),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 20)
   )
 
 ui <- fluidPage(
