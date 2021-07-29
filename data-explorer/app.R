@@ -8,41 +8,78 @@
 #
 
 library(shiny)
+library(showtext)
+library(ggplot2)
 
-# Define UI for application that draws a histogram
+latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest")
+asset_position = purrr::detect_index(
+    latest_release$assets, 
+    ~ purrr::pluck(.x, "name") == "coc_data.rds"
+)
+asset_url = purrr::pluck(latest_release$assets, asset_position, "url")
+
+# setup a tempfile
+tf = tempfile()
+
+# download the release
+response = httr::GET(
+    asset_url, 
+    httr::add_headers(
+        c(
+            Accept = "application/octet-stream"
+        )
+    ),
+    httr::write_disk(tf, overwrite = TRUE)
+)
+
+# load the data
+coc_data = readr::read_rds(tf)
+
+excluded_variables = c("coc_name", "coc_number")
+y_excluded_variables = c("year", "coc_category")
+
+make_choices = function(data, excluded) {
+  names(data)[!(names(data) %in% excluded)]
+}
+
+x_choices = make_choices(coc_data, excluded_variables)
+y_choices = make_choices(coc_data, c(y_excluded_variables, excluded_variables))
+
+font_add_google("Libre Franklin", family = "libre franklin")
+showtext_auto()
+
+base_plot = ggplot(coc_data) +
+    scale_y_continuous(labels = scales::label_comma()) +
+    scale_x_continuous(labels = scales::label_comma()) +
+    theme_minimal(base_family = "libre franklin") +
+    theme(
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(color = "grey90")
+    )
+
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            selectInput("x",
+                        "X-axis variable",
+                        choices = x_choices,
+                        selected = "share_rent_over_50_pct_inc"),
+            selectInput("y",
+                        "Y-axis variable",
+                        choices = y_choices,
+                        selected = "homeless_per_1000_total_pop")
         ),
-
-        # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+           plotOutput("scatterPlot")
         )
     )
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+  output$scatterPlot <- renderPlot({
+    base_plot +
+    geom_point(aes(x = .data[[input$x]], y = .data[[input$y]]))
+  })
 }
 
 # Run the application 
