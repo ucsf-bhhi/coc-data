@@ -50,7 +50,7 @@ base_plot = ggplot(coc_data) +
   theme_minimal(base_family = "libre franklin") +
   theme(
     panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(color = "grey90")
+    panel.grid.major = element_line(color = "grey93"),
   )
 
 ui <- fluidPage(
