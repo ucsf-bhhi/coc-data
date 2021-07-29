@@ -13,8 +13,8 @@ library(ggplot2)
 
 latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest")
 asset_position = purrr::detect_index(
-    latest_release$assets, 
-    ~ purrr::pluck(.x, "name") == "coc_data.rds"
+  latest_release$assets, 
+  ~ purrr::pluck(.x, "name") == "coc_data.rds"
 )
 asset_url = purrr::pluck(latest_release$assets, asset_position, "url")
 
@@ -23,13 +23,9 @@ tf = tempfile()
 
 # download the release
 response = httr::GET(
-    asset_url, 
-    httr::add_headers(
-        c(
-            Accept = "application/octet-stream"
-        )
-    ),
-    httr::write_disk(tf, overwrite = TRUE)
+  asset_url, 
+  httr::add_headers(c(Accept = "application/octet-stream")),
+  httr::write_disk(tf, overwrite = TRUE)
 )
 
 # load the data
@@ -49,30 +45,30 @@ font_add_google("Libre Franklin", family = "libre franklin")
 showtext_auto()
 
 base_plot = ggplot(coc_data) +
-    scale_y_continuous(labels = scales::label_comma()) +
-    scale_x_continuous(labels = scales::label_comma()) +
-    theme_minimal(base_family = "libre franklin") +
-    theme(
-        panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(color = "grey90")
-    )
+  scale_y_continuous(labels = scales::label_comma()) +
+  scale_x_continuous(labels = scales::label_comma()) +
+  theme_minimal(base_family = "libre franklin") +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "grey90")
+  )
 
 ui <- fluidPage(
-    sidebarLayout(
-        sidebarPanel(
-            selectInput("x",
-                        "X-axis variable",
-                        choices = x_choices,
-                        selected = "share_rent_over_50_pct_inc"),
-            selectInput("y",
-                        "Y-axis variable",
-                        choices = y_choices,
-                        selected = "homeless_per_1000_total_pop")
-        ),
-        mainPanel(
-           plotOutput("scatterPlot")
-        )
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("x",
+                  "X-axis variable",
+                  choices = x_choices,
+                  selected = "share_rent_over_50_pct_inc"),
+      selectInput("y",
+                  "Y-axis variable",
+                  choices = y_choices,
+                  selected = "homeless_per_1000_total_pop")
+    ),
+    mainPanel(
+      plotOutput("scatterPlot")
     )
+  )
 )
 
 server <- function(input, output) {
