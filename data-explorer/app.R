@@ -78,7 +78,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$scatterPlot <- renderPlot({
     base_plot +
-    geom_point(aes(x = .data[[input$x]], y = .data[[input$y]]))
+    geom_point(aes(x = .data[[input$x]], y = .data[[input$y]]), alpha = 0.7)
   })
 }
 
