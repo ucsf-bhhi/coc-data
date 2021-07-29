@@ -10,6 +10,7 @@
 library(shiny)
 library(showtext)
 library(ggplot2)
+library(ggiraph)
 
 latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest")
 asset_position = purrr::detect_index(
@@ -50,9 +51,10 @@ base_plot = ggplot(coc_data) +
   theme_minimal(base_family = "libre franklin") +
   theme(
     panel.grid.minor = element_blank(),
-    panel.grid.major = element_line(color = "grey93"),
-    axis.text = element_text(size = 16),
-    axis.title = element_text(size = 20)
+    panel.grid.major = element_line(color = "grey93")
+    ,
+    axis.text = element_text(size = 7, color = "grey50"),
+    axis.title = element_text(size = 8, color = "grey25")
   )
 
 ui <- fluidPage(
@@ -69,16 +71,17 @@ ui <- fluidPage(
       width = 3
     ),
     mainPanel(
-      plotOutput("scatterPlot", height = "600px"),
+      girafeOutput("scatterPlot", height = "600px"),
       width = 9
     )
   )
 )
 
 server <- function(input, output) {
-  output$scatterPlot <- renderPlot({
-    base_plot +
-    geom_point(aes(x = .data[[input$x]], y = .data[[input$y]]), alpha = 0.7)
+  output$scatterPlot <- renderGirafe({
+    plot = base_plot +
+    geom_point_interactive(aes(x = .data[[input$x]], y = .data[[input$y]]), alpha = 0.7)
+    girafe(ggobj = plot, width_svg = 8)
   })
 }
 
