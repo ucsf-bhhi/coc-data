@@ -66,9 +66,11 @@ ui <- fluidPage(
                   "X-axis variable",
                   choices = x_choices,
                   selected = "share_rent_over_50_pct_inc"),
+      width = 3
     ),
     mainPanel(
-      plotOutput("scatterPlot")
+      plotOutput("scatterPlot", height = "600px"),
+      width = 9
     )
   )
 )
