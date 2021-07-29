@@ -56,14 +56,14 @@ base_plot = ggplot(coc_data) +
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
+      selectInput("y",
+                  "Y-axis variable",
+                  choices = y_choices,
+                  selected = "homeless_per_1000_total_pop"),
       selectInput("x",
                   "X-axis variable",
                   choices = x_choices,
                   selected = "share_rent_over_50_pct_inc"),
-      selectInput("y",
-                  "Y-axis variable",
-                  choices = y_choices,
-                  selected = "homeless_per_1000_total_pop")
     ),
     mainPanel(
       plotOutput("scatterPlot")
