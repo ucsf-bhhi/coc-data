@@ -13,7 +13,7 @@ repo:
 
 navbar:
   structure:
-    left: [home, data-download, data-dictionary, data-summary, reference]
+    left: [home, data-download, data-dictionary, data-summary, data-explorer, reference]
     right: [github]
   components:
     data-download:
@@ -25,6 +25,9 @@ navbar:
     data-summary:
       text: Data Summary
       href: articles/data-summary.html
+    data-explorer:
+      text: Data Explorer
+      href: articles/data-explorer.html
       
 reference:
 - title: Shapefile Processing
