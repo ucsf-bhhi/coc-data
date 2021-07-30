@@ -9,6 +9,7 @@
 
 library(shiny)
 library(showtext)
+library(dplyr)
 library(ggplot2)
 library(ggiraph)
 
