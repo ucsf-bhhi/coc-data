@@ -57,7 +57,17 @@ base_plot = ggplot(coc_data) +
     axis.title = element_text(size = 8, color = "grey25")
   )
 
+format_values = function(x) {
+    case_when(
+        abs(x) <= 1 ~ scales::comma(x, accuracy = 0.01, trim = FALSE),
+        abs(x) > 1  ~ scales::comma(x, accuracy = 1, trim = FALSE)
+    )
+}
+
 ui <- fluidPage(
+  tags$head(
+    tags$style(HTML("@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin&display=swap');"))
+  ),
   sidebarLayout(
     sidebarPanel(
       selectInput("y",
@@ -80,8 +90,14 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$scatterPlot <- renderGirafe({
     plot = base_plot +
-    geom_point_interactive(aes(x = .data[[input$x]], y = .data[[input$y]]), alpha = 0.7)
-    girafe(ggobj = plot, width_svg = 8)
+    geom_point_interactive(
+      aes(x = .data[[input$x]],
+          y = .data[[input$y]],
+          tooltip = paste0("<b>", coc_number, ": ", coc_name, ", ", year, "</b><br><hr style='margin-top:1px; margin-bottom:4px'>", input$x, ": ", format_values(.data[[input$x]]), "<br>", input$y, ": ", format_values(.data[[input$y]]))
+      ),
+      alpha = 0.7)
+    
+    girafe(ggobj = plot, width_svg = 8, options = list(opts_tooltip(css = "background-color: white; rx: 15; padding: 3px 5px 3px 5px; border-color: white; border-radius: 3px; box-shadow: 3px 3px 7px grey; font-family: Libre Franklin,Helvetica,Arial,sans-serif;", opacity = 1)))
   })
 }
 
