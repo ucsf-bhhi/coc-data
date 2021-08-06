@@ -26,7 +26,8 @@ tar_option_set(
     "readxl",
     "haven",
     "rmapshaper",
-    "maptools"
+    "maptools",
+    "labelled"
   )
 )
 
