@@ -207,3 +207,50 @@ save_maps = function(maps, output_dir = "maps") {
   # invisibly return the file path so targets can track it
   invisible(output_file)
 }
+
+label_dataset = function(data) {
+  data %>% 
+  set_variable_labels(
+    coc_number = "CoC number",
+    coc_name = "CoC name",
+    coc_category = "CoC category",
+    year = "Year",
+    overall_homeless = "Unhoused people",
+    homeless_rate_total_pop = "Homelessness rate",
+    homeless_rate_in_poverty = "Homelessness rate (poverty)",
+    homeless_per_1000_total_pop = "Unhoused people per 1,000 people",
+    homeless_per_1000_in_poverty = "Unhoused people per 1,000 people (poverty)",
+    coc_pop = "Population",
+    coc_poverty_pop = "Population below poverty line",
+    coc_poverty_rate = "Poverty rate",
+    avg_renter_share = "Rental household share",
+    share_rent_over_30_pct_inc = "% rent-burdened (30%)",
+    share_rent_over_50_pct_inc = "% extremely rent burdened (50%)",
+    median_rent_burden = "Median rent burden",
+    gross_vacancy_rate = "Gross vacancy rate",
+    rental_vacancy_rate = "Rental vacancy rate",
+    eviction_filings = "Eviction filings",
+    evictions = "Evictions",
+    eviction_filing_rate = "Eviction filing rate",
+    eviction_rate = "Eviction rate",
+    missing_evictions_rate = "% of CoC missing eviction data",
+    avg_fmr0 = "Avg. studio FMR",
+    avg_fmr1 = "Avg. 1-bedroom FMR",
+    avg_fmr2 = "Avg. 2-bedroom FMR",
+    avg_fmr3 = "Avg. 3-bedroom FMR",
+    avg_fmr4 = "Avg. 4-bedroom FMR",
+    pct_coc_na_fmr = "% of CoC missing FMR",
+    coc_rent_zillow = "Avg. Zillow Rent Index",
+    coc_share_na_rent_zillow = "% of CoC missing Zillow Rent Index",
+    coc_unemployment_rate = "Unemployment rate",
+    share_na_coc_unemployment_rate = "% of population missing unemployment rate",
+    shr_hh_with_snap = "% with SNAP",
+    shr_hh_with_pub_assist = "% with public assistance",
+    shr_hh_with_snap_or_pub_assist = "% with SNAP or public assistance",
+    shr_hh_with_ssi = "% with SSI",
+    shr_with_medicaid = "% with Medicaid",
+    household_income = "Median household income",
+    family_income = "Median family income",
+    individual_earnings = "Median individual earnings"
+  )
+}
