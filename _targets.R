@@ -258,7 +258,8 @@ list(
       full_join(coc_unemployment_rate, by = c("coc_number", "year")) %>%  
       full_join(coc_public_program_use, by = c("coc_number", "year")) %>% 
       full_join(coc_evictions, by = c("coc_number", "year")) %>% 
-      full_join(coc_income, by = c("coc_number", "year"))
+      full_join(coc_income, by = c("coc_number", "year")) %>% 
+      label_dataset()
   ),
   #### Output Dataset Files ####
   tar_map(
