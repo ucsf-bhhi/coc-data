@@ -1,6 +1,6 @@
 Package: coc.data.package
 Title: Point-in-time homelessness counts and covariates by CoC
-Version: 0.8.0
+Version: 0.8.1
 URL: https://github.com/ucsf-bhhi/coc-data
 Authors@R: c(
   person(
