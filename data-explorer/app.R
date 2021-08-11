@@ -13,7 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(ggiraph)
 
-latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest")
+latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest", .token = config::get()$gh_token)
 asset_position = purrr::detect_index(
   latest_release$assets, 
   ~ purrr::pluck(.x, "name") == "coc_data.rds"
@@ -26,7 +26,12 @@ tf = tempfile()
 # download the release
 response = httr::GET(
   asset_url, 
-  httr::add_headers(c(Accept = "application/octet-stream")),
+  httr::add_headers(
+    c(
+      Authorization = paste("token", config::get()$gh_token),
+      Accept = "application/octet-stream"
+    )
+  ),
   httr::write_disk(tf, overwrite = TRUE)
 )
 
