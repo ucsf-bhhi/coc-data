@@ -12,6 +12,7 @@ library(showtext)
 library(dplyr)
 library(ggplot2)
 library(ggiraph)
+library(labelled)
 
 latest_release = gh::gh("GET /repos/ucsf-bhhi/coc-data/releases/latest", .token = config::get()$gh_token)
 asset_position = purrr::detect_index(
@@ -42,7 +43,10 @@ excluded_variables = c("coc_name", "coc_number")
 y_excluded_variables = c("year", "coc_category")
 
 make_choices = function(data, excluded) {
-  names(data)[!(names(data) %in% excluded)]
+  exclusion_mask = !(names(data) %in% excluded)
+  values = names(data)[exclusion_mask]
+  labels = var_label(data, unlist = TRUE)[exclusion_mask]
+  setNames(values, labels)
 }
 
 x_choices = make_choices(coc_data, excluded_variables)
@@ -99,9 +103,13 @@ server <- function(input, output) {
     geom_point_interactive(
       aes(x = .data[[input$x]],
           y = .data[[input$y]],
-          tooltip = paste0("<b>", coc_number, ": ", coc_name, ", ", year, "</b><br><hr style='margin-top:1px; margin-bottom:4px'>", input$x, ": ", format_values(.data[[input$x]]), "<br>", input$y, ": ", format_values(.data[[input$y]]))
+          tooltip = paste0("<b>", coc_number, ": ", coc_name, ", ", year, "</b><br><hr style='margin-top:1px; margin-bottom:4px'>", look_for(coc_data, input$x)$label, ": ", format_values(.data[[input$x]]), "<br>", look_for(coc_data, input$y)$label, ": ", format_values(.data[[input$y]]))
       ),
-      alpha = 0.7)
+      alpha = 0.7) +
+      labs(
+        x = look_for(coc_data, input$x)$label,
+        y = look_for(coc_data, input$y)$label
+      )
     
     girafe(ggobj = plot, width_svg = 8, options = list(opts_tooltip(css = "background-color: white; rx: 15; padding: 3px 5px 3px 5px; border-color: white; border-radius: 3px; box-shadow: 3px 3px 7px grey; font-family: Libre Franklin,Helvetica,Arial,sans-serif;", opacity = 1)))
   })
