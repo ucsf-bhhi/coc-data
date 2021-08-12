@@ -18,6 +18,7 @@ library(glue)
 library(scales)
 library(sf)
 library(leaflet)
+library(labelled)
 library(coc.data.package)
 
 font_add_google("Libre Franklin", family = "libre franklin")
@@ -36,6 +37,14 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+labels_df = function(data) {
+  label_list = var_label(data)
+  tibble(
+    variable = names(label_list),
+    label = unlist(label_list, use.names = FALSE)
+  )
+}
 ```
 
 ```{r load data, include = FALSE}
@@ -170,9 +179,10 @@ homelessness_rate_correlation_plot <- correlation_dataset %>%
     pos_neg = homeless_per_1000_total_pop >= 0,
     tt = round(homeless_per_1000_total_pop, 2)
   ) %>%
+  left_join(labels_df(combined_dataset), by = c("term" = "variable")) %>% 
   ggplot() +
   geom_bar_interactive(
-    aes(x = term, y = homeless_per_1000_total_pop, fill = pos_neg, tooltip = tt),
+    aes(x = label, y = homeless_per_1000_total_pop, fill = pos_neg, tooltip = tt),
     stat = "identity",
     width = 0.6
   ) +
@@ -202,6 +212,7 @@ combined_dataset %>%
     names_to = "variable",
     values_to = "value"
   ) %>% 
+  left_join(labels_df(combined_dataset), by = "variable") %>% 
   ggplot() +
   geom_point(aes(x = value, y = homeless_per_1000_total_pop)) +
   scale_x_continuous(name = NULL, labels = label_comma()) +
@@ -209,7 +220,7 @@ combined_dataset %>%
     y = NULL,
     subtitle = "Y-axis is the number of people experiencing homelessness per 1,000 people in the overall CoC population"
   ) +
-  facet_wrap(~ variable, ncol = 3, scales = "free", switch = "x") +
+  facet_wrap(~ label, ncol = 3, scales = "free", switch = "x") +
   base_theme
 ```
 
@@ -222,12 +233,16 @@ row_order <- correlation_dataset %>%
 correlation_grid_plot <- correlation_dataset %>%
   shave() %>%
   stretch(na.rm = TRUE) %>%
+  left_join(labels_df(combined_dataset), by = c("x" = "variable")) %>%
+  rename(label_x = label) %>% 
+  left_join(labels_df(combined_dataset), by = c("y" = "variable")) %>%
+  rename(label_y = label) %>%
   mutate(
     x = factor(x, levels = row_order),
     y = factor(y, levels = rev(row_order)),
     short_r = round(r, 2),
-    tooltip = glue("{x}, {y}: {short_r}")
-  ) %>%
+    tooltip = glue("{label_x}, {label_y}: {short_r}")
+  ) %>% 
   ggplot() +
   geom_point_interactive(
     aes(x = x, y = y, color = r, tooltip = tooltip),
@@ -257,11 +272,12 @@ girafe(ggobj = correlation_grid_plot, width_svg = 10, height_svg = 7)
 combined_dataset %>% 
   select(where(is.numeric), -year) %>% 
   pivot_longer(everything(), names_to = "variable", values_to = "value") %>% 
+  left_join(labels_df(combined_dataset), by = "variable") %>%
   ggplot() + 
   geom_histogram(aes(x = value)) +
   scale_x_continuous(name = NULL, labels = comma) +
   scale_y_continuous(name = "Counts", labels = comma) +
-  facet_wrap(~ variable, ncol = 3, scales = "free", switch = "x") +
+  facet_wrap(~ label, ncol = 3, scales = "free", switch = "x") +
   base_theme
 ```
 
@@ -274,6 +290,7 @@ frequency_plot = combined_dataset %>%
   count(variable, value, name = "count") %>% 
   group_by(variable) %>%
   mutate(share = percent(count / sum(count), 1)) %>% 
+  left_join(labels_df(combined_dataset), by = "variable") %>%
   ggplot() + 
   geom_bar_interactive(
     aes(x = value, y = count, tooltip = glue("{value}: {comma(count, 1)} ({share})")),
@@ -281,7 +298,7 @@ frequency_plot = combined_dataset %>%
   ) +
   scale_y_continuous(name = NULL, labels = label_comma()) +
   labs(x = NULL) +
-  facet_wrap(~ variable, scales = "free", ncol = 1) +
+  facet_wrap(~ label, scales = "free", ncol = 1) +
   base_theme +
   theme(panel.grid.major.x = element_blank())
 
