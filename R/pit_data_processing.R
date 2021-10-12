@@ -43,7 +43,8 @@ parse_pit_year <- function(filepath, year) {
     # underscores instead of spaces)
     rename_with(~ str_to_lower(str_replace(.x, " ", "_")), matches(c("CoC Number", "CoC Name", "CoC Category"))) %>%
     # drop any rows that don't have a CoC name (ie. notes and empty rows on the spreadsheet)
-    filter(!is.na(coc_name))
+    filter(!is.na(coc_name)) %>% 
+    mutate(coc_number = str_sub(coc_number, 1, 6))
 }
 
 
