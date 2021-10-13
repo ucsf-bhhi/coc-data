@@ -81,6 +81,11 @@ list(
     iteration = "list"
   ),
   tar_target(
+    coc_list,
+    build_coc_list(coc_shapefiles),
+    pattern = map(coc_shapefiles)
+  ),
+  tar_target(
     display_maps,
     build_display_map(coc_shapefiles),
     pattern = map(coc_shapefiles),
@@ -247,8 +252,9 @@ list(
   #### Combined Dataset ####
   tar_target(
     combined_dataset,
-    coc_categories %>% 
-      full_join(pit_rates, by = "coc_number") %>% 
+    coc_list %>% 
+      full_join(coc_categories, by = "coc_number") %>% 
+      full_join(pit_rates, by = c("coc_number", "year")) %>% 
       full_join(coc_populations, by = c("coc_number", "year")) %>% 
       full_join(coc_renter_shares, by = c("coc_number", "year")) %>% 
       full_join(coc_fmr, by = c("coc_number", "year")) %>% 
