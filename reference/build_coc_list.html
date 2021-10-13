@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Moves Alaska and Hawaii for compact 50 state map — build_display_map • CoC Data</title>
+<title>Build list of CoCs — build_coc_list • CoC Data</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Moves Alaska and Hawaii for compact 50 state map — build_display_map" />
-<meta property="og:description" content="Moves, scales, and rotates Alaska and Hawaii to make a compact 50 state map for
-data vizualization." />
+<meta property="og:title" content="Build list of CoCs — build_coc_list" />
+<meta property="og:description" content="Creates the list of CoCs and their names by year." />
 
 
 
@@ -123,67 +122,34 @@ data vizualization." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Moves Alaska and Hawaii for compact 50 state map</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/helpers.R'><code>R/helpers.R</code></a></small>
-    <div class="hidden name"><code>build_display_map.Rd</code></div>
+    <h1>Build list of CoCs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ucsf-bhhi/coc-data/blob/main/R/process_coc_shapefiles.R'><code>R/process_coc_shapefiles.R</code></a></small>
+    <div class="hidden name"><code>build_coc_list.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Moves, scales, and rotates Alaska and Hawaii to make a compact 50 state map for
-data vizualization.</p>
+    <p>Creates the list of CoCs and their names by year.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>build_display_map</span><span class='op'>(</span>
-  <span class='va'>shapefile</span>,
-  smooth <span class='op'>=</span> <span class='fl'>0.005</span>,
-  rotate_ak <span class='op'>=</span> <span class='op'>-</span><span class='fl'>27</span>,
-  scale_ak <span class='op'>=</span> <span class='fl'>0.4</span>,
-  shift_ak <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>5e+05</span>, <span class='op'>-</span><span class='fl'>3250000</span><span class='op'>)</span>,
-  rotate_hi <span class='op'>=</span> <span class='op'>-</span><span class='fl'>25</span>,
-  scale_hi <span class='op'>=</span> <span class='fl'>1</span>,
-  shift_hi <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5e+06</span>, <span class='op'>-</span><span class='fl'>1400000</span><span class='op'>)</span>
-<span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>build_coc_list</span><span class='op'>(</span><span class='va'>coc_shapefile</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>shapefile</th>
-      <td><p>A shapefile with CoC boundaries.</p></td>
-    </tr>
-    <tr>
-      <th>smooth</th>
-      <td><p>A numeric parameter for shapefile simplification.</p></td>
-    </tr>
-    <tr>
-      <th>rotate_ak</th>
-      <td><p>Rotation parameter for Alaksa, in degrees.</p></td>
-    </tr>
-    <tr>
-      <th>scale_ak</th>
-      <td><p>Scale factor for Alaska.</p></td>
-    </tr>
-    <tr>
-      <th>shift_ak</th>
-      <td><p>A vector with the horizonal and vertical shift for Alaska.</p></td>
-    </tr>
-    <tr>
-      <th>rotate_hi</th>
-      <td><p>Rotation parameter for Hawaii, in degrees</p></td>
-    </tr>
-    <tr>
-      <th>scale_hi</th>
-      <td><p>Scale factor for Hawaii.</p></td>
-    </tr>
-    <tr>
-      <th>shift_hi</th>
-      <td><p>A vector with the horizonal and vertical shift for Hawaii</p></td>
+      <th>coc_shapefile</th>
+      <td><p>An sf data frame with the shapefile data.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A spatial data frame with adjusted representations of Alaska and Hawaii.</p>
+    <p>A data frame:</p><ul>
+<li><p>coc_number: CoC number</p></li>
+<li><p>coc_name: CoC name</p></li>
+<li><p>year: Year</p></li>
+</ul>
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
