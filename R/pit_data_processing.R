@@ -79,5 +79,5 @@ get_coc_categories <- function(wide_pit_data) {
       coc_number != "MO-604a"
     ) %>%
     # just keep these variables around
-    select(coc_number, coc_name, coc_category)
+    select(coc_number, coc_category)
 }

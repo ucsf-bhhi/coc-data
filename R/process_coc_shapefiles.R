@@ -139,3 +139,17 @@ read_raw_coc_shapefile <- function(shapefile_path) {
     # add a column with the year
     mutate(year = shapefile_year)
 }
+
+#' Build list of CoCs
+#' 
+#' Creates the list of CoCs and their names by year.
+#'
+#' @param coc_shapefile An sf data frame with the shapefile data.
+#'
+#' @return A data frame:
+#' * coc_number: CoC number
+#' * coc_name: CoC name
+#' * year: Year
+build_coc_list <- function(coc_shapefile) {
+  st_drop_geometry(coc_shapefile)
+}
